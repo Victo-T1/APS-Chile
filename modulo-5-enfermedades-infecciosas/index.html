@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ENO Chile — Referencia Epidemiológica EFER 502</title>
+<style>
+   .volver-menu {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 999;
+    background: #1c2e4a;
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 14px;
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.22);
+  }
+
+  .volver-menu:hover {
+    background: #2e4d7d;
+  }
+
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg:        #F0F4F8;
+    --surface:   #FFFFFF;
+    --panel:     #E8EEF5;
+    --border:    #C8D6E5;
+    --text:      #1A2A3A;
+    --muted:     #5A7080;
+    --accent:    #1A5276;
+    --accent2:   #117A65;
+    --accent3:   #7D3C98;
+    --accent4:   #C0392B;
+    --tag-bg:    #D6EAF8;
+    --tag-txt:   #1A5276;
+    --highlight: #FEF9E7;
+    --mono:      'IBM Plex Mono', monospace;
+    --sans:      'IBM Plex Sans', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--accent);
+    color: #fff;
+    padding: 20px 28px 16px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  }
+  header .top-row { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  header .badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 3px 8px;
+    letter-spacing: 0.08em;
+    border-radius: 3px;
+  }
+  header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+  header p  { font-size: 12px; opacity: 0.75; margin-top: 2px; }
+
+  /* SEARCH & FILTER */
+  .controls {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    padding: 14px 28px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .controls input[type=search] {
+    flex: 1; min-width: 220px;
+    font-family: var(--sans); font-size: 13px;
+    padding: 8px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .controls input[type=search]:focus { border-color: var(--accent); }
+  .controls select {
+    font-family: var(--sans); font-size: 13px;
+    padding: 8px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    cursor: pointer;
+  }
+  .result-count {
+    font-size: 12px; color: var(--muted);
+    display: flex; align-items: center;
+    padding: 0 28px 6px;
+    background: var(--surface);
+  }
+
+  /* LAYOUT */
+  .layout { display: flex; min-height: calc(100vh - 130px); }
+
+  /* SIDEBAR */
+  nav.sidebar {
+    width: 220px; flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 10px 0;
+    position: sticky; top: 130px; height: calc(100vh - 130px);
+  }
+  .sidebar-group { margin-bottom: 6px; }
+  .sidebar-group-label {
+    font-size: 9.5px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted);
+    padding: 8px 16px 4px;
+  }
+  .nav-btn {
+    display: block; width: 100%;
+    text-align: left;
+    padding: 8px 16px;
+    font-family: var(--sans); font-size: 13px;
+    color: var(--text);
+    background: none; border: none;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+  }
+  .nav-btn:hover { background: var(--panel); color: var(--accent); }
+  .nav-btn.active { background: var(--tag-bg); color: var(--accent); border-left-color: var(--accent); font-weight: 600; }
+  .nav-btn .cat-dot {
+    display:inline-block; width:7px; height:7px; border-radius:50%;
+    margin-right:7px; vertical-align:middle;
+  }
+  .nav-btn .hidden-tag { display:none; }
+
+  /* MAIN CONTENT */
+  main.content {
+    flex: 1;
+    padding: 24px 28px;
+    overflow-y: auto;
+  }
+
+  .disease-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 28px;
+    overflow: hidden;
+    display: none;
+  }
+  .disease-card.visible { display: block; }
+
+  .card-header {
+    padding: 18px 22px 14px;
+    display: flex; align-items: flex-start; gap: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-header .icon-box {
+    width: 44px; height: 44px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .card-header .title-area h2 { font-size: 17px; font-weight: 700; }
+  .card-header .title-area .subtitle { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .cat-badge {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 3px 8px; border-radius: 20px;
+    margin-top: 4px; display: inline-block;
+  }
+
+  /* CAT COLORS */
+  .cat-resp  { background:#EBF5FB; color:#1A5276; }
+  .cat-its   { background:#E8F8F5; color:#117A65; }
+  .cat-vector{ background:#FDF2F8; color:#7D3C98; }
+  .cat-zoonosis{ background:#FEF9E7; color:#7E5109; }
+  .cat-ets   { background:#FDEDEC; color:#C0392B; }
+
+  .dot-resp    { background:#1A5276; }
+  .dot-its     { background:#117A65; }
+  .dot-vector  { background:#7D3C98; }
+  .dot-zoonosis{ background:#E67E22; }
+  .dot-ets     { background:#C0392B; }
+
+  /* SECTIONS GRID */
+  .sections-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .sec {
+    padding: 16px 22px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .sec:nth-child(2n) { border-right: none; }
+  .sec:last-child, .sec:nth-last-child(2):nth-child(odd) { border-bottom: none; }
+  .sec.full { grid-column: 1 / -1; border-right: none; }
+  .sec h3 {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.09em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .sec h3 span { font-size: 13px; }
+  .sec p, .sec li { font-size: 13px; color: var(--text); line-height: 1.65; }
+  .sec ul { padding-left: 16px; }
+  .sec li { margin-bottom: 3px; }
+  .sec .pill {
+    display: inline-block; font-size: 11px;
+    background: var(--highlight); color: #7E5109;
+    border: 1px solid #FAD7A0;
+    padding: 2px 8px; border-radius: 20px;
+    font-family: var(--mono);
+    margin: 2px 2px 2px 0;
+  }
+  .sec .alert {
+    background: #FDEDEC; border-left: 3px solid var(--accent4);
+    padding: 7px 10px; border-radius: 0 5px 5px 0;
+    font-size: 12px; color: #922B21;
+  }
+  .sec .info-box {
+    background: var(--panel); border-radius: 5px;
+    padding: 8px 10px; font-size: 12.5px;
+  }
+  strong { font-weight: 600; }
+
+  /* NO RESULTS */
+  #no-results {
+    text-align: center; padding: 60px 20px;
+    color: var(--muted); font-size: 15px; display: none;
+  }
+
+  /* PRINT */
+  @media print {
+    nav.sidebar, .controls, header { display: none !important; }
+    .disease-card { display: block !important; page-break-after: always; }
+    .sections-grid { grid-template-columns: 1fr 1fr; }
+    main.content { padding: 0; }
+  }
+  @media (max-width:700px) {
+    nav.sidebar { display:none; }
+    .sections-grid { grid-template-columns: 1fr; }
+    .sec { border-right: none; }
+    main.content { padding: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="top-row">
+    <span class="badge">MINSAL · ISP · SEREMI</span>
+  </div>
+  <h1>Enfermedades de Notificación Obligatoria — Chile</h1>
+  <p>Material elaborado por: Victoria Catalina Tiznado Jara</p>
+</header>
+
+<div class="controls">
+  <input type="search" id="searchInput" placeholder="🔍  Buscar enfermedad o agente causal…" oninput="filterAll()">
+  <select id="catFilter" onchange="filterAll()">
+    <option value="">Todas las categorías</option>
+    <option value="resp">Respiratorias</option>
+    <option value="its">ITS / VIH</option>
+    <option value="vector">Vectoriales / Arbovirus</option>
+    <option value="zoonosis">Zoonosis</option>
+    <option value="ets">Entéricas / Otras</option>
+  </select>
+</div>
+<div class="result-count" id="resultCount"></div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="content" id="mainContent">
+    <div id="no-results">No se encontraron enfermedades con ese criterio.</div>
+  </main>
+</div>
+
+<script>
+const diseases = [
+// ─────────────────────────────────────────────────────────────────────────────
+{
+  id:"influenza", name:"Influenza", cat:"resp", icon:"🫁",
+  subtitle:"Infección viral respiratoria aguda estacional y pandémica",
+  desc:`La influenza es una enfermedad respiratoria aguda causada por virus de la familia <em>Orthomyxoviridae</em>. Se presenta en brotes estacionales anuales (mayo–agosto en el hemisferio sur) y puede causar pandemias cuando emergen nuevos subtipos con escasa inmunidad poblacional. Afecta especialmente a adultos mayores, niños menores de 5 años, embarazadas e inmunocomprometidos. Constituye un problema de salud pública mayor por su alta morbilidad y potencial mortalidad.`,
+  agente:`<strong>Tipos:</strong> Influenza A (subtipos H1N1, H3N2, H5N1, H7N9), Influenza B (linajes Victoria/Yamagata), Influenza C (enfermedad leve). <br><strong>En Chile:</strong> circulan predominantemente A/H1N1pdm09, A/H3N2 y B. El ISP realiza tipificación semanal vía red REVIRI.`,
+  incubacion:`<strong>Período de incubación:</strong> 1–4 días (promedio 2 días).<br><strong>Período de transmisibilidad:</strong> Adultos: 1 día antes hasta 5–7 días post inicio de síntomas. Niños e inmunocomprometidos: hasta 10 días o más.`,
+  diseminacion:`Transmisión por gotículas respiratorias (&gt;5 µm) a distancia &lt;1 m. También por contacto con superficies contaminadas y posterior autoinoculación. Aerosoles en ambientes cerrados. Distribución mundial estacional. En Chile: vigilancia REVIRI, red centinela en atención primaria y hospitalaria.`,
+  diagnostico:`<strong>Clínica:</strong> Fiebre &gt;38°C, mialgias, cefalea intensa, tos seca, odinofagia, inicio brusco. Puede complicarse con neumonía viral o bacteriana secundaria.<br><strong>Laboratorio:</strong> RT-PCR en tiempo real (gold standard), IFI (inmunofluorescencia indirecta), test rápido de antígenos (baja sensibilidad). Muestra: hisopado nasofaríngeo en las primeras 48–72h.<br><strong>Tratamiento:</strong> <span class='pill'>Oseltamivir 75 mg c/12h × 5d</span> (inicio en &lt;48h). Grupos de riesgo: tratamiento obligatorio. Medidas de soporte.`,
+  caso:`<strong>Caso sospechoso:</strong> Fiebre súbita &gt;38°C + síntomas respiratorios agudos (tos, disnea) o mialgias, en período de circulación viral.<br><strong>Caso confirmado:</strong> caso sospechoso con RT-PCR o IFI positivo.<br><strong>Caso probable:</strong> caso sospechoso con nexo epidemiológico a caso confirmado.<br><strong>ETESA (Enfermedad Tipo Influenza):</strong> fiebre + tos/odinofagia, usado en red centinela.`,
+  vigilancia:`Sistema REVIRI (Red de Vigilancia de Influenza y Otros Virus Respiratorios). Notificación individualizada en caso de hospitalización, UCI o fallecimiento. Notificación numérica semanal en centros centinela. El ISP procesa muestras para tipificación. Alerta sanitaria en aumento de tasas. DEIS publica informe semanal ERA. Vigilancia virológica, sindrómica y de mortalidad.`,
+  brote:`VDE activado ante: aumento &gt;2 DS sobre mediana histórica, brote en institución cerrada (ELEAM, hospital, colegio). Investigar: tasa de ataque, caso índice, cohorte expuesta. Muestra de 10–20 casos para tipificación. Informe al SEREMI. Medidas de control inmediato: cohorte, EPP, restricción visitas.`,
+  contactos_estudio:`Rastreo en brotes institucionales: identificar todos los expuestos 4 días previos al caso índice. Evaluar estado vacunal. En casos graves o pandémicos: estudio de contactos estrechos (convivientes, cuidadores).`,
+  contactos_manejo:`Profilaxis post-exposición con <span class='pill'>Oseltamivir 75 mg/día × 10d</span> en grupos de riesgo dentro de 48h del último contacto. Reforzar higiene respiratoria. Vacunación anual (octubre–noviembre en Chile). Aislamiento domiciliario del caso 5–7 días.`
+},
+// ─────────────────────────────────────────────────────────────────────────────
+{
+  id:"covid", name:"COVID-19", cat:"resp", icon:"🦠",
+  subtitle:"Enfermedad por coronavirus SARS-CoV-2",
+  desc:`COVID-19 es la enfermedad causada por el coronavirus SARS-CoV-2, declarada pandemia por la OMS en marzo 2020. En Chile ocasionó múltiples olas epidémicas con variantes sucesivas. Actualmente en fase de transición endémica, con circulación continua y variantes de la familia Omicron. Espectro clínico amplio: desde asintomáticos hasta cuadros graves con SDRA, shock séptico y disfunción multiorgánica.`,
+  agente:`<strong>SARS-CoV-2</strong>, betacoronavirus, familia <em>Coronaviridae</em>. Variantes de relevancia: Alpha, Beta, Delta, Omicron (BA.1–BA.5, XBB, JN.1). La evolución viral continúa; el ISP realiza secuenciación periódica. Proteína Spike como principal diana antigénica y vacunal.`,
+  incubacion:`<strong>Incubación:</strong> 2–14 días (mediana ~5 días); Omicron: 2–4 días.<br><strong>Transmisibilidad:</strong> Desde 2 días antes de síntomas hasta 10 días post inicio (casos leves) o hasta 20 días (casos graves/inmunocomprometidos). Período de mayor infectividad: 1–2 días previa a síntomas y 2–3 días post inicio.`,
+  diseminacion:`Transmisión aérea (aerosoles) y por gotículas. Contacto con superficies (menos relevante). R₀ varía: cepa original ~2-3, Delta ~5-6, Omicron ~8-15. Factores: ventilación, hacinamiento, actividad. En Chile: vigilancia por plataforma EPIVIGILA, red centinela ERA, ICOVID.`,
+  diagnostico:`<strong>RT-PCR:</strong> gold standard, muestra nasofaríngea (&lt;5 días de síntomas). <strong>Antígenos (TRAg):</strong> alta especificidad, menor sensibilidad, resultado inmediato.<br><strong>Clínica grave:</strong> disnea, SatO₂ &lt;94%, infiltrados bilaterales, IL-6 elevada, dímero D elevado, linfopenia.<br><strong>Tratamiento:</strong> <span class='pill'>Nirmatrelvir/ritonavir</span> (Paxlovid, &lt;5d síntomas, riesgo alto). <span class='pill'>Remdesivir</span> hospitalizados. <span class='pill'>Dexametasona</span> si requiere O₂. Anticoagulación profiláctica.`,
+  caso:`<strong>Caso sospechoso:</strong> cuadro respiratorio agudo con ≥1 de: fiebre, tos, disnea, anosmia/disgeusia.<br><strong>Caso probable:</strong> clínica compatible + nexo epidemiológico o imagen sugerente sin lab.<br><strong>Caso confirmado:</strong> RT-PCR o TRAg positivo.<br><strong>Caso grave:</strong> hospitalizado con necesidad de O₂.<br>Definiciones según circular MINSAL vigente (actualización periódica).`,
+  vigilancia:`Notificación inmediata individualizada de casos graves (hospitalización, UCI, fallecidos). Notificación numérica semanal en APS. EPIVIGILA: plataforma de notificación. Red centinela ERA en APS. Vigilancia genómica (ISP): secuenciación de variantes. Indicadores: positividad, R efectivo, ocupación UCI.`,
+  brote:`VDE en brote institucional (&gt;2 casos vinculados). Investigar nexo epidemiológico, ventilación, uso EPP. Muestra para PCR y eventual secuenciación. Informe inmediato a SEREMI. Cohorte de casos, restricción ingresos, refuerzo ventilación. Alertas en ELEAM, hospitales, colegios.`,
+  contactos_estudio:`Contacto estrecho: ≥15 min a &lt;2m sin mascarilla con caso confirmado en los 2 días previos al inicio de síntomas (o en las 48h previas al test en asintomáticos) hasta aislamiento. Monitorear síntomas 10 días.`,
+  contactos_manejo:`Cuarentena no obligatoria (fase actual, según normativa vigente). Recomendación: autoaislamiento 5 días si síntomas, uso de mascarilla 10 días. Testear si síntomas. Reforzar vacunación. En grupos de riesgo: evaluar tratamiento preventivo según guía.`
+},
+// ─────────────────────────────────────────────────────────────────────────────
+{
+  id:"vrs", name:"Virus Respiratorio Sincicial (VRS)", cat:"resp", icon:"👶",
+  subtitle:"Principal causa de bronquiolitis en lactantes",
+  desc:`El VRS es el agente infeccioso más importante de infección respiratoria baja en lactantes y niños menores de 2 años. Causa bronquiolitis, neumonía y crup. En adultos mayores e inmunocomprometidos puede causar enfermedad grave. En Chile circula principalmente entre abril y agosto, con epidemias anuales que saturan la red pediátrica.`,
+  agente:`<strong>Virus Respiratorio Sincicial</strong>, género <em>Orthopneumovirus</em>, familia <em>Pneumoviridae</em>. Dos subtipos: A y B. Subtipo A asociado a mayor gravedad. Proteína F (fusión) como principal diana de nirsevimab y palivizumab.`,
+  incubacion:`<strong>Incubación:</strong> 2–8 días (media 4–6 días).<br><strong>Transmisibilidad:</strong> 3–8 días desde inicio de síntomas; hasta 4 semanas en inmunocomprometidos.`,
+  diseminacion:`Gotículas y contacto directo con secreciones. Supervivencia en superficies hasta 7h. Altamente contagioso en guarderías y salas hospitalarias. Distribución estacional (otoño-invierno). Chile: vigilancia REVIRI, notificación de hospitalizaciones pediátricas.`,
+  diagnostico:`<strong>IFI o RT-PCR</strong> en muestra de aspirado nasofaríngeo (preferida en lactantes). Test rápido de antígenos disponible en urgencias.<br><strong>Bronquiolitis:</strong> sibilancias espiratorias + hiperinsuflación + SatO₂ ↓ en lactante con pródromo viral.<br><strong>Tratamiento:</strong> Soporte: oxigenoterapia, hidratación, aspiración de secreciones. <span class='pill'>Suero hipertónico nebulizado</span> en bronquiolitis moderada. No se recomienda broncodilatadores ni corticoides de rutina.`,
+  caso:`<strong>Caso de bronquiolitis:</strong> lactante &lt;24 meses con primer episodio de sibilancias + síntomas catarrales.<br><strong>Caso confirmado VRS:</strong> cuadro respiratorio + IFI/RT-PCR positivo a VRS.<br><strong>Caso grave:</strong> hospitalización con requerimiento de O₂ o ventilación.`,
+  vigilancia:`Notificación hospitalaria en sistema EPIVIGILA. Vigilancia REVIRI (ISP): tipificación viral semanal. Informe ERA-semanal DEIS. Indicadores: tasa de hospitalización pediátrica, ocupación camas UCI pediátrica. Alerta MINSAL en umbral de actividad epidémica.`,
+  brote:`Brotes en UCIP, neonatología o guarderías: notificación inmediata a SEREMI. Medidas de control: cohorte de pacientes, higiene de manos estricta, uso de guantes/mascarilla en contacto con caso, restricción de visitas. Investigar fuente.`,
+  contactos_estudio:`Identificar lactantes menores de 6 meses o con factores de riesgo (cardiopatía congénita, prematuro, displasia broncopulmonar) expuestos a caso confirmado.`,
+  contactos_manejo:`<span class='pill'>Nirsevimab</span> (Beyfortus): anticuerpo monoclonal profiláctico, dosis única IM, indicado en lactantes &lt;12 meses durante su primera temporada VRS (incorporado en PNI Chile). <span class='pill'>Palivizumab</span> mensual para grupos de alto riesgo (prematuros &lt;35 sem, cardiopatías hemodinámicamente significativas). Reforzar higiene respiratoria en entorno.`
+},
+// ─────────────────────────────────────────────────────────────────────────────
+{
+  id:"nac", name:"Neumonía Adquirida en la Comunidad (NAC)", cat:"resp", icon:"🫁",
+  subtitle:"Infección del parénquima pulmonar de adquisición extrahospitalaria",
+  desc:`La Neumonía Adquirida en la Comunidad (NAC) es una infección aguda del parénquima pulmonar en personas que no han sido hospitalizadas ≥48h previas al inicio de síntomas. Es la principal causa infecciosa de muerte en adultos mayores y la causa más frecuente de hospitalización por enfermedad infecciosa. En Chile constituye un problema de salud pública prioritario, especialmente en invierno.`,
+  agente:`<strong>Bacterias:</strong> <em>Streptococcus pneumoniae</em> (más frecuente), <em>Mycoplasma pneumoniae</em>, <em>Chlamydophila pneumoniae</em>, <em>Haemophilus influenzae</em>, <em>Legionella pneumophila</em>.<br><strong>Virus:</strong> Influenza, VRS, SARS-CoV-2, adenovirus, rinovirus.<br>En &gt;50% de casos no se identifica agente específico.`,
+  incubacion:`Variable según agente. <em>S. pneumoniae:</em> 1–3 días. <em>Mycoplasma:</em> 2–3 semanas. <em>Legionella:</em> 2–10 días.<br><strong>Transmisibilidad:</strong> Hasta 24–48h post inicio de antibiótico adecuado (neumonías bacterianas). Variable para virales.`,
+  diseminacion:`Inhalación de microorganismos de la flora orofaríngea aspirados, o inhalación directa de aerosoles. No se considera enfermedad de transmisión entre personas (salvo Legionella: por agua contaminada; o agentes virales). Factores de riesgo: edad, tabaquismo, inmunosupresión, EPOC, alcoholismo.`,
+  diagnostico:`<strong>Clínica:</strong> Fiebre, tos, expectoración, dolor pleurítico, disnea. Adultos mayores: presentación atípica (confusión, sin fiebre).<br><strong>Imágenes:</strong> Rx tórax (infiltrado nuevo). TAC si duda diagnóstica.<br><strong>Lab:</strong> Hemograma, PCR, hemocultivos. Antígeno urinario: <em>Pneumococcus</em> y <em>Legionella</em>.<br><strong>Severidad:</strong> Score PSI o CURB-65 (≥2: hospitalizar; ≥3: evaluar UCI).<br><strong>Tratamiento:</strong> <span class='pill'>Amoxicilina 1g c/8h</span> (NAC leve, ambulatorio). <span class='pill'>Amoxicilina-clavulánico + macrólido</span> (moderada). <span class='pill'>Betalactámico + macrólido o fluoroquinolona resp.</span> (grave).`,
+  caso:`<strong>Caso NAC:</strong> Síntomas respiratorios agudos (fiebre, tos, expectoración, disnea, dolor pleurítico) + imagen radiológica con infiltrado nuevo, en paciente sin hospitalización previa ≥48h ni institucionalizado.<br>No es ENO de notificación individualizada; se notifica como grupo en sistema ERA. <strong>Brote por Legionella</strong> sí requiere notificación inmediata.`,
+  vigilancia:`Vigilancia sindrómica ERA (Enfermedades Respiratorias Agudas): notificación numérica semanal en centros centinela. El ISP realiza vigilancia de <em>S. pneumoniae</em> invasor (ENO individualizado). Vigilancia de resistencia antimicrobiana (WHONET). Tasa de hospitalización por NAC en DEIS.`,
+  brote:`Brote de Legionella (≥2 casos vinculados): notificación inmediata a SEREMI. Investigar fuente hídrica (torres de enfriamiento, duchas, agua caliente). Muestras ambientales y clínicas. Medidas: cloración, temperatura &gt;60°C en sistemas de agua caliente.`,
+  contactos_estudio:`No aplica para NAC típica (no contagiosa de persona a persona). En brote viral asociado: identificar convivientes con síntomas. En Legionella: investigar fuente común, no contactos personales.`,
+  contactos_manejo:`No se requiere quimioprofilaxis en contactos de NAC bacteriana. Reforzar vacunación: <span class='pill'>VCN13/VCN15</span> en adultos mayores y grupos de riesgo + <span class='pill'>VPPV23</span>. Vacuna influenza anual. Cese de tabaquismo.`
+},
+// ─────────────────────────────────────────────────────────────────────────────
+{
+  id:"tuberculosis", name:"Tuberculosis (TBC)", cat:"resp", icon:"🫀",
+  subtitle:"Infección crónica por Mycobacterium tuberculosis — ENO individualizada",
+  desc:`La tuberculosis es una enfermedad infectocontagiosa crónica causada por el Complejo <em>Mycobacterium tuberculosis</em>. Afecta principalmente al pulmón (TBC pulmonar: 80–85%), pero puede comprometer cualquier órgano (TBC extrapulmonar). En Chile, la incidencia ha disminuido históricamente, pero persisten poblaciones vulnerables: privados de libertad, inmigrantes, VIH positivos, personas en situación de calle. Meta OMS: eliminación (&lt;1 caso/100.000 hab.).`,
+  agente:`<strong><em>Mycobacterium tuberculosis</em></strong> (bacilo de Koch), aerobio estricto, crecimiento lento (18–24h de generación). Complejo M. tuberculosis: M. tuberculosis, M. bovis, M. africanum. Resistencia: TBC-MDR (resistente a isoniacida+rifampicina), TBC-XDR (resistente además a fluoroquinolonas + inyectables).`,
+  incubacion:`<strong>Incubación (infección a enfermedad primaria):</strong> 4–12 semanas (primoinfección). Reactivación endógena puede ocurrir años o décadas después.<br><strong>Transmisibilidad:</strong> Mientras el paciente elimina bacilos en esputo (BK positivo). Cesa en 2–3 semanas de tratamiento efectivo.`,
+  diseminacion:`Vía aérea: aerosoles con núcleos de Wells (&lt;5µm) que alcanzan alvéolos. El 10% de infectados desarrollará enfermedad activa en su vida (50% en primeros 2 años). Factores de riesgo de progresión: VIH, desnutrición, DM, inmunosupresión, silicosis, edad extrema.`,
+  diagnostico:`<strong>Baciloscopia (BK):</strong> ×3 muestras de expectoración en días consecutivos (rapid, bajo costo, detecta &gt;5000 bac/mL).<br><strong>Cultivo:</strong> gold standard (Löwenstein-Jensen, MGIT); permite tipificación y antibiograma. Resultado: 3–8 semanas.<br><strong>GeneXpert MTB/RIF:</strong> molecular, resultado &lt;2h, detecta resistencia a rifampicina.<br><strong>PPD/IGRA:</strong> detección de infección latente (LTBI).<br><strong>Tratamiento TBC sensible:</strong> <span class='pill'>2HRZE/4HR</span>: Isoniacida+Rifampicina+Pirazinamida+Etambutol ×2m, luego Isoniacida+Rifampicina ×4m. Tratamiento supervisado (DOTS).`,
+  caso:`<strong>Caso de TBC:</strong> laboratorio positivo (BK, cultivo o molecular) o criterio clínico-radiológico con decisión de tratamiento.<br><strong>Caso confirmado:</strong> cultivo positivo para M. tuberculosis.<br><strong>Caso probable:</strong> BK positiva o GeneXpert positivo.<br><strong>Caso clínico:</strong> diagnóstico y tratamiento sin confirmación bacteriológica.<br><strong>TBC extrapulmonar:</strong> confirmada por bacteriología en muestra extrapulmonar o histología compatible.`,
+  vigilancia:`<strong>ENO de notificación inmediata individualizada</strong> (formulario ENO, Decreto 158/2004). Registro en plataforma EPIVIGILA. El PROCET (Programa de Control y Eliminación de la Tuberculosis) del MINSAL coordina la red. ISP: baciloscopia, cultivo y tipificación. SEREMI: seguimiento de cohortes, tasas de éxito de tratamiento. Indicadores OMS: tasa notificación, éxito tratamiento ≥85%.`,
+  brote:`Investigación de brote (≥2 casos vinculados epidemiológicamente): genotipificación (MIRU-VNTR, WGS). Buscar caso fuente. Estudio de contactos. Notificación urgente a SEREMI. Visita domiciliaria. Evaluación de condiciones de hacinamiento, ventilación.`,
+  contactos_estudio:`<strong>Estudio exhaustivo de contactos.</strong> Prioridad:<br>• Convivientes del caso índice BK positivo.<br>• Contactos íntimos &gt;6h/semana.<br>• Inmunocomprometidos, niños &lt;5 años, VIH.<br>Evaluación: PPD/IGRA + Rx tórax. Plazo: iniciar en 7 días, completar en 30 días post notificación.`,
+  contactos_manejo:`<strong>Infección Latente (LTBI):</strong> <span class='pill'>Isoniacida 5mg/kg/día ×9m</span> (niños y VIH positivos: primera línea). <span class='pill'>3HR</span> (isoniacida+rifampicina ×3m): alternativa en adultos. <span class='pill'>1HP</span> (isoniacida+rifapentina ×12 semanas): régimen corto supervisado. Descartar TBC activa antes de iniciar profilaxis.`
+},
+// ─────────────────────────────────────────────────────────────────────────────
+{
+  id:"dengue", name:"Dengue", cat:"vector", icon:"🦟",
+  subtitle:"Arbovirosis vectorial transmitida por Aedes aegypti",
+  desc:`El dengue es la arbovirosis de mayor importancia en salud pública mundial. Causada por cuatro serotipos del virus dengue (DENV 1–4), transmitida por el mosquito <em>Aedes aegypti</em>. No es endémica en Chile continental (no existe vector establecido), pero ocurren casos importados en viajeros. Es endémica en Isla de Pascua (vector presente). En Latinoamérica es hiperendémica. Riesgo de introducción ante cambio climático y expansión del vector.`,
+  agente:`<strong>Virus Dengue (DENV)</strong>, cuatro serotipos (DENV-1, 2, 3, 4), género <em>Flavivirus</em>, familia <em>Flaviviridae</em>. La infección por un serotipo confiere inmunidad duradera homóloga pero no heteróloga; infección secundaria con serotipo diferente aumenta riesgo de dengue grave (ADE).`,
+  incubacion:`<strong>Incubación:</strong> 3–14 días (media 4–7 días).<br><strong>Viremia en humano:</strong> 1 día antes hasta 6–7 días post inicio fiebre (período infectante para el vector).`,
+  diseminacion:`<strong>Vector:</strong> <em>Aedes aegypti</em> (primario), <em>A. albopictus</em> (secundario). No hay transmisión directa persona-persona (salvo vertical y transfusional, raras). El mosquito pica de día. Ciclo: mosquito pica virémico → mosquito infectado → pica susceptible. En Chile: casos importados de América tropical. Isla de Pascua: riesgo endémico local.`,
+  diagnostico:`<strong>Fase febril aguda (&lt;5 días):</strong> RT-PCR + antígeno NS1 (alta sensibilidad).<br><strong>Fase tardía (&gt;5 días):</strong> Serología IgM/IgG (ELISA).<br><strong>Clasificación OMS 2009:</strong> Dengue sin signos de alarma / Con signos de alarma / Dengue grave.<br><strong>Signos de alarma:</strong> dolor abdominal intenso, vómitos persistentes, acumulación de líquidos, sangrado mucoso, letargo, hepatomegalia &gt;2cm, aumento hematocrito con caída brusca de plaquetas.<br><strong>Tratamiento:</strong> Soporte. Hidratación oral/IV. <span class='pill'>Paracetamol</span> (no AINES ni aspirina). Hospitalización si signos de alarma o grave.`,
+  caso:`<strong>Caso sospechoso:</strong> Fiebre &gt;38°C de inicio agudo + 2 de: cefalea, dolor retroorbitario, mialgias, artralgias, rash, manifestaciones hemorrágicas, en persona con antecedente de viaje a zona endémica o Isla de Pascua en los 14 días previos.<br><strong>Caso probable:</strong> Sospechoso + IgM positivo.<br><strong>Caso confirmado:</strong> Sospechoso + PCR positivo o aislamiento viral o NS1 positivo o seroconversión IgG.`,
+  vigilancia:`<strong>ENO de notificación inmediata individualizada.</strong> Formulario al SEREMI en 24h. ISP: confirmación por PCR y tipificación de serotipo. SEREMI activa control de vectores ante caso importado (fumigación peridomiciliar, eliminación criaderos). Vigilancia entomológica en zonas con <em>A. aegypti</em>.`,
+  brote:`En caso de brote local (Isla de Pascua o si se establece vector): investigar nexo espacio-temporal, índice de Breteau y de Casa. Control de vectores: eliminación larvas, adulticida (ULV). Comunicación de riesgo a comunidad.`,
+  contactos_estudio:`No aplica estudio de contactos (no transmisión persona-persona). Identificar lugar y fecha probable de exposición al vector.`,
+  contactos_manejo:`No hay quimioprofilaxis ni vacuna disponible de forma universal en Chile. <span class='pill'>Vacuna Dengvaxia:</span> indicada solo en personas con dengue previo confirmado, &gt;9 años, en zonas endémicas (no aplicable en Chile continental). Medidas de protección frente al vector: repelentes (DEET, Icaridina), ropa protectora, eliminación de criaderos, mosquiteros.`
+},
+// ─────────────────────────────────────────────────────────────────────────────
+{
+  id:"chikungunya", name:"Fiebre Chikungunya", cat:"vector", icon:"🦟",
+  subtitle:"Arbovirosis por Alphavirus con artralgia severa",
+  desc:`La fiebre Chikungunya es una enfermedad viral aguda transmitida por mosquitos del género <em>Aedes</em>, causada por el virus Chikungunya (CHIKV), un Alphavirus. Se caracteriza por fiebre de inicio súbito y artralgia intensa y debilitante (el nombre significa "doblarse de dolor" en lengua makonde). Puede evolucionar a artralgia crónica en hasta 40% de los casos. No endémica en Chile continental; casos importados de América tropical.`,
+  agente:`<strong>Virus Chikungunya (CHIKV)</strong>, género <em>Alphavirus</em>, familia <em>Togaviridae</em>. Tres genotipos: ECSA (África centro-sur), Asiático, IOL (Océano Índico). El genotipo IOL puede ser transmitido por <em>A. albopictus</em>, amplía el rango geográfico del vector.`,
+  incubacion:`<strong>Incubación:</strong> 2–12 días (usualmente 3–7 días).<br><strong>Viremia:</strong> 1–2 días antes hasta 5–7 días post inicio de fiebre (infectante para vector).`,
+  diseminacion:`<strong>Vector:</strong> <em>Aedes aegypti</em> y <em>A. albopictus</em>. Transmisión vertical (madre-hijo perinatalmente). Transfusional (excepcional). No contagio directo entre personas. Distribución: África, Asia, América tropical, islas del Caribe, Europa (sporadico). Chile: casos importados.`,
+  diagnostico:`<strong>Fase aguda (&lt;5 días):</strong> RT-PCR (ISP).<br><strong>Fase tardía:</strong> Serología IgM/IgG (ELISA).<br><strong>Clínica:</strong> Fiebre súbita + artralgia simétrica severa (muñecas, tobillos, rodillas, metacarpos) + rash maculopapular.<br><strong>Diagnóstico diferencial:</strong> dengue (sin artralgia prominente), Zika (rash, conjuntivitis, artralgia moderada).<br><strong>Tratamiento:</strong> Soporte: <span class='pill'>Paracetamol</span>, AINEs en fase crónica. Reposo, hidratación. No tratamiento antiviral específico.`,
+  caso:`<strong>Caso sospechoso:</strong> Fiebre de inicio agudo &gt;38°C + artralgia severa o artritis, no explicada por otras causas, en persona con antecedente de viaje a zona endémica ≤14 días previos.<br><strong>Caso probable:</strong> Sospechoso + IgM positivo.<br><strong>Caso confirmado:</strong> RT-PCR positivo o aislamiento viral o seroconversión IgG.`,
+  vigilancia:`<strong>ENO de notificación inmediata.</strong> Formulario ENO al SEREMI en 24h. Confirmación en ISP. Control entomológico ante caso importado en zona con vector. Vigilancia de viajeros procedentes de zonas endémicas.`,
+  brote:`Similar a dengue. Investigación de nexo epidemiológico, índice vectorial. Control inmediato de vectores. Comunicación de riesgo.`,
+  contactos_estudio:`No aplica (no transmisión persona-persona). Determinar lugar de exposición al vector.`,
+  contactos_manejo:`Sin vacuna ni quimioprofilaxis disponibles actualmente. Protección frente al vector: repelentes (DEET ≥20%), ropa manga larga, mosquiteros, eliminación de criaderos. Evitar viaje a zonas endémicas en embarazo (riesgo de transmisión vertical).`
+},
+// ─────────────────────────────────────────────────────────────────────────────
+{
+  id:"zika", name:"Virus Zika", cat:"vector", icon:"🦟",
+  subtitle:"Arbovirosis asociada a microcefalia y síndrome de Guillain-Barré",
+  desc:`El virus Zika (ZIKV) es un Flavivirus transmitido principalmente por <em>Aedes aegypti</em>. Causa un cuadro generalmente leve, pero tiene consecuencias graves: síndrome congénito por Zika (microcefalia, calcificaciones cerebrales) en neonatos de madres infectadas durante el embarazo, y síndrome de Guillain-Barré. Fue declarado Emergencia de Salud Pública Internacional (ESPII) por la OMS en 2016. No endémico en Chile; casos importados.`,
+  agente:`<strong>Virus Zika (ZIKV)</strong>, género <em>Flavivirus</em>, familia <em>Flaviviridae</em>. Dos linajes: africano y asiático (el que circuló en América). Reactividad cruzada serológica con dengue y otros flavivirus.`,
+  incubacion:`<strong>Incubación:</strong> 3–14 días (típicamente 3–7 días).<br><strong>Viremia:</strong> 1 semana aprox. En fluido seminal: hasta 6 meses post infección.`,
+  diseminacion:`<strong>Vector principal:</strong> <em>Aedes aegypti</em>. <strong>Sexual:</strong> transmisión heterosexual y homosexual (semen/secreción vaginal). <strong>Vertical:</strong> madre-feto en cualquier trimestre (mayor riesgo 1°T). <strong>Transfusional:</strong> documentada. Casos asintomáticos frecuentes (75–80%).`,
+  diagnostico:`<strong>RT-PCR:</strong> orina o suero (&lt;14 días síntomas). Orina puede ser positiva más prolongado.<br><strong>Serología:</strong> IgM/IgG ELISA (reactividad cruzada con dengue; confirmar con PRNT).<br><strong>Embarazadas:</strong> RT-PCR en suero y orina + ecografía fetal seriada.<br><strong>Síndrome congénito:</strong> ecografía/TAC/RMN cerebro neonatal.<br><strong>Tratamiento:</strong> Soporte: <span class='pill'>Paracetamol</span>, hidratación. Sin antiviral específico.`,
+  caso:`<strong>Caso sospechoso:</strong> Exantema maculopapular pruriginoso + 2 de: fiebre, conjuntivitis no purulenta, artralgia/mialgia, cefalea, en persona con viaje a zona endémica ≤14 días o contacto sexual con caso.<br><strong>Caso confirmado:</strong> RT-PCR positivo (suero, orina o semen).<br><strong>Síndrome congénito:</strong> neonato con anomalías congénitas + vínculo materno a Zika.`,
+  vigilancia:`<strong>ENO de notificación inmediata.</strong> Formulario ENO al SEREMI. ISP: RT-PCR y confirmación. Alerta especial para casos en embarazadas. Vigilancia del síndrome congénito. PAHO/OMS: reporte internacional.`,
+  brote:`Investigación de brote vectorial. Control de <em>Aedes aegypti</em>. Especial vigilancia en embarazadas en área afectada.`,
+  contactos_estudio:`<strong>Contactos sexuales de caso confirmado:</strong> consejería, test si síntomas. Parejas de embarazadas: testear si posible exposición.`,
+  contactos_manejo:`<strong>Abstinencia o uso consistente de condón</strong> hasta: hombre con Zika: 6 meses post resolución síntomas; mujer con Zika: 2 meses post síntomas; viajero asintomático desde zona endémica: 2 meses (hombre: 6 meses). Sin vacuna disponible. Evitar embarazo durante y post infección por períodos indicados.`
+},
+// ─────────────────────────────────────────────────────────────────────────────
+{
+  id:"chagas", name:"Enfermedad de Chagas", cat:"vector", icon:"🐛",
+  subtitle:"Tripanosomiasis americana — ENO individualizada",
+  desc:`La enfermedad de Chagas es una parasitosis sistémica causada por el protozoo <em>Trypanosoma cruzi</em>. En Chile es endémica en las regiones de Arica y Parinacota, Tarapacá, Antofagasta, Atacama, Coquimbo y parte de Valparaíso (zonas rurales con <em>Triatoma infestans</em>). Puede causar miocardiopatía dilatada crónica (10–30%), megaesófago y megacolon. Afecta aproximadamente 300.000 personas en Chile.`,
+  agente:`<strong><em>Trypanosoma cruzi</em></strong>, protozoo hemoflagelado, familia <em>Trypanosomatidae</em>. Estadios: tripomastigote (sangre), amastigote (intracelular), tripomastigote metacíclico (forma infectante en heces del vector).`,
+  incubacion:`<strong>Enfermedad aguda:</strong> 1–2 semanas post picada del vector (vectorial) o 20–40 días post transfusión.<br><strong>Fase crónica:</strong> latencia de años a décadas tras infección aguda asintomática o no diagnosticada.`,
+  diseminacion:`<strong>Vectorial:</strong> <em>Triatoma infestans</em> (vinchuca): pica y defeca en herida, tripomastigotes en heces. <strong>Transfusional</strong> (riesgo residual, tamizaje obligatorio en Chile desde 1985). <strong>Vertical (congénita):</strong> 5–10% de hijos de madres infectadas. <strong>Oral:</strong> alimentos contaminados (infrecuente en Chile). <strong>Transplante de órganos.</strong>`,
+  diagnostico:`<strong>Fase aguda:</strong> Frotis de sangre periférica (tripomastigotes). Microhematocrito. PCR.<br><strong>Fase crónica:</strong> 2 pruebas serológicas de diferente técnica (ELISA + IFI o hemaglutinación). Diagnóstico confirmado si ambas positivas.<br><strong>Clínica aguda:</strong> chagoma de inoculación, signo de Romaña (edema bipalpebral), fiebre, hepatoesplenomegalia, adenopatías.<br><strong>Tratamiento:</strong> <span class='pill'>Benznidazol 5–7 mg/kg/día ×60d</span> (fase aguda, congénita, crónica reciente &lt;18 años). <span class='pill'>Nifurtimox</span>: alternativa. Tratamiento etiológico más eficaz en fase aguda.`,
+  caso:`<strong>Caso agudo confirmado:</strong> tripomastigotes en sangre periférica o PCR positiva.<br><strong>Caso crónico confirmado:</strong> 2 serológicas positivas de distinta técnica en persona sin presentación aguda.<br><strong>Caso congénito:</strong> neonato con tripomastigotes o IgG persistente &gt;9 meses (sin transferencia materna pasiva).`,
+  vigilancia:`<strong>ENO de notificación inmediata individualizada.</strong> Formulario ENO al SEREMI. ISP: diagnóstico de referencia. MINSAL: Programa de Enfermedad de Chagas. Tamizaje obligatorio en bancos de sangre. Tamizaje en embarazadas en regiones endémicas (PCR e IgG). Vigilancia entomológica: índice de infestación domiciliaria (meta &lt;1%).`,
+  brote:`Brotes orales: investigar fuente alimentaria común. Control vectorial de emergencia. Notificación inmediata a SEREMI. Investigación epidemiológica exhaustiva.`,
+  contactos_estudio:`<strong>Hijo de madre con Chagas:</strong> estudio parasitológico al nacimiento (microhematocrito) y serología a los 9 y 12 meses. <strong>Donantes de sangre con Chagas:</strong> notificación al receptor potencial. Familiares en zona endémica: estudio serológico.`,
+  contactos_manejo:`Tratamiento etiológico en casos confirmados (especialmente agudos y niños). Control vectorial del domicilio con insecticidas piretroides. Mejora de la vivienda (consulta de fisuras donde habita vinchuca). Educación comunitaria.`
+},
+// ─────────────────────────────────────────────────────────────────────────────
+{
+  id:"hantavirus", name:"Hantavirus (SPH)", cat:"zoonosis", icon:"🐭",
+  subtitle:"Síndrome Pulmonar por Hantavirus — zoonosis de alta mortalidad",
+  desc:`El Síndrome Pulmonar por Hantavirus (SPH) es una zoonosis grave causada por hantavirus del género <em>Orthohantavirus</em>. En Chile, el virus Andes (ANDV) es el único con transmisión interhumana documentada en el mundo. Mortalidad del 25–40%. Distribución geográfica en Chile: principalmente regiones de O'Higgins a Los Lagos, asociado al ratón colilargo (<em>Oligoryzomys longicaudatus</em>). Casos esporádicos en invierno-primavera.`,
+  agente:`<strong>Virus Andes (ANDV)</strong>, familia <em>Hantaviridae</em>. En América también: Sin Nombre (EEUU), Laguna Negra (Paraguay), entre otros. ANDV es el único hantavirus con transmisión persona-persona (conglomerados familiares).`,
+  incubacion:`<strong>Incubación:</strong> 9–33 días (media 14–21 días) post exposición.<br><strong>Transmisibilidad:</strong> Hantavirus no se elimina de persona a persona habitualmente, excepto ANDV (transmisión interhumana en cluster familiares: período de transmisibilidad durante fase febril hasta primeros días de EDC).`,
+  diseminacion:`<strong>Inhalación de aerosoles:</strong> excreciones (orina, heces, saliva) de ratón colilargo infectado. Contacto con material contaminado, mordedura. Distribución: regiones de Chile central-sur. Riesgo: actividades rurales, limpieza de recintos abandonados, camping, labores agrícolas/forestales. Transmisión interhumana (ANDV): contacto estrecho con caso en fase aguda.`,
+  diagnostico:`<strong>Clínica:</strong> 3 fases: prodrómica (fiebre, mialgias, cefalea, 3–5 días), cardiopulmonar (disnea, edema pulmonar no cardiogénico, shock), convalecencia.<br><strong>Lab:</strong> IgM anti-ANDV (ELISA, ISP), RT-PCR en sangre en fase aguda temprana. Hallazgos: trombocitopenia, linfocitosis atípica, hematocrito elevado, infiltrados bilaterales en Rx.<br><strong>Tratamiento:</strong> Soporte en UCI: ventilación mecánica, ECMO en casos graves. No hay antiviral de eficacia probada para SPH. <span class='pill'>Ribavirina</span>: no demostrado beneficio en SPH (sí en FHRS).`,
+  caso:`<strong>Caso sospechoso:</strong> Cuadro febril agudo + insuficiencia respiratoria de rápida progresión con infiltrados bilaterales, sin causa alternativa identificada, con antecedente epidemiológico (exposición a roedores o zona endémica).<br><strong>Caso confirmado:</strong> IgM anti-ANDV positiva o RT-PCR positivo.<br><strong>Caso probable:</strong> Cuadro clínico compatible + nexo epidemiológico sin confirmación de laboratorio.`,
+  vigilancia:`<strong>ENO de notificación inmediata (urgente).</strong> Formulario ENO al SEREMI en &lt;24h. ISP: diagnóstico de referencia. MINSAL: alerta epidemiológica ante cluster familiar. Vigilancia de roedores en regiones endémicas. Mapa de riesgo anual según abundancia de colilargo.`,
+  brote:`<strong>Cluster familiar (≥2 casos):</strong> activar protocolo de transmisión interhumana. Investigación exhaustiva de exposición. Precauciones de transmisión aérea y por contacto para caso en UCI. Rastreo de contactos estrechos. Notificación PAHO.`,
+  contactos_estudio:`<strong>Contactos con caso confirmado ANDV:</strong> identificar todos los contactos estrechos durante fase prodrómica y cardiopulmonar (convivientes, personal de salud sin EPP adecuado). Monitoreo de síntomas por 45 días.`,
+  contactos_manejo:`Sin vacuna ni quimioprofilaxis disponible. Monitoreo de temperatura y síntomas diario por 45 días. Instrucción para consulta inmediata ante fiebre o síntomas respiratorios. Precauciones en personal de salud: EPP nivel 3 (mascarilla N95, guantes, delantal) en contacto con caso sospechoso. Control de roedores (raticidas, trampas) en entorno domiciliario.`
+},
+// ─────────────────────────────────────────────────────────────────────────────
+{
+  id:"ecoli", name:"Escherichia coli STEC / O157:H7", cat:"ets", icon:"🦠",
+  subtitle:"E. coli enterohemorrágica — causa de SUH en niños",
+  desc:`<em>Escherichia coli</em> productora de toxina Shiga (STEC, serotipo O157:H7 y otros) causa diarrea hemorrágica y Síndrome Urémico Hemolítico (SUH) — la principal causa de insuficiencia renal aguda en niños en Chile. En Chile, el serotipo O157:H7 es el más frecuente. El SUH afecta predominantemente a niños menores de 5 años y adultos mayores. Chile tiene una de las tasas más altas de SUH en el mundo.`,
+  agente:`<strong><em>Escherichia coli</em> O157:H7</strong> y otros serotipos STEC (O26, O111, O121). Produce <strong>toxinas Shiga (Stx1, Stx2)</strong>, que causan daño endotelial sistémico → microangiopatía trombótica → SUH (anemia hemolítica microangiopática + trombocitopenia + IRA).`,
+  incubacion:`<strong>Incubación:</strong> 2–10 días (media 3–4 días).<br><strong>Transmisibilidad:</strong> Mientras dure la excreción fecal del germen (2–3 semanas o más en niños). Dosis infectante muy baja (&lt;100 bacterias).`,
+  diseminacion:`<strong>Alimentos:</strong> carne bovina mal cocida (hamburguesas), leche sin pasteurizar, vegetales crudos regados con agua contaminada, jugos no pasteurizados. <strong>Agua:</strong> agua no tratada. <strong>Contacto persona-persona:</strong> fecal-oral (importante en guarderías). <strong>Reservorio:</strong> intestino de bovinos (asintomático).`,
+  diagnostico:`<strong>Coprocultivo:</strong> en medio SMAC (sorbitol-MacConkey) — O157 no fermenta sorbitol. <strong>PCR para genes stx1/stx2:</strong> alta sensibilidad, ISP. <strong>ELISA para toxina Shiga.</strong><br><strong>SUH:</strong> tríada: anemia hemolítica (Coombs negativo) + trombocitopenia + creatinina elevada, 5–10 días post inicio diarrea.<br><strong>Tratamiento:</strong> <div class='alert'>⚠️ NO usar antibióticos ni antidiarreicos (aumentan riesgo de SUH al liberar toxina). NO usar inhibidores de motilidad.</div> Soporte: hidratación IV, diálisis si IRA. Transfusiones si anemia grave.`,
+  caso:`<strong>Caso STEC:</strong> diarrea (con o sin sangre) + coprocultivo/PCR/toxina Shiga positivo.<br><strong>Caso SUH:</strong> anemia hemolítica microangiopática (esquistocitos) + trombocitopenia + creatinina elevada, precedida de diarrea (hemorrágica generalmente).<br><strong>Caso probable:</strong> diarrea hemorrágica sin confirmación lab + nexo epidemiológico.`,
+  vigilancia:`<strong>ENO de notificación inmediata individualizada</strong> (SUH y STEC confirmado). Formulario al SEREMI en 24h. ISP: caracterización molecular (PFGE, WGS). Investigación de brote alimentario con SEREMI + SEREMI de Salud + SAG. Vigilancia de niños con SUH en nefrología pediátrica.`,
+  brote:`Investigación de brote alimentario: encuesta epidemiológica, identificar fuente común. Muestreo de alimentos sospechosos. Notificación SAG si fuente bovina. Refuerzo de inocuidad alimentaria. Cuarentena de producto si aplica. Comunicado a la comunidad.`,
+  contactos_estudio:`<strong>Convivientes y contactos de caso STEC:</strong> búsqueda activa de síntomas (diarrea hemorrágica). Coprocultivo a asintomáticos en contexto de brote o trabajadores de alimentación. Excluir de manipulación de alimentos y atención de niños hasta 2 cultivos negativos.`,
+  contactos_manejo:`Educación: lavado de manos, cocción adecuada de carnes (T° interna &gt;70°C), pasteurización de lácteos, higiene en manipulación de alimentos. No antibióticos profilácticos. Vigilancia de síntomas 10 días post exposición.`
+},
+// ─────────────────────────────────────────────────────────────────────────────
+{
+  id:"vih", name:"VIH/SIDA", cat:"its", icon:"🩸",
+  subtitle:"Infección por Virus de Inmunodeficiencia Humana — ITS de notificación",
+  desc:`El VIH es un retrovirus que destruye progresivamente los linfocitos CD4+, comprometiendo la inmunidad celular. Sin tratamiento, evoluciona a SIDA (síndrome de inmunodeficiencia adquirida), definido por recuento CD4 &lt;200 céls/µL o enfermedad definitoria. En Chile, la epidemia se concentra en hombres que tienen sexo con hombres (HSH), personas trans y poblaciones vulnerables. La terapia antirretroviral (TARV) permite una expectativa de vida similar a la población general.`,
+  agente:`<strong>VIH-1</strong> (pandémico, grupo M, subtipos A–K, circulante en Chile) y <strong>VIH-2</strong> (infrecuente, África Occidental). Familia <em>Retroviridae</em>. Receptor: CD4 + correceptores CCR5/CXCR4. Integración al genoma celular: reservorios latentes perpetúan infección.`,
+  incubacion:`<strong>Período ventana:</strong> 10–45 días (con pruebas de 4ª generación Ag/Ac).<br><strong>Seroconversión:</strong> 3–12 semanas post exposición. <strong>Síndrome retroviral agudo:</strong> 2–4 semanas post exposición. <strong>Progresión a SIDA:</strong> media 10 años sin TARV.`,
+  diseminacion:`<strong>Sexual:</strong> relaciones sin condón (vía más frecuente en Chile). <strong>Parenteral:</strong> uso compartido de jeringuillas, transfusiones (riesgo residual). <strong>Vertical:</strong> madre-hijo (embarazo, parto, lactancia; reducible a &lt;2% con TARV). Riesgo de transmisión sexual: mayor vía receptiva anal (&sim;1.4%) &gt; insertiva anal (&sim;0.1%) &gt; vaginal.`,
+  diagnostico:`<strong>Tamizaje:</strong> Test de Elisa 4ª gen (Antígeno p24 + Anticuerpos) — gratuito en FONASA, anónimo en CESFAM.<br><strong>Confirmación:</strong> Western Blot o ensayo diferencial Ag/Ac. <strong>Carga viral y CD4</strong> para estadificación y seguimiento.<br><strong>TARV:</strong> iniciar a toda persona con diagnóstico, independiente de CD4. Regímenes de primera línea en Chile: <span class='pill'>TDF/FTC + DTG</span> (Tenofovir/Emtricitabina/Dolutegravir). Monitorizar con CV indetectable (&lt;50 cop/mL = No detectable = No transmisible: U=U).`,
+  caso:`<strong>Caso VIH:</strong> resultado confirmado positivo (Western Blot o ensayo diferencial).<br><strong>Caso SIDA:</strong> VIH confirmado + CD4 &lt;200 céls/µL o enfermedad definitoria de SIDA (Pneumocystis, toxoplasma cerebral, CMV retinitis, sarcoma de Kaposi, etc.).<br><strong>Clasificación CDC:</strong> Categorías A, B, C.`,
+  vigilancia:`<strong>ENO de notificación inmediata individualizada.</strong> Formulario C2 (DEIS/MINSAL): médico tratante notifica al SEREMI. Sistema de nombre encriptado para confidencialidad. Estadística anual publicada por DEIS. Indicadores ONUSIDA: "90-90-90" (ahora 95-95-95). Banco de sangre: tamizaje obligatorio.`,
+  brote:`No aplica concepto de "brote" clásico. En caso de conglomerados (ej. personas que usan drogas inyectables): activar respuesta comunitaria, distribución de material estéril, acceso a TARV. Investigación molecular de redes de transmisión.`,
+  contactos_estudio:`<strong>Notificación a parejas</strong> (partner notification): el equipo de salud apoya al caso en notificar a contactos sexuales de los últimos 3–6 meses. Oferta de test a contactos. Principio de confidencialidad mantenido. En perinatal: estudio completo al neonato expuesto.`,
+  contactos_manejo:`<strong>PEP (Profilaxis Post-Exposición):</strong> <span class='pill'>TDF/FTC + RAL o DTG</span> ×28 días; iniciar en &lt;72h de exposición de riesgo (ocupacional o no ocupacional). <strong>PrEP (Profilaxis Pre-Exposición):</strong> <span class='pill'>TDF/FTC</span> diario en personas de alto riesgo (disponible en CESFAM, FONASA, desde 2022 en Chile). Condón como medida fundamental. Consejería en reducción de riesgo.`
+},
+// ─────────────────────────────────────────────────────────────────────────────
+{
+  id:"herpes", name:"Herpes Genital", cat:"its", icon:"🔴",
+  subtitle:"ITS por Herpes Virus Simplex tipo 2 (HSV-2) y tipo 1",
+  desc:`El herpes genital es una infección de transmisión sexual crónica y recurrente causada principalmente por el Virus Herpes Simple tipo 2 (HSV-2) y, en proporción creciente, por HSV-1 (en genitales por sexo oral-genital). Es una de las ITS más prevalentes a nivel mundial. En Chile, la seroprevalencia de HSV-2 en adultos es ~17–25%. Caracterizado por episodios de úlceras genitales recurrentes precedidas de pródromos, con latencia en ganglios sacros.`,
+  agente:`<strong>Herpes Virus Simple (HSV)</strong>, familia <em>Herpesviridae</em>. <strong>HSV-2:</strong> principalmente genital (recurrencias más frecuentes). <strong>HSV-1:</strong> orolabial, pero causa 30–50% del herpes genital primario en países desarrollados. Latencia en ganglio sacro/trigémino.`,
+  incubacion:`<strong>Incubación:</strong> 2–12 días (media 4 días) para primoinfección.<br><strong>Transmisibilidad:</strong> Principalmente durante lesiones activas; también eliminación viral asintomática (shedding subclínico) 5–20% de los días, mayor riesgo.`,
+  diseminacion:`Contacto directo con lesiones, mucosas o piel de zona genital/anal/oral de persona infectada. No transmisión por fomites. HSV-2: mayor recurrencia genital. Transmisión vertical durante el parto si lesión activa (herpes neonatal, grave).`,
+  diagnostico:`<strong>Clínica:</strong> Vesículas dolorosas que progresan a úlceras genitales, perineales, anales; adenopatía inguinal bilateral; disuria. Primoinfección más grave que recurrencias.<br><strong>Lab:</strong> PCR HSV en lesión (gold standard). Cultivo viral. Serología (IgG HSV-2): útil para diagnóstico de infección latente en asintomáticos.<br><strong>Tratamiento:</strong> Primoinfección: <span class='pill'>Aciclovir 400 mg c/8h ×7–10d</span> o <span class='pill'>Valaciclovir 1g c/12h ×7–10d</span>. Recurrencia: <span class='pill'>Aciclovir 400 mg c/8h ×5d</span>. Supresión crónica (≥6 episodios/año): <span class='pill'>Valaciclovir 500 mg/día</span>.`,
+  caso:`<strong>Caso de herpes genital:</strong> úlcera o vesícula genital/perigenital con PCR o cultivo positivo para HSV. Diagnóstico clínico aceptado en contexto de historia recurrente característica.<br><strong>En Chile:</strong> Notificación como ITS ulcerativa en sistema de vigilancia de ITS (no siempre individualizada).`,
+  vigilancia:`Notificación de síndromes de ITS (úlcera genital) en red centinela ITS-VIH del MINSAL/ISP. Formulario ENO en caso de diagnóstico confirmado (varía según norma vigente). Vigilancia de resistencia a aciclovir en ISP.`,
+  brote:`No aplica concepto de brote clásico. Investigar clusters en contexto de red sexual. Ofrecer test ITS completo.`,
+  contactos_estudio:`Notificar a pareja(s) sexual(es) actuales. Ofrecer evaluación clínica y serología. Consejería. Incluir en oferta de test VIH, sífilis, gonorrea, clamidia.`,
+  contactos_manejo:`Educación: uso consistente de condón (reduce transmisión pero no elimina). Evitar contacto sexual durante lesiones activas. En embarazadas: suprimir con aciclovir desde semana 36 si historia de herpes genital. Cesárea si lesión activa al parto.`
+},
+// ─────────────────────────────────────────────────────────────────────────────
+{
+  id:"clamidia", name:"Clamidia (Chlamydia trachomatis)", cat:"its", icon:"🔬",
+  subtitle:"ITS bacteriana más frecuente — asintomática en mayoría de casos",
+  desc:`La infección genital por <em>Chlamydia trachomatis</em> es la ITS bacteriana más frecuente a nivel mundial. En Chile, altamente prevalente en jóvenes sexualmente activos. Causa cervicitis, uretritis, enfermedad inflamatoria pélvica (EIP), epididimitis y puede producir infertilidad por daño tubárico. El 70–80% de las mujeres y 50% de los hombres son asintomáticos, lo que facilita la transmisión y el subdiagnóstico.`,
+  agente:`<strong><em>Chlamydia trachomatis</em></strong>, parásito intracelular obligado. Serotipos D–K (genitales), L1–L3 (Linfogranuloma venéreo, LGV), A–C (tracoma ocular). Ciclo intracelular: cuerpo elemental (infectante) ↔ cuerpo reticulado (replicativo).`,
+  incubacion:`<strong>Incubación:</strong> 7–21 días.<br><strong>Transmisibilidad:</strong> Mientras persiste infección activa, incluso asintomática (meses a años sin tratamiento).`,
+  diseminacion:`Contacto sexual (vaginal, anal, oral). Vertical: conjuntivitis neonatal y neumonía por <em>C. trachomatis</em> (transmisión perinatal). Tasas más altas en mujeres 15–24 años, HSH.`,
+  diagnostico:`<strong>NAAT (Nucleic Acid Amplification Test):</strong> PCR — gold standard, muestra endocervical, uretral, rectal, orina primer chorro, hisopado vulvovaginal. Alta sensibilidad y especificidad.<br><strong>Cultivo celular:</strong> solo en contexto forense.<br><strong>Tratamiento:</strong> <span class='pill'>Azitromicina 1g vía oral dosis única</span> (primera línea). <span class='pill'>Doxiciclina 100 mg c/12h ×7d</span> (alternativa, mayor eficacia en EIP y LGV). LGV: <span class='pill'>Doxiciclina 100 mg c/12h ×21d</span>. Tratar simultáneamente a la pareja.`,
+  caso:`<strong>Caso confirmado:</strong> NAAT o cultivo positivo para <em>C. trachomatis</em> en muestra genital, rectal o faríngea.<br><strong>Caso sindrómico:</strong> cervicitis o uretritis mucopurulenta con sospecha clínica alta (tratamiento empírico justificado mientras se aguarda resultado).`,
+  vigilancia:`Notificación como ITS en sistema de vigilancia centinela ITS-VIH (red de centros de salud sexual). Formulario de notificación al SEREMI. En Chile: subregistro importante. ISP: caracterización molecular. Indicador: cobertura de tamizaje en embarazadas.`,
+  brote:`Investigación de redes sexuales. Rastreo de contactos. Tamizaje ampliado en población expuesta.`,
+  contactos_estudio:`<strong>Notificar y tratar a parejas sexuales de los últimos 60 días.</strong> Si última relación &gt;60 días, tratar a la última pareja. Ofrecer test completo ITS (VIH, sífilis, gonorrea, VHB, VHC). Incluir test de embarazo en mujeres.`,
+  contactos_manejo:`Tratamiento simultáneo de pareja (sin confirmación diagnóstica si es posible — tratamiento acelerado de parejas, TAP). Abstinencia o condón hasta completar tratamiento y resolución de síntomas (7 días post dosis única). Control clínico a los 3 meses (alta reinfección por nueva exposición).`
+},
+// ─────────────────────────────────────────────────────────────────────────────
+{
+  id:"vph", name:"VPH (Virus Papiloma Humano)", cat:"its", icon:"🔬",
+  subtitle:"ITS viral más frecuente — asociado a cáncer cervicouterino",
+  desc:`El Virus Papiloma Humano (VPH) es la ITS más frecuente a nivel mundial. Casi todas las personas sexualmente activas se infectan en algún momento de su vida. Causa verrugas anogenitales (condilomas acuminados, serotipos 6, 11 — de bajo riesgo) y es el agente causal del cáncer cervicouterino, anal, vulvar, vaginal, peneano y orofaríngeo (serotipos 16, 18 — alto riesgo, responsables del 70% de los cánceres cervicales).`,
+  agente:`<strong>Virus Papiloma Humano (VPH)</strong>, familia <em>Papillomaviridae</em>. &gt;200 genotipos; 40 infectan mucosas genitales. <strong>Bajo riesgo (BR):</strong> 6, 11 (verrugas genitales). <strong>Alto riesgo (AR):</strong> 16, 18, 31, 33, 45, 52, 58. VPH 16 y 18: 70% de CCU.`,
+  incubacion:`<strong>Período desde infección a lesión:</strong> verrugas genitales: 2–3 meses (rango: semanas a meses). <strong>Cáncer cervical:</strong> la displasia precancerosa puede tardar 10–20 años desde la infección en progresar.<br><strong>Transmisibilidad:</strong> Mientras persista infección; la mayoría se elimina espontáneamente en 1–2 años.`,
+  diseminacion:`Contacto piel-piel y mucosa-mucosa durante actividad sexual (vaginal, anal, oral, con o sin penetración). Transmisión vertical (parto): papilomatosis respiratoria recurrente. No por fomites. 80% de adultos habrán tenido infección por VPH a los 50 años.`,
+  diagnostico:`<strong>No hay prueba diagnóstica para VPH en hombres.</strong><br><strong>Mujeres:</strong> Test VPH (PCR) en muestra cervical — incluido en Programa Nacional de CCU (MINSAL) como primera línea de tamizaje en mujeres ≥30 años (cada 5 años si negativo). Cotamizaje: Test VPH + Papanicolau.<br><strong>Colposcopía + biopsia:</strong> ante test VPH AR positivo. Clasificación BETHESDA: ASCUS, LSIL, HSIL, CCU.<br><strong>Verrugas genitales:</strong> diagnóstico clínico.<br><strong>Tratamiento de verrugas:</strong> <span class='pill'>Imiquimod 5% crema</span>, <span class='pill'>Podofilotoxina</span>, criocirugía, electrocauterio. No hay antiviral sistémico.`,
+  caso:`<strong>No es ENO de notificación individualizada en Chile.</strong><br>El CCU sí es de notificación oncológica. Las lesiones precancerosas (CIN 2-3 / HSIL) se registran en el Programa Nacional de CCU.`,
+  vigilancia:`Programa Nacional de Detección Precoz del Cáncer Cervicouterino (MINSAL): cobertura de tamizaje en mujeres 25–64 años. Vacunación VPH en PNI: 4° básico (niñas, desde 2014) y 4° básico (niños, desde 2019). Registro de cobertura vacunal en RNI.`,
+  brote:`No aplica concepto de brote.`,
+  contactos_estudio:`Notificar a pareja(s) sobre diagnóstico. Hombres: examen genital (verrugas). Mujeres: test VPH / PAP. Ofrecer test ITS completo.`,
+  contactos_manejo:`<strong>Vacunación:</strong> <span class='pill'>Vacuna VPH bivalente (Cervarix: 16, 18)</span> o <span class='pill'>Nonavalente (Gardasil 9: 6,11,16,18,31,33,45,52,58)</span>. PNI Chile: esquema 2 dosis en niñas y niños de 4° básico (~9-10 años). En mayores de 15 años o inmunocomprometidos: 3 dosis (0, 2, 6 meses). Vacuna eficaz antes del inicio de actividad sexual. Condón: reduce transmisión (no elimina, por transmisión cutánea). Tamizaje cervical continúa incluso en vacunadas.`
+},
+// ─────────────────────────────────────────────────────────────────────────────
+{
+  id:"gonorrea", name:"Gonorrea (Neisseria gonorrhoeae)", cat:"its", icon:"🔬",
+  subtitle:"ITS bacteriana — problema de resistencia antimicrobiana emergente",
+  desc:`La gonorrea es una ITS bacteriana causada por <em>Neisseria gonorrhoeae</em>. Afecta principalmente uretra, endocérvix, recto, faringe y conjuntiva. En mujeres, puede ascender causando EIP con riesgo de infertilidad y embarazo ectópico. Constituye un problema de salud pública global por la emergencia de cepas resistentes a múltiples antibióticos (GNMR, incluyendo cefalosporinas de 3ª generación — gonorrea superbacteriana). Chile reporta aumento sostenido de casos en la última década.`,
+  agente:`<strong><em>Neisseria gonorrhoeae</em></strong> (gonococo), diplococo Gram negativo, aerobio, intracelular en PMN. Alta variabilidad antigénica. <strong>Resistencia:</strong> penicilina, tetraciclinas, fluoroquinolonas (alta resistencia). Resistencia a cefalosporinas de 3ª generación (emergente, vigilancia OMS).`,
+  incubacion:`<strong>Incubación:</strong> 1–14 días (media 2–5 días).<br><strong>Transmisibilidad:</strong> Mientras persista infección activa (semanas a meses si asintomático sin tratamiento).`,
+  diseminacion:`Contacto sexual (vaginal, anal, oral). Vertical: conjuntivitis gonocócica neonatal (oftalmía neonatorum) en el parto. No por fomites. Mayor prevalencia en HSH, jóvenes 15–29 años, coinfección frecuente con clamidia.`,
+  diagnostico:`<strong>Cultivo:</strong> en agar chocolate/Thayer-Martin — permite antibiograma (imperativo ante sospecha de resistencia). Muestra: exudado uretral, endocervical, rectal, faríngeo.<br><strong>NAAT (PCR):</strong> mayor sensibilidad; no permite antibiograma (solicitar cultivo adicional si NAAT positivo).<br><strong>Tinción de Gram:</strong> útil en uretritis sintomática masculina (diplococos Gram neg. intracelulares).<br><strong>Tratamiento (OMS/MINSAL 2023):</strong> <span class='pill'>Ceftriaxona 500 mg IM dosis única</span> (&gt;150 kg: 1g). Añadir <span class='pill'>Azitromicina 1g</span> solo si coinfección con clamidia no descartada. <span class='pill'>Gentamicina 240 mg IM + Azitromicina 2g</span>: alternativa si alergia cefalosporinas.`,
+  caso:`<strong>Caso confirmado:</strong> NAAT o cultivo positivo para <em>N. gonorrhoeae</em> en muestra genital, rectal o faríngea.<br><strong>Caso sindrómico:</strong> uretritis o cervicitis mucopurulenta con epidemiología sugerente (tratamiento empírico simultáneo para gonorrea y clamidia).`,
+  vigilancia:`Notificación al sistema de vigilancia ITS centinela (MINSAL/ISP). Formulario de notificación. ISP: Red GASP (Gonococcal Antimicrobial Susceptibility Programme) — vigilancia de resistencia. Indicadores: tasa de incidencia, perfil de susceptibilidad.`,
+  brote:`Investigación de redes sexuales. Identificar posibles casos no diagnosticados. Notificación a SEREMI. Vigilancia de resistencia a cefalosporinas.`,
+  contactos_estudio:`<strong>Notificar y tratar a parejas de los últimos 60 días.</strong> Ofrecer test ITS completo (VIH, sífilis, clamidia, VHB). Cultivo con antibiograma en parejas antes del tratamiento.`,
+  contactos_manejo:`Tratamiento simultáneo de pareja(s). Abstinencia o condón hasta completar tratamiento y ausencia de síntomas (mínimo 7 días). Control microbiológico de cura a los 7–14 días si sitio faríngeo o resistencia sospechada. Notificación de gonorrea resistente a SEREMI.`
+}
+// ─────────────────────────────────────────────────────────────────────────────
+];
+
+// ─── CATEGORY META ───────────────────────────────────────────────────────────
+const catMeta = {
+  resp:     { label:"Respiratorias",         color:"#1A5276" },
+  its:      { label:"ITS / VIH",             color:"#C0392B" },
+  vector:   { label:"Vectoriales/Arbovirus", color:"#7D3C98" },
+  zoonosis: { label:"Zoonosis",              color:"#E67E22" },
+  ets:      { label:"Entéricas/Otras",       color:"#117A65" }
+};
+
+const catOrder = ["resp","its","vector","zoonosis","ets"];
+
+// ─── RENDER SIDEBAR ───────────────────────────────────────────────────────────
+function buildSidebar(){
+  const nav = document.getElementById("sidebar");
+  catOrder.forEach(cat=>{
+    const items = diseases.filter(d=>d.cat===cat);
+    if(!items.length) return;
+    const grp = document.createElement("div");
+    grp.className = "sidebar-group";
+    grp.innerHTML = `<div class="sidebar-group-label">${catMeta[cat].label}</div>`;
+    items.forEach(d=>{
+      const btn = document.createElement("button");
+      btn.className = "nav-btn";
+      btn.id = "nav-"+d.id;
+      btn.setAttribute("data-id", d.id);
+      btn.setAttribute("data-cat", d.cat);
+      btn.innerHTML = `<span class="cat-dot dot-${d.cat}"></span>${d.name}<span class="hidden-tag">${d.agente||""} ${d.desc||""}</span>`;
+      btn.onclick = () => scrollToCard(d.id);
+      grp.appendChild(btn);
+    });
+    nav.appendChild(grp);
+  });
+}
+
+// ─── RENDER CARDS ─────────────────────────────────────────────────────────────
+function buildCards(){
+  const main = document.getElementById("mainContent");
+  diseases.forEach(d=>{
+    const card = document.createElement("div");
+    card.className = "disease-card visible";
+    card.id = "card-"+d.id;
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="icon-box" style="background:${catMeta[d.cat].color}22">${d.icon}</div>
+        <div class="title-area">
+          <h2>${d.name}</h2>
+          <div class="subtitle">${d.subtitle}</div>
+          <span class="cat-badge cat-${d.cat}">${catMeta[d.cat].label}</span>
+        </div>
+      </div>
+      <div class="sections-grid">
+        <div class="sec full">
+          <h3><span>📋</span> Descripción de la Enfermedad</h3>
+          <p>${d.desc}</p>
+        </div>
+        <div class="sec">
+          <h3><span>🧫</span> Agente Causal</h3>
+          <p>${d.agente}</p>
+        </div>
+        <div class="sec">
+          <h3><span>⏱</span> Período de Incubación y Transmisibilidad</h3>
+          <p>${d.incubacion}</p>
+        </div>
+        <div class="sec full">
+          <h3><span>🌐</span> Diseminación</h3>
+          <p>${d.diseminacion}</p>
+        </div>
+        <div class="sec full">
+          <h3><span>🩺</span> Diagnóstico y Tratamiento</h3>
+          <p>${d.diagnostico}</p>
+        </div>
+        <div class="sec">
+          <h3><span>📌</span> Definiciones de Caso (ENO)</h3>
+          <p>${d.caso}</p>
+        </div>
+        <div class="sec">
+          <h3><span>📊</span> Vigilancia Epidemiológica</h3>
+          <p>${d.vigilancia}</p>
+        </div>
+        <div class="sec">
+          <h3><span>🔍</span> Investigación Epidemiológica de Brote (VDE)</h3>
+          <p>${d.brote}</p>
+        </div>
+        <div class="sec">
+          <h3><span>👥</span> Estudio de Contactos</h3>
+          <p>${d.contactos_estudio}</p>
+        </div>
+        <div class="sec full">
+          <h3><span>🛡</span> Manejo de Contactos</h3>
+          <p>${d.contactos_manejo}</p>
+        </div>
+      </div>`;
+    main.appendChild(card);
+  });
+}
+
+// ─── FILTER ───────────────────────────────────────────────────────────────────
+function filterAll(){
+  const q = document.getElementById("searchInput").value.toLowerCase().trim();
+  const cat = document.getElementById("catFilter").value;
+  let visible = 0;
+
+  diseases.forEach(d=>{
+    const card = document.getElementById("card-"+d.id);
+    const navBtn = document.getElementById("nav-"+d.id);
+    const searchText = [d.name,d.subtitle,d.desc,d.agente,d.incubacion,d.diseminacion,d.diagnostico,d.caso,d.vigilancia,d.brote,d.contactos_estudio,d.contactos_manejo].join(" ").toLowerCase();
+    const matchQ = !q || searchText.includes(q);
+    const matchCat = !cat || d.cat===cat;
+    const show = matchQ && matchCat;
+    card.classList.toggle("visible", show);
+    if(navBtn){
+      navBtn.style.display = show ? "" : "none";
+    }
+    if(show) visible++;
+  });
+
+  const nr = document.getElementById("no-results");
+  nr.style.display = visible===0 ? "block" : "none";
+  document.getElementById("resultCount").textContent = `Mostrando ${visible} de ${diseases.length} enfermedades`;
+}
+
+// ─── SCROLL + ACTIVE ─────────────────────────────────────────────────────────
+function scrollToCard(id){
+  const card = document.getElementById("card-"+id);
+  if(card){
+    card.scrollIntoView({behavior:"smooth", block:"start"});
+    document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+    const nb = document.getElementById("nav-"+id);
+    if(nb) nb.classList.add("active");
+  }
+}
+
+// Intersection observer to highlight active nav item
+function setupObserver(){
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const id = e.target.id.replace("card-","");
+        document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+        const nb = document.getElementById("nav-"+id);
+        if(nb) nb.classList.add("active");
+      }
+    });
+  },{threshold:0.2});
+  document.querySelectorAll(".disease-card").forEach(c=>obs.observe(c));
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+buildSidebar();
+buildCards();
+filterAll();
+setupObserver();
+</script>
+
+<a href="../index.html" class="volver-menu">← Volver al menú principal</a>
+
+</body>
+</html>
