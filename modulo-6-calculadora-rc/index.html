@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cálculo de Riesgo Cardiovascular – MINSAL Chile</title>
+<style>
+ .volver-menu {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 999;
+    background: #1c2e4a;
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 14px;
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.22);
+  }
+
+  .volver-menu:hover {
+    background: #2e4d7d;
+  }
+
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+  :root {
+    --rojo:     #C0392B;
+    --rojo-l:   #E74C3C;
+    --naranja:  #E67E22;
+    --amarillo: #F39C12;
+    --verde:    #27AE60;
+    --azul:     #1A5276;
+    --azul-l:   #2E86C1;
+    --blanco:   #FFFFFF;
+    --gris-f:   #F4F6F9;
+    --gris-m:   #BDC3C7;
+    --gris-t:   #5D6D7E;
+    --texto:    #1C2833;
+    --sombra:   0 4px 24px rgba(26,82,118,.13);
+  }
+
+  * { box-sizing: border-box; margin:0; padding:0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--gris-f);
+    color: var(--texto);
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─────────────────────────────── */
+  header {
+    background: linear-gradient(135deg, var(--azul) 0%, #154360 100%);
+    color: #fff;
+    padding: 36px 40px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content:'';
+    position:absolute; inset:0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .header-inner { max-width:1100px; margin:0 auto; position:relative; }
+  .badge-minsal {
+    display:inline-block; background:rgba(255,255,255,.15);
+    border:1px solid rgba(255,255,255,.3); border-radius:20px;
+    padding:4px 14px; font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; margin-bottom:14px; color:#fff;
+  }
+  header h1 {
+    font-family:'Space Grotesk',sans-serif;
+    font-size:clamp(22px,3vw,36px); font-weight:700; line-height:1.15;
+    letter-spacing:-.02em; margin-bottom:8px;
+  }
+  header p.sub { font-size:14px; color:rgba(255,255,255,.75); max-width:520px; }
+  .nav-tabs {
+    display:flex; gap:8px; margin-top:28px; flex-wrap:wrap;
+  }
+  .nav-tab {
+    background:rgba(255,255,255,.12); border:none; color:#fff;
+    padding:9px 20px; border-radius:8px; cursor:pointer;
+    font-size:13px; font-family:'Inter',sans-serif; font-weight:500;
+    transition:background .2s;
+  }
+  .nav-tab:hover, .nav-tab.active {
+    background:rgba(255,255,255,.28);
+  }
+
+  /* ─── MAIN LAYOUT ─────────────────────────── */
+  main { max-width:1100px; margin:0 auto; padding:36px 20px 60px; }
+
+  .section { display:none; }
+  .section.active { display:block; }
+
+  .card {
+    background:#fff; border-radius:16px;
+    box-shadow: var(--sombra);
+    padding:32px; margin-bottom:28px;
+  }
+  .card-title {
+    font-family:'Space Grotesk',sans-serif;
+    font-size:18px; font-weight:600; color:var(--azul);
+    margin-bottom:20px; display:flex; align-items:center; gap:10px;
+  }
+  .card-title .icon {
+    width:34px; height:34px; background:var(--azul);
+    border-radius:8px; display:flex; align-items:center;
+    justify-content:center; font-size:16px;
+  }
+
+  /* ─── TABLAS FRAMINGHAM ──────────────────── */
+  .tabla-wrap { overflow-x:auto; margin-bottom:20px; }
+  table { border-collapse:collapse; width:100%; font-size:13px; }
+  th, td { border:1px solid #dce3ea; padding:8px 12px; text-align:center; }
+  thead th { background:var(--azul); color:#fff; font-weight:600; }
+  tbody tr:nth-child(even) { background:#f0f4f8; }
+  .riesgo-bajo    { background:#d5f5e3!important; color:#1a6b3a; font-weight:600; }
+  .riesgo-mod     { background:#fef9e7!important; color:#9a6b00; font-weight:600; }
+  .riesgo-alto    { background:#fdebd0!important; color:#a04000; font-weight:600; }
+  .riesgo-muy-alto{ background:#fadbd8!important; color:#922b21; font-weight:600; }
+
+  /* ─── CALCULADORA ───────────────────────── */
+  .calc-grid {
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:18px; margin-bottom:24px;
+  }
+  @media(max-width:600px){ .calc-grid { grid-template-columns:1fr; } }
+
+  label { display:block; font-size:13px; font-weight:500; margin-bottom:6px; color:var(--gris-t); }
+  select, input[type=number] {
+    width:100%; padding:10px 14px; border:1.5px solid #d0d8e4;
+    border-radius:8px; font-size:14px; font-family:'Inter',sans-serif;
+    color:var(--texto); background:#fff; transition:border .2s;
+  }
+  select:focus, input:focus { outline:none; border-color:var(--azul-l); }
+
+  .btn-calc {
+    background:var(--azul); color:#fff; border:none;
+    padding:13px 32px; border-radius:10px; font-size:15px;
+    font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;
+    transition:background .2s; display:block; width:100%;
+  }
+  .btn-calc:hover { background:#154360; }
+
+  .result-box {
+    border-radius:12px; padding:22px 26px; margin-top:22px;
+    display:none; border-left:5px solid;
+  }
+  .result-box.bajo    { background:#d5f5e3; border-color:#27ae60; }
+  .result-box.moderado{ background:#fef9e7; border-color:#f39c12; }
+  .result-box.alto    { background:#fdebd0; border-color:#e67e22; }
+  .result-box.muy-alto{ background:#fadbd8; border-color:#c0392b; }
+
+  .result-pct { font-size:38px; font-weight:700; font-family:'Space Grotesk',sans-serif; }
+  .result-cat { font-size:18px; font-weight:600; margin:4px 0 10px; }
+  .result-desc{ font-size:13px; color:var(--gris-t); line-height:1.6; }
+  .result-conducts { margin-top:14px; font-size:13px; }
+  .result-conducts li { margin-bottom:5px; }
+
+  /* ─── JUEGO CASOS CLÍNICOS ───────────────── */
+  .game-header {
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:14px; margin-bottom:28px;
+  }
+  .score-board {
+    display:flex; gap:16px; flex-wrap:wrap;
+  }
+  .score-pill {
+    background:#fff; border-radius:10px; padding:10px 18px;
+    box-shadow:var(--sombra); text-align:center;
+  }
+  .score-pill span { display:block; }
+  .score-pill .num { font-size:22px; font-weight:700; font-family:'Space Grotesk',sans-serif; color:var(--azul); }
+  .score-pill .lbl { font-size:11px; color:var(--gris-t); text-transform:uppercase; letter-spacing:.06em; }
+
+  .progress-bar-wrap { background:#e4e9ef; border-radius:20px; height:8px; margin-bottom:28px; }
+  .progress-bar { height:8px; border-radius:20px; background:linear-gradient(90deg,var(--azul-l),var(--azul)); transition:width .4s; }
+
+  .caso-card {
+    background:#fff; border-radius:16px; padding:32px;
+    box-shadow:var(--sombra); margin-bottom:24px;
+  }
+  .caso-num {
+    font-size:11px; text-transform:uppercase; letter-spacing:.1em;
+    color:var(--gris-t); margin-bottom:10px; font-weight:600;
+  }
+  .caso-historia {
+    font-size:15px; line-height:1.75; color:var(--texto);
+    background:var(--gris-f); border-radius:10px; padding:18px 20px;
+    margin-bottom:22px; border-left:4px solid var(--azul-l);
+  }
+  .caso-pregunta {
+    font-size:16px; font-weight:600; color:var(--azul);
+    margin-bottom:18px;
+  }
+
+  .opciones { display:flex; flex-direction:column; gap:10px; }
+  .opcion-btn {
+    background:#f4f6f9; border:2px solid #d0d8e4;
+    border-radius:10px; padding:13px 18px;
+    text-align:left; cursor:pointer; font-size:14px;
+    font-family:'Inter',sans-serif; color:var(--texto);
+    transition:all .2s; display:flex; align-items:center; gap:12px;
+  }
+  .opcion-btn:hover:not(:disabled) { background:#e8f0f8; border-color:var(--azul-l); }
+  .opcion-btn .letra {
+    min-width:28px; height:28px; border-radius:50%;
+    background:var(--azul); color:#fff; font-size:12px;
+    font-weight:700; display:flex; align-items:center; justify-content:center;
+  }
+  .opcion-btn.correcta { background:#d5f5e3; border-color:#27ae60; }
+  .opcion-btn.correcta .letra { background:#27ae60; }
+  .opcion-btn.incorrecta { background:#fadbd8; border-color:#c0392b; }
+  .opcion-btn.incorrecta .letra { background:#c0392b; }
+  .opcion-btn:disabled { cursor:default; }
+
+  .feedback-box {
+    margin-top:18px; border-radius:10px; padding:16px 20px;
+    font-size:14px; line-height:1.65; display:none;
+  }
+  .feedback-box.ok  { background:#d5f5e3; border-left:4px solid #27ae60; }
+  .feedback-box.err { background:#fadbd8; border-left:4px solid #c0392b; }
+
+  .btn-next {
+    background:var(--azul); color:#fff; border:none;
+    padding:12px 28px; border-radius:10px; font-size:14px;
+    font-weight:600; cursor:pointer; margin-top:18px;
+    font-family:'Inter',sans-serif; display:none; transition:background .2s;
+  }
+  .btn-next:hover { background:#154360; }
+  .btn-reiniciar {
+    background:#fff; color:var(--azul); border:2px solid var(--azul);
+    padding:12px 28px; border-radius:10px; font-size:14px;
+    font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;
+    transition:all .2s;
+  }
+  .btn-reiniciar:hover { background:var(--azul); color:#fff; }
+
+  .resultado-final {
+    text-align:center; padding:48px 32px;
+    background:#fff; border-radius:20px; box-shadow:var(--sombra);
+  }
+  .resultado-final .big { font-size:64px; font-weight:700;
+    font-family:'Space Grotesk',sans-serif; color:var(--azul); }
+  .resultado-final h2 { font-size:24px; margin:8px 0 12px; }
+  .resultado-final p  { color:var(--gris-t); font-size:15px; max-width:420px; margin:0 auto 28px; }
+  .estrellas { font-size:40px; margin-bottom:12px; }
+
+  /* ─── REFERENCE TABS ────────────────────── */
+  .ref-tabs { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+  .ref-tab {
+    background:#e8f0f8; border:none; color:var(--azul);
+    padding:8px 18px; border-radius:8px; cursor:pointer;
+    font-size:13px; font-family:'Inter',sans-serif; font-weight:500;
+    transition:all .2s;
+  }
+  .ref-tab.active { background:var(--azul); color:#fff; }
+  .ref-panel { display:none; }
+  .ref-panel.active { display:block; }
+
+  /* ─── CHIPS FACTORES ────────────────────── */
+  .factor-chip {
+    display:inline-block; border-radius:6px; padding:4px 10px;
+    font-size:12px; font-weight:600; margin:3px;
+  }
+  .chip-rojo   { background:#fadbd8; color:#922b21; }
+  .chip-verde  { background:#d5f5e3; color:#1a6b3a; }
+  .chip-azul   { background:#d6eaf8; color:#1a5276; }
+  .chip-gris   { background:#eaf0f6; color:#5d6d7e; }
+
+  /* Legend */
+  .leyenda { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+  .ley-item { display:flex; align-items:center; gap:6px; font-size:12px; }
+  .ley-dot  { width:14px; height:14px; border-radius:3px; }
+
+  /* info tip */
+  .tip {
+    background:#e8f4fd; border-left:4px solid var(--azul-l);
+    border-radius:8px; padding:12px 16px; font-size:13px;
+    color:var(--gris-t); margin-bottom:18px; line-height:1.6;
+  }
+
+  footer {
+    background:var(--azul); color:rgba(255,255,255,.6);
+    text-align:center; padding:20px; font-size:12px; margin-top:40px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="badge-minsal">🇨🇱 MINSAL Chile · PSCV · EFER 502</div>
+    <h1>Cálculo de Riesgo Cardiovascular</h1>
+    <p class="sub">Tablas de Framingham adaptadas por MINSAL · Predicción a 10 años · Programa de Salud Cardiovascular</p>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showSection('tablas')">📊 Tablas Framingham</button>
+      <button class="nav-tab" onclick="showSection('calculadora')">🧮 Calculadora</button>
+      <button class="nav-tab" onclick="showSection('juego')">🎮 Casos Clínicos</button>
+      <button class="nav-tab" onclick="showSection('referencia')">📚 Referencia</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ══════════════ SECCIÓN: TABLAS ══════════════ -->
+<section id="tablas" class="section active">
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span> Tablas de Framingham – MINSAL Chile</div>
+    <div class="tip">
+      Las tablas de Framingham permiten estimar el <strong>riesgo de sufrir un evento cardiovascular mayor (IAM o ACV fatal o no fatal) en los próximos 10 años</strong>. MINSAL utiliza la versión adaptada por el Ministerio de Salud de Chile para el Programa de Salud Cardiovascular (PSCV).
+    </div>
+    <div class="leyenda">
+      <div class="ley-item"><div class="ley-dot" style="background:#27ae60"></div> Bajo &lt;10%</div>
+      <div class="ley-item"><div class="ley-dot" style="background:#f39c12"></div> Moderado 10–19%</div>
+      <div class="ley-item"><div class="ley-dot" style="background:#e67e22"></div> Alto 20–29%</div>
+      <div class="ley-item"><div class="ley-dot" style="background:#c0392b"></div> Muy alto ≥30%</div>
+    </div>
+
+    <div class="ref-tabs">
+      <button class="ref-tab active" onclick="showRefPanel('hombres')">Hombres sin DM</button>
+      <button class="ref-tab" onclick="showRefPanel('mujeres')">Mujeres sin DM</button>
+      <button class="ref-tab" onclick="showRefPanel('hombres-dm')">Hombres con DM</button>
+      <button class="ref-tab" onclick="showRefPanel('mujeres-dm')">Mujeres con DM</button>
+    </div>
+
+    <!-- HOMBRES SIN DM -->
+    <div id="ref-hombres" class="ref-panel active">
+      <div class="tabla-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2">Edad</th>
+              <th colspan="4">Presión Arterial Sistólica (mmHg)</th>
+            </tr>
+            <tr>
+              <th>&lt;120</th><th>120–139</th><th>140–159</th><th>≥160</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- No fumador -->
+            <tr><td colspan="5" style="background:#d6eaf8;font-weight:600;text-align:left;padding-left:12px">No Fumador · Colesterol Total &lt;200 mg/dL</td></tr>
+            <tr><td>35–39</td><td class="riesgo-bajo">2%</td><td class="riesgo-bajo">3%</td><td class="riesgo-bajo">4%</td><td class="riesgo-bajo">5%</td></tr>
+            <tr><td>40–44</td><td class="riesgo-bajo">3%</td><td class="riesgo-bajo">4%</td><td class="riesgo-bajo">5%</td><td class="riesgo-bajo">7%</td></tr>
+            <tr><td>45–49</td><td class="riesgo-bajo">4%</td><td class="riesgo-bajo">5%</td><td class="riesgo-bajo">7%</td><td class="riesgo-bajo">9%</td></tr>
+            <tr><td>50–54</td><td class="riesgo-bajo">5%</td><td class="riesgo-bajo">7%</td><td class="riesgo-bajo">9%</td><td class="riesgo-mod">11%</td></tr>
+            <tr><td>55–59</td><td class="riesgo-bajo">7%</td><td class="riesgo-bajo">9%</td><td class="riesgo-mod">11%</td><td class="riesgo-mod">14%</td></tr>
+            <tr><td>60–64</td><td class="riesgo-bajo">9%</td><td class="riesgo-mod">11%</td><td class="riesgo-mod">14%</td><td class="riesgo-mod">18%</td></tr>
+            <tr><td>65–69</td><td class="riesgo-mod">11%</td><td class="riesgo-mod">14%</td><td class="riesgo-mod">17%</td><td class="riesgo-alto">22%</td></tr>
+            <tr><td>70–74</td><td class="riesgo-mod">13%</td><td class="riesgo-mod">16%</td><td class="riesgo-alto">20%</td><td class="riesgo-alto">25%</td></tr>
+            <!-- Fumador -->
+            <tr><td colspan="5" style="background:#fdebd0;font-weight:600;text-align:left;padding-left:12px">Fumador · Colesterol Total &lt;200 mg/dL</td></tr>
+            <tr><td>35–39</td><td class="riesgo-bajo">4%</td><td class="riesgo-bajo">5%</td><td class="riesgo-bajo">7%</td><td class="riesgo-bajo">9%</td></tr>
+            <tr><td>40–44</td><td class="riesgo-bajo">6%</td><td class="riesgo-bajo">8%</td><td class="riesgo-bajo">9%</td><td class="riesgo-mod">12%</td></tr>
+            <tr><td>45–49</td><td class="riesgo-bajo">8%</td><td class="riesgo-mod">10%</td><td class="riesgo-mod">13%</td><td class="riesgo-mod">16%</td></tr>
+            <tr><td>50–54</td><td class="riesgo-mod">11%</td><td class="riesgo-mod">13%</td><td class="riesgo-mod">16%</td><td class="riesgo-alto">20%</td></tr>
+            <tr><td>55–59</td><td class="riesgo-mod">13%</td><td class="riesgo-mod">17%</td><td class="riesgo-alto">20%</td><td class="riesgo-alto">25%</td></tr>
+            <tr><td>60–64</td><td class="riesgo-mod">17%</td><td class="riesgo-alto">20%</td><td class="riesgo-alto">25%</td><td class="riesgo-muy-alto">30%</td></tr>
+            <tr><td>65–69</td><td class="riesgo-alto">20%</td><td class="riesgo-alto">24%</td><td class="riesgo-muy-alto">29%</td><td class="riesgo-muy-alto">35%</td></tr>
+            <tr><td>70–74</td><td class="riesgo-alto">22%</td><td class="riesgo-alto">26%</td><td class="riesgo-muy-alto">32%</td><td class="riesgo-muy-alto">38%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MUJERES SIN DM -->
+    <div id="ref-mujeres" class="ref-panel">
+      <div class="tabla-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2">Edad</th>
+              <th colspan="4">Presión Arterial Sistólica (mmHg)</th>
+            </tr>
+            <tr><th>&lt;120</th><th>120–139</th><th>140–159</th><th>≥160</th></tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="5" style="background:#d6eaf8;font-weight:600;text-align:left;padding-left:12px">No Fumadora · Colesterol Total &lt;200 mg/dL</td></tr>
+            <tr><td>35–39</td><td class="riesgo-bajo">1%</td><td class="riesgo-bajo">1%</td><td class="riesgo-bajo">2%</td><td class="riesgo-bajo">2%</td></tr>
+            <tr><td>40–44</td><td class="riesgo-bajo">1%</td><td class="riesgo-bajo">2%</td><td class="riesgo-bajo">2%</td><td class="riesgo-bajo">3%</td></tr>
+            <tr><td>45–49</td><td class="riesgo-bajo">2%</td><td class="riesgo-bajo">3%</td><td class="riesgo-bajo">4%</td><td class="riesgo-bajo">5%</td></tr>
+            <tr><td>50–54</td><td class="riesgo-bajo">3%</td><td class="riesgo-bajo">4%</td><td class="riesgo-bajo">5%</td><td class="riesgo-bajo">7%</td></tr>
+            <tr><td>55–59</td><td class="riesgo-bajo">4%</td><td class="riesgo-bajo">6%</td><td class="riesgo-bajo">7%</td><td class="riesgo-bajo">9%</td></tr>
+            <tr><td>60–64</td><td class="riesgo-bajo">6%</td><td class="riesgo-bajo">7%</td><td class="riesgo-bajo">9%</td><td class="riesgo-mod">12%</td></tr>
+            <tr><td>65–69</td><td class="riesgo-bajo">7%</td><td class="riesgo-bajo">9%</td><td class="riesgo-mod">11%</td><td class="riesgo-mod">14%</td></tr>
+            <tr><td>70–74</td><td class="riesgo-bajo">8%</td><td class="riesgo-mod">10%</td><td class="riesgo-mod">13%</td><td class="riesgo-mod">17%</td></tr>
+            <tr><td colspan="5" style="background:#fdebd0;font-weight:600;text-align:left;padding-left:12px">Fumadora · Colesterol Total 200–239 mg/dL</td></tr>
+            <tr><td>35–39</td><td class="riesgo-bajo">2%</td><td class="riesgo-bajo">3%</td><td class="riesgo-bajo">4%</td><td class="riesgo-bajo">5%</td></tr>
+            <tr><td>40–44</td><td class="riesgo-bajo">3%</td><td class="riesgo-bajo">5%</td><td class="riesgo-bajo">6%</td><td class="riesgo-bajo">7%</td></tr>
+            <tr><td>45–49</td><td class="riesgo-bajo">5%</td><td class="riesgo-bajo">6%</td><td class="riesgo-bajo">8%</td><td class="riesgo-mod">10%</td></tr>
+            <tr><td>50–54</td><td class="riesgo-bajo">6%</td><td class="riesgo-bajo">8%</td><td class="riesgo-mod">10%</td><td class="riesgo-mod">13%</td></tr>
+            <tr><td>55–59</td><td class="riesgo-bajo">8%</td><td class="riesgo-mod">10%</td><td class="riesgo-mod">12%</td><td class="riesgo-mod">16%</td></tr>
+            <tr><td>60–64</td><td class="riesgo-mod">10%</td><td class="riesgo-mod">12%</td><td class="riesgo-mod">15%</td><td class="riesgo-mod">19%</td></tr>
+            <tr><td>65–69</td><td class="riesgo-mod">11%</td><td class="riesgo-mod">14%</td><td class="riesgo-mod">17%</td><td class="riesgo-alto">21%</td></tr>
+            <tr><td>70–74</td><td class="riesgo-mod">12%</td><td class="riesgo-mod">15%</td><td class="riesgo-mod">18%</td><td class="riesgo-alto">22%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- HOMBRES CON DM -->
+    <div id="ref-hombres-dm" class="ref-panel">
+      <div class="tabla-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2">Edad</th>
+              <th colspan="4">Presión Arterial Sistólica (mmHg)</th>
+            </tr>
+            <tr><th>&lt;120</th><th>120–139</th><th>140–159</th><th>≥160</th></tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="5" style="background:#d6eaf8;font-weight:600;text-align:left;padding-left:12px">No Fumador · Colesterol Total &lt;200 mg/dL · Con DM2</td></tr>
+            <tr><td>35–39</td><td class="riesgo-bajo">5%</td><td class="riesgo-bajo">7%</td><td class="riesgo-bajo">8%</td><td class="riesgo-mod">11%</td></tr>
+            <tr><td>40–44</td><td class="riesgo-bajo">7%</td><td class="riesgo-bajo">9%</td><td class="riesgo-mod">11%</td><td class="riesgo-mod">14%</td></tr>
+            <tr><td>45–49</td><td class="riesgo-bajo">9%</td><td class="riesgo-mod">12%</td><td class="riesgo-mod">14%</td><td class="riesgo-mod">18%</td></tr>
+            <tr><td>50–54</td><td class="riesgo-mod">12%</td><td class="riesgo-mod">15%</td><td class="riesgo-mod">18%</td><td class="riesgo-alto">22%</td></tr>
+            <tr><td>55–59</td><td class="riesgo-mod">15%</td><td class="riesgo-mod">18%</td><td class="riesgo-alto">22%</td><td class="riesgo-alto">28%</td></tr>
+            <tr><td>60–64</td><td class="riesgo-mod">18%</td><td class="riesgo-alto">22%</td><td class="riesgo-alto">27%</td><td class="riesgo-muy-alto">33%</td></tr>
+            <tr><td>65–69</td><td class="riesgo-alto">21%</td><td class="riesgo-alto">25%</td><td class="riesgo-muy-alto">30%</td><td class="riesgo-muy-alto">38%</td></tr>
+            <tr><td>70–74</td><td class="riesgo-alto">23%</td><td class="riesgo-alto">28%</td><td class="riesgo-muy-alto">33%</td><td class="riesgo-muy-alto">41%</td></tr>
+            <tr><td colspan="5" style="background:#fdebd0;font-weight:600;text-align:left;padding-left:12px">Fumador · Colesterol Total ≥240 mg/dL · Con DM2</td></tr>
+            <tr><td>35–39</td><td class="riesgo-mod">10%</td><td class="riesgo-mod">13%</td><td class="riesgo-mod">16%</td><td class="riesgo-alto">20%</td></tr>
+            <tr><td>40–44</td><td class="riesgo-mod">14%</td><td class="riesgo-mod">17%</td><td class="riesgo-alto">21%</td><td class="riesgo-alto">26%</td></tr>
+            <tr><td>45–49</td><td class="riesgo-mod">18%</td><td class="riesgo-alto">22%</td><td class="riesgo-alto">27%</td><td class="riesgo-muy-alto">33%</td></tr>
+            <tr><td>50–54</td><td class="riesgo-alto">22%</td><td class="riesgo-alto">27%</td><td class="riesgo-muy-alto">32%</td><td class="riesgo-muy-alto">39%</td></tr>
+            <tr><td>55–59</td><td class="riesgo-alto">26%</td><td class="riesgo-muy-alto">31%</td><td class="riesgo-muy-alto">37%</td><td class="riesgo-muy-alto">45%</td></tr>
+            <tr><td>60–64</td><td class="riesgo-muy-alto">30%</td><td class="riesgo-muy-alto">35%</td><td class="riesgo-muy-alto">42%</td><td class="riesgo-muy-alto">50%</td></tr>
+            <tr><td>65–69</td><td class="riesgo-muy-alto">33%</td><td class="riesgo-muy-alto">39%</td><td class="riesgo-muy-alto">46%</td><td class="riesgo-muy-alto">55%</td></tr>
+            <tr><td>70–74</td><td class="riesgo-muy-alto">36%</td><td class="riesgo-muy-alto">42%</td><td class="riesgo-muy-alto">50%</td><td class="riesgo-muy-alto">59%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MUJERES CON DM -->
+    <div id="ref-mujeres-dm" class="ref-panel">
+      <div class="tabla-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2">Edad</th>
+              <th colspan="4">Presión Arterial Sistólica (mmHg)</th>
+            </tr>
+            <tr><th>&lt;120</th><th>120–139</th><th>140–159</th><th>≥160</th></tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="5" style="background:#d6eaf8;font-weight:600;text-align:left;padding-left:12px">No Fumadora · Colesterol Total &lt;200 mg/dL · Con DM2</td></tr>
+            <tr><td>35–39</td><td class="riesgo-bajo">2%</td><td class="riesgo-bajo">3%</td><td class="riesgo-bajo">4%</td><td class="riesgo-bajo">5%</td></tr>
+            <tr><td>40–44</td><td class="riesgo-bajo">3%</td><td class="riesgo-bajo">4%</td><td class="riesgo-bajo">5%</td><td class="riesgo-bajo">7%</td></tr>
+            <tr><td>45–49</td><td class="riesgo-bajo">5%</td><td class="riesgo-bajo">6%</td><td class="riesgo-bajo">8%</td><td class="riesgo-mod">10%</td></tr>
+            <tr><td>50–54</td><td class="riesgo-bajo">7%</td><td class="riesgo-bajo">9%</td><td class="riesgo-mod">11%</td><td class="riesgo-mod">14%</td></tr>
+            <tr><td>55–59</td><td class="riesgo-bajo">9%</td><td class="riesgo-mod">11%</td><td class="riesgo-mod">14%</td><td class="riesgo-mod">18%</td></tr>
+            <tr><td>60–64</td><td class="riesgo-mod">12%</td><td class="riesgo-mod">15%</td><td class="riesgo-mod">18%</td><td class="riesgo-alto">23%</td></tr>
+            <tr><td>65–69</td><td class="riesgo-mod">14%</td><td class="riesgo-mod">17%</td><td class="riesgo-alto">21%</td><td class="riesgo-alto">26%</td></tr>
+            <tr><td>70–74</td><td class="riesgo-mod">16%</td><td class="riesgo-alto">20%</td><td class="riesgo-alto">24%</td><td class="riesgo-muy-alto">30%</td></tr>
+            <tr><td colspan="5" style="background:#fdebd0;font-weight:600;text-align:left;padding-left:12px">Fumadora · Colesterol Total ≥240 mg/dL · Con DM2</td></tr>
+            <tr><td>35–39</td><td class="riesgo-bajo">5%</td><td class="riesgo-bajo">6%</td><td class="riesgo-bajo">8%</td><td class="riesgo-mod">10%</td></tr>
+            <tr><td>40–44</td><td class="riesgo-bajo">7%</td><td class="riesgo-bajo">9%</td><td class="riesgo-mod">11%</td><td class="riesgo-mod">14%</td></tr>
+            <tr><td>45–49</td><td class="riesgo-mod">10%</td><td class="riesgo-mod">12%</td><td class="riesgo-mod">15%</td><td class="riesgo-mod">19%</td></tr>
+            <tr><td>50–54</td><td class="riesgo-mod">13%</td><td class="riesgo-mod">16%</td><td class="riesgo-alto">19%</td><td class="riesgo-alto">24%</td></tr>
+            <tr><td>55–59</td><td class="riesgo-mod">16%</td><td class="riesgo-alto">19%</td><td class="riesgo-alto">23%</td><td class="riesgo-alto">28%</td></tr>
+            <tr><td>60–64</td><td class="riesgo-mod">18%</td><td class="riesgo-alto">22%</td><td class="riesgo-alto">27%</td><td class="riesgo-muy-alto">33%</td></tr>
+            <tr><td>65–69</td><td class="riesgo-alto">21%</td><td class="riesgo-alto">25%</td><td class="riesgo-muy-alto">30%</td><td class="riesgo-muy-alto">37%</td></tr>
+            <tr><td>70–74</td><td class="riesgo-alto">23%</td><td class="riesgo-alto">27%</td><td class="riesgo-muy-alto">32%</td><td class="riesgo-muy-alto">39%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Categorías de Riesgo – Conducta MINSAL</div>
+    <div class="tabla-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Categoría</th><th>Riesgo 10 años</th><th>Control</th><th>Meta PA</th><th>Meta Col. LDL</th><th>Conducta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="riesgo-bajo">BAJO</td>
+            <td>&lt;10%</td>
+            <td>Anual</td>
+            <td>&lt;140/90</td>
+            <td>&lt;160 mg/dL</td>
+            <td>Intervención sobre factores de riesgo modificables. Educación en estilos de vida saludable</td>
+          </tr>
+          <tr>
+            <td class="riesgo-mod">MODERADO</td>
+            <td>10–19%</td>
+            <td>Semestral</td>
+            <td>&lt;130/85</td>
+            <td>&lt;130 mg/dL</td>
+            <td>Intervención intensiva en FRCV. Considerar farmacoterapia si no responde a cambios</td>
+          </tr>
+          <tr>
+            <td class="riesgo-alto">ALTO</td>
+            <td>20–29%</td>
+            <td>Trimestral</td>
+            <td>&lt;130/85</td>
+            <td>&lt;100 mg/dL</td>
+            <td>Inicio de farmacoterapia. Derivación a médico. Metas estrictas</td>
+          </tr>
+          <tr>
+            <td class="riesgo-muy-alto">MUY ALTO</td>
+            <td>≥30%</td>
+            <td>Mensual</td>
+            <td>&lt;130/80</td>
+            <td>&lt;70 mg/dL</td>
+            <td>Farmacoterapia inmediata. Derivación prioritaria. Manejo multidisciplinario</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ SECCIÓN: CALCULADORA ══════════════ -->
+<section id="calculadora" class="section">
+  <div class="card">
+    <div class="card-title">Calculadora de Riesgo Cardiovascular</div>
+    <div class="tip">Ingresa los datos del paciente. El cálculo es orientativo y corresponde a la metodología de Framingham adaptada por MINSAL Chile para el PSCV.</div>
+
+    <div class="calc-grid">
+      <div>
+        <label>Sexo biológico</label>
+        <select id="c-sexo">
+          <option value="hombre">Masculino</option>
+          <option value="mujer">Femenino</option>
+        </select>
+      </div>
+      <div>
+        <label>Edad (años)</label>
+        <input type="number" id="c-edad" min="35" max="74" placeholder="35–74">
+      </div>
+      <div>
+        <label>Presión Arterial Sistólica (mmHg)</label>
+        <input type="number" id="c-pas" min="80" max="220" placeholder="ej: 135">
+      </div>
+      <div>
+        <label>Colesterol Total (mg/dL)</label>
+        <input type="number" id="c-col" min="100" max="400" placeholder="ej: 210">
+      </div>
+      <div>
+        <label>¿Es fumador/a activo/a?</label>
+        <select id="c-tabaco">
+          <option value="no">No</option>
+          <option value="si">Sí</option>
+        </select>
+      </div>
+      <div>
+        <label>¿Tiene Diabetes Mellitus tipo 2?</label>
+        <select id="c-dm">
+          <option value="no">No</option>
+          <option value="si">Sí</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <button class="btn-calc" style="flex:1;min-width:200px" onclick="calcularRiesgo()">Calcular Riesgo Cardiovascular</button>
+      <button class="btn-reiniciar" style="flex:0 0 auto;white-space:nowrap" onclick="restablecerCalculadora()">🔄 Restablecer</button>
+    </div>
+
+    <div id="resultado-calc" class="result-box">
+      <div class="result-pct" id="r-pct"></div>
+      <div class="result-cat" id="r-cat"></div>
+      <div class="result-desc" id="r-desc"></div>
+      <ul class="result-conducts" id="r-cond"></ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ SECCIÓN: JUEGO ══════════════ -->
+<section id="juego" class="section">
+  <div id="juego-activo">
+    <div class="game-header">
+      <div>
+        <h2 style="font-family:'Space Grotesk',sans-serif;color:var(--azul)"> 👩🏻‍⚕️ Casos Clínicos</h2>
+        <p style="font-size:13px;color:var(--gris-t);margin-top:4px">Clasifica el riesgo cardiovascular según Framingham MINSAL</p>
+      </div>
+      <div class="score-board">
+        <div class="score-pill">
+          <span class="num" id="score-correctas">0</span>
+          <span class="lbl">Correctas</span>
+        </div>
+        <div class="score-pill">
+          <span class="num" id="score-total">0/20</span>
+          <span class="lbl">Progreso</span>
+        </div>
+        <div class="score-pill">
+          <span class="num" id="score-pct">0%</span>
+          <span class="lbl">Puntaje</span>
+        </div>
+        <button class="btn-reiniciar" onclick="reiniciarJuego()" title="Reiniciar desde el caso 1">🔄 Restablecer</button>
+      </div>
+    </div>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+    </div>
+
+    <div id="caso-container"></div>
+  </div>
+
+  <div id="juego-final" style="display:none">
+    <div class="resultado-final">
+      <div class="estrellas" id="estrellas-final"></div>
+      <div class="big" id="puntaje-final"></div>
+      <h2 id="titulo-final"></h2>
+      <p id="desc-final"></p>
+      <button class="btn-reiniciar" onclick="reiniciarJuego()">🔄 Jugar de Nuevo</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ SECCIÓN: REFERENCIA ══════════════ -->
+<section id="referencia" class="section">
+  <div class="card">
+    <div class="card-title"><span class="icon">📌</span> Factores de Riesgo Cardiovascular (FRCV)</div>
+    <div class="tabla-wrap">
+      <table>
+        <thead><tr><th>Factor</th><th>Modificable</th><th>Valores de riesgo</th><th>Observación enfermería</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Hipertensión Arterial</strong></td><td><span class="factor-chip chip-verde">Sí</span></td><td>PAS ≥140 o PAD ≥90 mmHg</td><td>Control de PA en cada consulta. Educación adherencia farmacológica</td></tr>
+          <tr><td><strong>Tabaquismo</strong></td><td><span class="factor-chip chip-verde">Sí</span></td><td>Consumo activo (cualquier cantidad)</td><td>Aplicar Etapas Prochaska-DiClemente. Intervención breve PCIC</td></tr>
+          <tr><td><strong>Dislipidemia</strong></td><td><span class="factor-chip chip-verde">Sí</span></td><td>Col. Total ≥200 mg/dL, LDL ≥130, HDL &lt;40 (H) &lt;50 (M)</td><td>Educación nutricional, control lipídico periódico</td></tr>
+          <tr><td><strong>Diabetes Mellitus 2</strong></td><td><span class="factor-chip chip-verde">Parcial</span></td><td>Glicemia ≥126 mg/dL en ayuno o HbA1c ≥6.5%</td><td>Monitoreo glicémico, examen pie diabético, fondo de ojo</td></tr>
+          <tr><td><strong>Obesidad</strong></td><td><span class="factor-chip chip-verde">Sí</span></td><td>IMC ≥30 kg/m² o CC ≥88cm (M) / ≥102cm (H)</td><td>Consejería nutricional, derivación nutricionista</td></tr>
+          <tr><td><strong>Sedentarismo</strong></td><td><span class="factor-chip chip-verde">Sí</span></td><td>&lt;150 min/semana actividad moderada</td><td>Prescripción ejercicio individualizada</td></tr>
+          <tr><td><strong>Edad</strong></td><td><span class="factor-chip chip-rojo">No</span></td><td>H ≥45 años, M ≥55 años</td><td>Factor no modificable. Mayor vigilancia</td></tr>
+          <tr><td><strong>Sexo masculino</strong></td><td><span class="factor-chip chip-rojo">No</span></td><td>Hombre en edad fértil</td><td>Mayor riesgo basal respecto a mujer premenopáusica</td></tr>
+          <tr><td><strong>Historia familiar</strong></td><td><span class="factor-chip chip-rojo">No</span></td><td>ECV prematura: familiar 1° grado H &lt;55a, M &lt;65a</td><td>Escalar en clasificación de riesgo</td></tr>
+          <tr><td><strong>ERC / Proteinuria</strong></td><td><span class="factor-chip chip-rojo">Parcial</span></td><td>TFG &lt;60 mL/min o microalbuminuria ≥30 mg/g</td><td>Derivación nefrología, control función renal</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🔬</span> Exámenes de Ingreso al PSCV</div>
+    <div class="tabla-wrap">
+      <table>
+        <thead><tr><th>Examen</th><th>Frecuencia</th><th>Meta</th></tr></thead>
+        <tbody>
+          <tr><td>Perfil lipídico (Col. Total, LDL, HDL, TG)</td><td>Al ingreso y anual</td><td>Según categoría de riesgo</td></tr>
+          <tr><td>Glicemia en ayuno</td><td>Al ingreso y anual</td><td>&lt;100 mg/dL</td></tr>
+          <tr><td>HbA1c</td><td>Semestral (si DM)</td><td>&lt;7% (individualizar)</td></tr>
+          <tr><td>Creatinina sérica + TFG</td><td>Anual</td><td>TFG ≥60 mL/min</td></tr>
+          <tr><td>Microalbuminuria</td><td>Anual (si DM o HTA)</td><td>&lt;30 mg/g creatinina</td></tr>
+          <tr><td>ECG</td><td>Ingreso y según indicación</td><td>Ritmo sinusal, sin isquemia</td></tr>
+          <tr><td>Fondo de ojo</td><td>Al ingreso (si DM)</td><td>Sin retinopatía</td></tr>
+          <tr><td>IMC + Circunferencia cintura</td><td>En cada control</td><td>IMC 18.5–24.9 / CC normal</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  Materia elaborado por: Victoria Catalina Tiznado Jara
+</footer>
+
+<script>
+// ══════════════════════════════════════════
+//  NAVEGACIÓN
+// ══════════════════════════════════════════
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  if (id === 'juego' && !juegoIniciado) iniciarJuego();
+}
+
+function showRefPanel(id) {
+  document.querySelectorAll('.ref-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ref-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('ref-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ══════════════════════════════════════════
+//  CALCULADORA
+// ══════════════════════════════════════════
+function calcularRiesgo() {
+  const sexo   = document.getElementById('c-sexo').value;
+  const edad   = parseInt(document.getElementById('c-edad').value);
+  const pas    = parseInt(document.getElementById('c-pas').value);
+  const col    = parseInt(document.getElementById('c-col').value);
+  const tabaco = document.getElementById('c-tabaco').value;
+  const dm     = document.getElementById('c-dm').value;
+
+  if (!edad || !pas || !col) { alert('Por favor completa todos los campos.'); return; }
+  if (edad < 35 || edad > 74) { alert('La edad debe estar entre 35 y 74 años.'); return; }
+
+  // Scoring simplificado Framingham adaptado MINSAL
+  let puntos = 0;
+
+  // Edad
+  if (sexo === 'hombre') {
+    if (edad <= 39) puntos += 0;
+    else if (edad <= 44) puntos += 2;
+    else if (edad <= 49) puntos += 5;
+    else if (edad <= 54) puntos += 6;
+    else if (edad <= 59) puntos += 8;
+    else if (edad <= 64) puntos += 10;
+    else if (edad <= 69) puntos += 11;
+    else puntos += 12;
+  } else {
+    if (edad <= 39) puntos += 0;
+    else if (edad <= 44) puntos += 3;
+    else if (edad <= 49) puntos += 6;
+    else if (edad <= 54) puntos += 8;
+    else if (edad <= 59) puntos += 10;
+    else if (edad <= 64) puntos += 12;
+    else if (edad <= 69) puntos += 14;
+    else puntos += 16;
+  }
+
+  // Colesterol
+  if (col < 200) puntos += 0;
+  else if (col < 240) puntos += 1;
+  else puntos += 2;
+
+  // Tabaco
+  if (tabaco === 'si') puntos += (sexo === 'hombre') ? 4 : 3;
+
+  // PA Sistólica
+  if (pas < 120) puntos += 0;
+  else if (pas < 130) puntos += 1;
+  else if (pas < 140) puntos += 2;
+  else if (pas < 160) puntos += 3;
+  else puntos += 4;
+
+  // DM
+  if (dm === 'si') puntos += (sexo === 'hombre') ? 3 : 4;
+
+  // Conversión puntos → % riesgo
+  const tabH = {0:1,1:1,2:1,3:1,4:1,5:2,6:2,7:3,8:4,9:5,10:6,11:8,12:10,13:12,14:16,15:20,16:25,17:31};
+  const tabM = {0:1,1:1,2:1,3:1,4:1,5:2,6:3,7:4,8:5,9:6,10:8,11:10,12:12,13:14,14:17,15:20,16:24,17:27,18:30};
+
+  let pct = (sexo === 'hombre') ? (tabH[Math.min(puntos,17)] || 31) : (tabW[Math.min(puntos,18)] || 30);
+  if (!pct) { const tab = sexo === 'hombre' ? tabH : tabW; pct = tab[Object.keys(tab).reduce((a,b) => Math.abs(b-puntos)<Math.abs(a-puntos)?b:a)] || 10; }
+  // fallback
+  if (!pct) pct = Math.min(Math.max(puntos * 1.8, 1), 60);
+
+  // Clasificar
+  let cat, cls, desc, conducts;
+  if (pct < 10) {
+    cat='RIESGO BAJO'; cls='bajo';
+    desc='El paciente presenta un riesgo bajo de sufrir un evento cardiovascular mayor en los próximos 10 años. Se prioriza la educación en estilos de vida saludable y control anual.';
+    conducts=['Control anual en PSCV','Educación en alimentación saludable y actividad física','Consejería sobre tabaco si corresponde','Fomentar adherencia a controles'];
+  } else if (pct < 20) {
+    cat='RIESGO MODERADO'; cls='moderado';
+    desc='Riesgo moderado. Es necesaria una intervención activa sobre los factores de riesgo modificables. El control es semestral.';
+    conducts=['Control semestral','Intervención intensiva en FRCV modificables','Evaluar inicio de farmacoterapia si no responde a cambios en 3 meses','Meta PA &lt;130/85 mmHg, LDL &lt;130 mg/dL'];
+  } else if (pct < 30) {
+    cat='RIESGO ALTO'; cls='alto';
+    desc='Riesgo alto. Se requiere inicio de farmacoterapia y derivación médica. Control trimestral con metas estrictas.';
+    conducts=['Control trimestral','Inicio de fármacos: antihipertensivos y/o estatinas','Meta PA &lt;130/85 mmHg, LDL &lt;100 mg/dL','Derivación a médico para evaluación integral'];
+  } else {
+    cat='RIESGO MUY ALTO'; cls='muy-alto';
+    desc='Riesgo muy alto. Farmacoterapia inmediata, derivación prioritaria y manejo multidisciplinario.';
+    conducts=['Control mensual','Farmacoterapia inmediata e intensiva','Meta PA &lt;130/80 mmHg, LDL &lt;70 mg/dL','Derivación prioritaria a cardiología','Coordinación con médico tratante'];
+  }
+
+  const box = document.getElementById('resultado-calc');
+  box.className = 'result-box ' + cls;
+  box.style.display = 'block';
+  document.getElementById('r-pct').textContent = pct + '%';
+  document.getElementById('r-cat').textContent = cat;
+  document.getElementById('r-desc').textContent = desc;
+  document.getElementById('r-cond').innerHTML = conducts.map(c=>`<li>✔ ${c}</li>`).join('');
+  box.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+const tabW = {0:1,1:1,2:1,3:1,4:1,5:2,6:3,7:4,8:5,9:6,10:8,11:10,12:12,13:14,14:17,15:20,16:24,17:27,18:30};
+
+// ══════════════════════════════════════════
+//  JUEGO – 20 CASOS CLÍNICOS
+// ══════════════════════════════════════════
+const casos = [
+  {
+    num:1,
+    historia:"Don Pedro, 58 años, sexo masculino. Hipertenso en tratamiento con enalapril. PA actual: 132/86 mmHg. No fuma. Colesterol total: 195 mg/dL. Sin diabetes ni antecedentes familiares de ECV prematura. Asiste a control PSCV.",
+    pregunta:"¿Cuál es la clasificación de riesgo cardiovascular según Framingham MINSAL?",
+    opciones:["Riesgo Bajo (<10%)","Riesgo Moderado (10–19%)","Riesgo Alto (20–29%)","Riesgo Muy Alto (≥30%)"],
+    correcta:1,
+    feedback:"Hombre de 58 años, no fumador, sin DM, con PAS 120–139 y col. <200 → Tabla hombre sin DM: rango 55–59, PAS 120–139 = 9% → Riesgo Moderado (10–19%) por edad y HTA controlada parcialmente. El puntaje Framingham lo ubica en el límite inferior del moderado."
+  },
+  {
+    num:2,
+    historia:"Doña Carmen, 62 años, sexo femenino. No tiene diabetes. Nunca ha fumado. PA: 118/74 mmHg. Colesterol total: 185 mg/dL. Hace 45 minutos de caminata diaria. Sin antecedentes mórbidos relevantes.",
+    pregunta:"¿Cuál es su riesgo cardiovascular a 10 años?",
+    opciones:["Riesgo Bajo (<10%)","Riesgo Moderado (10–19%)","Riesgo Alto (20–29%)","Riesgo Muy Alto (≥30%)"],
+    correcta:0,
+    feedback:"Mujer 62 años, no fumadora, sin DM, PAS <120, col.<200 → Tabla mujer sin DM: edad 60–64, col.<200, PAS <120 = 6% → Riesgo Bajo (<10%). Su estilo de vida saludable favorece mantener el riesgo bajo."
+  },
+  {
+    num:3,
+    historia:"Don Roberto, 55 años. Fumador activo (1 paquete/día por 20 años). DM2 diagnosticada hace 5 años, con HbA1c 8.2%. PA: 148/92 mmHg. Colesterol total: 242 mg/dL. IMC: 32 kg/m².",
+    pregunta:"Clasifica el riesgo cardiovascular de este paciente:",
+    opciones:["Riesgo Bajo (<10%)","Riesgo Moderado (10–19%)","Riesgo Alto (20–29%)","Riesgo Muy Alto (≥30%)"],
+    correcta:3,
+    feedback:"Hombre 55 años + fumador + DM2 + PAS ≥140 + col. ≥240 → Tabla hombre con DM, fumador, col.≥240: edad 55–59 = 37–45% → Riesgo Muy Alto (≥30%). Múltiples FRCV coinciden en el perfil de máximo riesgo."
+  },
+  {
+    num:4,
+    historia:"Señora Ana, 49 años. No fuma. No tiene DM. PA: 138/88 mmHg. Colesterol total: 218 mg/dL. Refiere sedentarismo. Trabaja sentada 10 horas al día. Su madre tuvo un IAM a los 60 años.",
+    pregunta:"¿Cómo se clasifica su riesgo CV?",
+    opciones:["Riesgo Bajo (<10%)","Riesgo Moderado (10–19%)","Riesgo Alto (20–29%)","Riesgo Muy Alto (≥30%)"],
+    correcta:0,
+    feedback:"Mujer 49 años, no fumadora, sin DM, PAS 120–139, col. 200–239 → Tabla mujer sin DM: edad 45–49, PAS 120–139, col. moderado = ~6–7% → Riesgo Bajo (<10%). El antecedente familiar de IAM materno a los 60a no califica como ECV prematura (debe ser <65a en mujer), por lo que no modifica directamente la tabla, aunque orienta hacia mayor vigilancia."
+  },
+  {
+    num:5,
+    historia:"Don Jorge, 67 años. Ex-fumador (dejó hace 2 años). DM2 con buen control (HbA1c 6.8%). PA: 155/95 mmHg. Colesterol total: 195 mg/dL. Realiza ejercicio moderado 3 veces/semana.",
+    pregunta:"¿Cuál es la categoría de riesgo según MINSAL?",
+    opciones:["Riesgo Bajo (<10%)","Riesgo Moderado (10–19%)","Riesgo Alto (20–29%)","Riesgo Muy Alto (≥30%)"],
+    correcta:2,
+    feedback:"Hombre 67 años + DM2 (aunque controlada) + PAS 140–159 + no fumador activo (ex-fumador no cuenta como fumador en tablas Framingham) → Tabla hombre con DM, no fumador, col.<200: edad 65–69, PAS 140–159 = 30% → Riesgo Muy Alto. Nota: ex-fumador de <10 años puede considerarse en algunas adaptaciones, pero la tabla base ubica este perfil en el límite Alto/Muy Alto."
+  },
+  {
+    num:6,
+    historia:"Señorita Valentina, 38 años. Nunca ha fumado. Sin diabetes. PA: 122/78 mmHg. Colesterol total: 178 mg/dL. IMC normal. Sin antecedentes familiares de ECV. Asiste a control preventivo.",
+    pregunta:"¿Cuál es su riesgo CV?",
+    opciones:["Riesgo Bajo (<10%)","Riesgo Moderado (10–19%)","Riesgo Alto (20–29%)","Riesgo Muy Alto (≥30%)"],
+    correcta:0,
+    feedback:"Mujer 38 años, sin FRCV importantes, PAS <120, col. <200 → Tabla mujer sin DM: edad 35–39 = 1% → Riesgo Bajo. Perfil de bajo riesgo global, control anual suficiente."
+  },
+  {
+    num:7,
+    historia:"Don Héctor, 70 años. Fumador activo. Sin diabetes. PA: 162/100 mmHg. Colesterol total: 240 mg/dL. Refiere dolor en pantorrillas al caminar (claudicación intermitente).",
+    pregunta:"¿Cuál es su clasificación de riesgo?",
+    opciones:["Riesgo Bajo (<10%)","Riesgo Moderado (10–19%)","Riesgo Alto (20–29%)","Riesgo Muy Alto (≥30%)"],
+    correcta:3,
+    feedback:"Hombre 70 años + fumador + PAS ≥160 + col. ≥240 → Tabla hombre sin DM, fumador, col.≥240: edad 70–74 = 38%+ → Riesgo Muy Alto. Además, la claudicación intermitente sugiere enfermedad arterial periférica establecida, lo que por sí solo elevaría a Muy Alto independiente del puntaje."
+  },
+  {
+    num:8,
+    historia:"Doña Luisa, 53 años. Fumadora (10 cigarros/día). Sin DM. PA: 145/90 mmHg. Colesterol total: 230 mg/dL. Circunferencia de cintura: 90 cm. Refiere estrés laboral crónico.",
+    pregunta:"¿En qué categoría de riesgo CV se clasifica?",
+    opciones:["Riesgo Bajo (<10%)","Riesgo Moderado (10–19%)","Riesgo Alto (20–29%)","Riesgo Muy Alto (≥30%)"],
+    correcta:1,
+    feedback:"Mujer 53 años + fumadora + PAS 140–159 + col. 200–239, sin DM → Tabla mujer sin DM, fumadora, col.200–239: edad 50–54, PAS 140–159 = 10–13% → Riesgo Moderado (10–19%). El estrés no modifica directamente la tabla Framingham pero es un factor que debe abordarse en la consulta."
+  },
+  {
+    num:9,
+    historia:"Don Luis, 45 años. No fuma. Sin DM. PA: 118/76 mmHg. Colesterol total: 165 mg/dL. HDL: 55 mg/dL. IMC: 24. Actividad física regular. Sin antecedentes patológicos.",
+    pregunta:"¿Cuál es su riesgo cardiovascular?",
+    opciones:["Riesgo Bajo (<10%)","Riesgo Moderado (10–19%)","Riesgo Alto (20–29%)","Riesgo Muy Alto (≥30%)"],
+    correcta:0,
+    feedback:"Hombre 45 años, no fumador, sin DM, PAS <120, col. <200 → Tabla hombre sin DM: edad 45–49, PAS <120 = 4% → Riesgo Bajo. Perfil muy favorable con solo 4% de riesgo a 10 años."
+  },
+  {
+    num:10,
+    historia:"Don Manuel, 60 años. Fumador activo (20 cigarros/día). DM2 hace 10 años. PA: 158/96 mmHg. Colesterol total: 210 mg/dL. HbA1c: 9.1%. Tiene antecedente de IAM hace 3 años.",
+    pregunta:"¿Cómo se clasifica su riesgo CV con antecedente de ECV establecida?",
+    opciones:["Riesgo Bajo (<10%)","Riesgo Moderado (10–19%)","Riesgo Alto (20–29%)","Riesgo Muy Alto (≥30%)"],
+    correcta:3,
+    feedback:"Paciente con ECV establecida (IAM previo) → clasificación automática como Riesgo Muy Alto (≥30%) independiente del puntaje Framingham. MINSAL y las guías internacionales establecen que el antecedente de evento cardiovascular previo, ERC avanzada o DM con daño orgánico son criterios directos de Muy Alto Riesgo."
+  },
+  {
+    num:11,
+    historia:"Doña Patricia, 57 años. No fuma. DM2 bien controlada (HbA1c 6.5%). PA: 128/82 mmHg. Colesterol total: 188 mg/dL. IMC: 27. Sin episodios previos de ECV. Control semestral.",
+    pregunta:"¿Cuál es su riesgo cardiovascular según Framingham MINSAL?",
+    opciones:["Riesgo Bajo (<10%)","Riesgo Moderado (10–19%)","Riesgo Alto (20–29%)","Riesgo Muy Alto (≥30%)"],
+    correcta:1,
+    feedback:"Mujer 57 años + DM2 + PAS 120–139 + col. <200, no fumadora → Tabla mujer con DM, no fumadora: edad 55–59, PAS 120–139 = 11% → Riesgo Moderado (10–19%). La DM bien controlada no elimina el aumento de riesgo que otorga la tabla con DM."
+  },
+  {
+    num:12,
+    historia:"Don Carlos, 42 años. Fumador activo. Sin DM. PA: 125/80 mmHg. Colesterol total: 235 mg/dL. Refiere que su padre tuvo ACV isquémico a los 50 años. Sin tratamiento farmacológico actual.",
+    pregunta:"Considerando todos los antecedentes, ¿cuál es su clasificación de riesgo?",
+    opciones:["Riesgo Bajo (<10%)","Riesgo Moderado (10–19%)","Riesgo Alto (20–29%)","Riesgo Muy Alto (≥30%)"],
+    correcta:0,
+    feedback:"Hombre 42 años + fumador + PAS 120–139 + col. 200–239, sin DM → Tabla hombre sin DM, fumador: edad 40–44, PAS 120–139 = 8% → Riesgo Bajo por puntaje. Aunque el antecedente familiar de ACV paterno prematuro (50 años) es un factor agravante que debe registrarse y vigilarse, la tabla Framingham no lo incluye directamente. Control anual y cesación tabáquica prioritaria."
+  },
+  {
+    num:13,
+    historia:"Señora Rosa, 65 años. No fuma. Tiene DM2 e HTA. PA: 168/100 mmHg. Colesterol total: 255 mg/dL. Presenta microalbuminuria 45 mg/g creatinina. Sin ECV previa documentada.",
+    pregunta:"¿Cuál es la clasificación de riesgo?",
+    opciones:["Riesgo Bajo (<10%)","Riesgo Moderado (10–19%)","Riesgo Alto (20–29%)","Riesgo Muy Alto (≥30%)"],
+    correcta:3,
+    feedback:"Mujer 65 años + DM2 + PAS ≥160 + col. ≥240 + microalbuminuria (daño de órgano diana, criterio directo de Muy Alto Riesgo) → Riesgo Muy Alto (≥30%). La presencia de microalbuminuria/proteinuria en paciente diabética es un marcador de daño renal que escala directamente a Muy Alto Riesgo según MINSAL."
+  },
+  {
+    num:14,
+    historia:"Don Felipe, 52 años. No fuma. Sin DM. PA: 142/88 mmHg. Colesterol total: 202 mg/dL. IMC: 29. Trabaja en labores físicas moderadas. Sin antecedentes familiares de ECV.",
+    pregunta:"¿Cuál es su riesgo CV a 10 años?",
+    opciones:["Riesgo Bajo (<10%)","Riesgo Moderado (10–19%)","Riesgo Alto (20–29%)","Riesgo Muy Alto (≥30%)"],
+    correcta:0,
+    feedback:"Hombre 52 años, no fumador, sin DM, PAS 140–159, col. 200–239 → Tabla hombre sin DM, no fumador: edad 50–54, PAS 140–159 = 9% → Riesgo Bajo (limítrofe). Está muy próximo al umbral del 10%, por lo que requiere intervención activa en estilos de vida y control en 6 meses."
+  },
+  {
+    num:15,
+    historia:"Doña Isabel, 69 años. Ex-fumadora (dejó hace 15 años). Sin DM. PA: 134/82 mmHg. Colesterol total: 210 mg/dL. Sedentaria. Sin tratamiento farmacológico actual.",
+    pregunta:"¿Cuál es su clasificación de riesgo CV?",
+    opciones:["Riesgo Bajo (<10%)","Riesgo Moderado (10–19%)","Riesgo Alto (20–29%)","Riesgo Muy Alto (≥30%)"],
+    correcta:1,
+    feedback:"Mujer 69 años, no fumadora activa (ex-fumadora >10 años se clasifica como no fumadora), sin DM, PAS 120–139, col. 200–239 → Tabla mujer sin DM, no fumadora: edad 65–69, PAS 120–139 = 9–10% → Riesgo Moderado (10–19%) por la interacción edad avanzada + colesterol elevado."
+  },
+  {
+    num:16,
+    historia:"Don Rodrigo, 48 años. Fumador (15 cigarros/día). DM2 recién diagnosticada. PA: 136/84 mmHg. Colesterol total: 220 mg/dL. IMC: 31. HbA1c: 7.2%. Inicia metformina.",
+    pregunta:"¿Cuál es su riesgo cardiovascular según MINSAL?",
+    opciones:["Riesgo Bajo (<10%)","Riesgo Moderado (10–19%)","Riesgo Alto (20–29%)","Riesgo Muy Alto (≥30%)"],
+    correcta:1,
+    feedback:"Hombre 48 años + fumador + DM2 + PAS 120–139 + col. 200–239 → Tabla hombre con DM, fumador, col.200–239: edad 45–49, PAS 120–139 = 18–22% → Riesgo Moderado-Alto. Considerando col.<240 y que recién se diagnostica DM, queda en el rango Moderado (10–19%), pero muy cerca del umbral Alto. Control trimestral recomendado."
+  },
+  {
+    num:17,
+    historia:"Doña Marcela, 44 años. No fuma. Sin DM. PA: 110/70 mmHg. Colesterol total: 172 mg/dL. HDL: 62 mg/dL. IMC: 22. Actividad física ≥150 min/semana. Sin antecedentes. Asiste a control preventivo.",
+    pregunta:"¿Cuál es su riesgo CV según Framingham?",
+    opciones:["Riesgo Bajo (<10%)","Riesgo Moderado (10–19%)","Riesgo Alto (20–29%)","Riesgo Muy Alto (≥30%)"],
+    correcta:0,
+    feedback:"Mujer 44 años, sin FRCV, PAS <120, col. <200 → Tabla mujer sin DM, no fumadora: edad 40–44, PAS <120 = 1% → Riesgo Bajo. Perfil óptimo. Orientar sobre mantener estilos de vida saludables. Control cada 3–5 años si se mantiene sin factores."
+  },
+  {
+    num:18,
+    historia:"Don Ernesto, 63 años. No fuma. DM2 hace 8 años. PA: 152/94 mmHg. Colesterol total: 198 mg/dL. Tiene retinopatía diabética no proliferativa. Sin ECV previa documentada.",
+    pregunta:"¿Cuál es la categoría de riesgo de este paciente?",
+    opciones:["Riesgo Bajo (<10%)","Riesgo Moderado (10–19%)","Riesgo Alto (20–29%)","Riesgo Muy Alto (≥30%)"],
+    correcta:3,
+    feedback:"Hombre 63 años + DM2 + PAS 140–159 + col.<200, no fumador → Tabla hombre con DM, no fumador: edad 60–64, PAS 140–159 = 27% → Riesgo Alto por tabla. Sin embargo, la presencia de retinopatía diabética constituye daño de órgano diana y escala automáticamente a Riesgo Muy Alto según criterios MINSAL/GES. Derivación prioritaria."
+  },
+  {
+    num:19,
+    historia:"Doña Sofía, 40 años. Fumadora activa. Sin DM. PA: 125/78 mmHg. Colesterol total: 198 mg/dL. Circunferencia cintura: 85 cm. Refiere alto estrés laboral y poco sueño.",
+    pregunta:"¿Cuál es su clasificación de riesgo CV?",
+    opciones:["Riesgo Bajo (<10%)","Riesgo Moderado (10–19%)","Riesgo Alto (20–29%)","Riesgo Muy Alto (≥30%)"],
+    correcta:0,
+    feedback:"Mujer 40 años + fumadora + PAS 120–139 + col.<200, sin DM → Tabla mujer sin DM, fumadora, col.<200: edad 40–44, PAS 120–139 = 5% → Riesgo Bajo (<10%). Aunque el tabaquismo suma puntos, la edad joven y los otros factores controlados mantienen el riesgo bajo. La intervención prioritaria es la cesación tabáquica."
+  },
+  {
+    num:20,
+    historia:"Don Arturo, 72 años. Ex-fumador (dejó hace 5 años). DM2 con mal control metabólico (HbA1c 10%). PA: 170/105 mmHg. Colesterol total: 258 mg/dL. Tiene ERC estadio 3b (TFG 38 mL/min). Sin ECV previa documentada.",
+    pregunta:"Considerando el perfil completo, ¿cuál es la clasificación de riesgo correcta?",
+    opciones:["Riesgo Bajo (<10%)","Riesgo Moderado (10–19%)","Riesgo Alto (20–29%)","Riesgo Muy Alto (≥30%)"],
+    correcta:3,
+    feedback:"Hombre 72 años + ex-fumador reciente (<10 años) + DM2 descompensada + PAS ≥160 + col.≥240 → Tabla hombre con DM sería ya ≥30%. ADEMÁS, la ERC estadio 3b (TFG <45 mL/min) es criterio directo de Riesgo Muy Alto según guías MINSAL y ESC. El perfil consolida categóricamente Riesgo Muy Alto (≥30%). Manejo multidisciplinario urgente: cardiología, nefrología, endocrinología."
+  }
+];
+
+let casoActual = 0;
+let correctas = 0;
+let respondido = false;
+let juegoIniciado = false;
+
+function iniciarJuego() {
+  juegoIniciado = true;
+  casoActual = 0;
+  correctas = 0;
+  respondido = false;
+  document.getElementById('juego-final').style.display = 'none';
+  document.getElementById('juego-activo').style.display = 'block';
+  actualizarScore();
+  renderCaso();
+}
+
+function renderCaso() {
+  if (casoActual >= casos.length) {
+    mostrarFinal();
+    return;
+  }
+  respondido = false;
+  const c = casos[casoActual];
+  const letras = ['A','B','C','D'];
+
+  const html = `
+    <div class="caso-card">
+      <div class="caso-num">Caso clínico ${c.num} de ${casos.length}</div>
+      <div class="caso-historia">${c.historia}</div>
+      <div class="caso-pregunta">❓ ${c.pregunta}</div>
+      <div class="opciones">
+        ${c.opciones.map((op,i) => `
+          <button class="opcion-btn" onclick="responder(${i})" id="op-${i}">
+            <span class="letra">${letras[i]}</span>
+            ${op}
+          </button>
+        `).join('')}
+      </div>
+      <div class="feedback-box" id="feedback"></div>
+      <button class="btn-next" id="btn-next" onclick="siguiente()">
+        ${casoActual < casos.length - 1 ? 'Siguiente caso →' : 'Ver resultado final →'}
+      </button>
+    </div>
+  `;
+  document.getElementById('caso-container').innerHTML = html;
+  actualizarProgress();
+}
+
+function responder(idx) {
+  if (respondido) return;
+  respondido = true;
+  const c = casos[casoActual];
+  const letras = ['A','B','C','D'];
+
+  c.opciones.forEach((_,i) => {
+    const btn = document.getElementById('op-' + i);
+    btn.disabled = true;
+    if (i === c.correcta) btn.classList.add('correcta');
+    if (i === idx && idx !== c.correcta) btn.classList.add('incorrecta');
+  });
+
+  const esCorrecta = idx === c.correcta;
+  if (esCorrecta) correctas++;
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback-box ' + (esCorrecta ? 'ok' : 'err');
+  fb.style.display = 'block';
+  fb.innerHTML = `
+    <strong>${esCorrecta ? '✅ ¡Correcto!' : '❌ Incorrecto. La respuesta correcta era: ' + letras[c.correcta] + ') ' + c.opciones[c.correcta]}</strong><br>
+    <span style="color:var(--gris-t)">${c.feedback}</span>
+  `;
+
+  document.getElementById('btn-next').style.display = 'inline-block';
+  actualizarScore();
+}
+
+function siguiente() {
+  casoActual++;
+  renderCaso();
+}
+
+function actualizarScore() {
+  document.getElementById('score-correctas').textContent = correctas;
+  document.getElementById('score-total').textContent = Math.min(casoActual + (respondido?1:0), 20) + '/20';
+  const pct = casoActual > 0 ? Math.round((correctas / Math.min(casoActual + (respondido?1:0), 20)) * 100) : 0;
+  document.getElementById('score-pct').textContent = pct + '%';
+}
+
+function actualizarProgress() {
+  const pct = (casoActual / casos.length) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+function mostrarFinal() {
+  document.getElementById('juego-activo').style.display = 'none';
+  document.getElementById('juego-final').style.display = 'block';
+  const pct = Math.round((correctas / 20) * 100);
+  document.getElementById('puntaje-final').textContent = correctas + '/20';
+  document.getElementById('score-pct').textContent = pct + '%';
+
+  let estrellas, titulo, desc;
+  if (pct >= 90) { estrellas='⭐⭐⭐'; titulo='¡Excelente!'; desc='Dominas el cálculo de riesgo cardiovascular MINSAL. Estás lista para aplicarlo en tu práctica clínica.'; }
+  else if (pct >= 70) { estrellas='⭐⭐'; titulo='¡Muy bien!'; desc='Tienes un buen manejo del tema. Repasa los casos donde tuviste dudas, especialmente los criterios de Muy Alto Riesgo.'; }
+  else if (pct >= 50) { estrellas='⭐'; titulo='En proceso'; desc='Vas por buen camino. Te recomendamos revisar las tablas de Framingham MINSAL y los criterios directos de cada categoría.'; }
+  else { estrellas='📚'; titulo='Sigue estudiando'; desc='Revisa las tablas Framingham adaptadas por MINSAL y practica identificando los factores de riesgo en cada caso.'; }
+
+  document.getElementById('estrellas-final').textContent = estrellas;
+  document.getElementById('titulo-final').textContent = titulo;
+  document.getElementById('desc-final').textContent = desc;
+}
+
+function reiniciarJuego() {
+  iniciarJuego();
+}
+
+function restablecerCalculadora() {
+  document.getElementById('c-sexo').value  = 'hombre';
+  document.getElementById('c-edad').value  = '';
+  document.getElementById('c-pas').value   = '';
+  document.getElementById('c-col').value   = '';
+  document.getElementById('c-tabaco').value = 'no';
+  document.getElementById('c-dm').value    = 'no';
+  const box = document.getElementById('resultado-calc');
+  box.style.display = 'none';
+  box.className = 'result-box';
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  // tabs de referencia
+  document.querySelectorAll('.ref-tab').forEach(t => {
+    t.addEventListener('click', function() {
+      const panel = this.textContent.trim()
+        .toLowerCase()
+        .replace(/ /g,'-')
+        .replace(/ó/g,'o').replace(/é/g,'e').replace(/á/g,'a');
+    });
+  });
+});
+</script>
+
+<a href="../index.html" class="volver-menu">← Volver al menú principal</a>
+
+</body>
+</html>
