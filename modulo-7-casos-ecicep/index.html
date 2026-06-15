@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Riesgo ECICEP – MINSAL Chile</title>
+<style>
+    .volver-menu {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 999;
+    background: #1c2e4a;
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 14px;
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.22);
+  }
+
+  .volver-menu:hover {
+    background: #2e4d7d;
+  }
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --teal-dk:  #0B4F4A;
+  --teal:     #0D6E66;
+  --teal-m:   #12948A;
+  --teal-l:   #5DBDB6;
+  --teal-xl:  #C8EFED;
+  --teal-xxl: #EBF8F7;
+  --g0-bg:#E2F5EA; --g0-bdr:#1A7A43; --g0-txt:#0f5c2a;
+  --g1-bg:#EBF5FB; --g1-bdr:#2980B9; --g1-txt:#1a4f7a;
+  --g2-bg:#FEF9E7; --g2-bdr:#D4AC0D; --g2-txt:#7a6300;
+  --g3-bg:#FDEDEC; --g3-bdr:#C0392B; --g3-txt:#7a1a1a;
+  --verde:#1A7A43; --verde-l:#E2F5EA;
+  --rojo:#B92B2B;  --rojo-l:#F4E5E5;
+  --gris-f:#F5F7F7; --gris-m:#D4DCDB; --gris-t:#5A6E6C;
+  --negro:#0E1F1E;
+  --sombra-s:0 2px 8px rgba(11,79,74,.08);
+  --sombra-m:0 6px 28px rgba(11,79,74,.12);
+  --sombra-l:0 16px 48px rgba(11,79,74,.16);
+  --r-md:14px; --r-lg:20px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--gris-f);color:var(--negro);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ── HERO ──────────────────────────────────────── */
+.hero{background:var(--teal-dk);position:relative;overflow:hidden;padding:0}
+.hero-bg{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 80% at 85% 50%,rgba(13,110,102,.55) 0%,transparent 70%),
+             radial-gradient(ellipse 40% 60% at 10% 80%,rgba(93,189,182,.12) 0%,transparent 60%)}
+.hero-ecg{position:absolute;bottom:0;left:0;right:0;height:60px;pointer-events:none;opacity:.18}
+.hero-inner{position:relative;max-width:1120px;margin:0 auto;padding:52px 32px 48px;
+  display:grid;grid-template-columns:1fr auto;gap:32px;align-items:start}
+@media(max-width:680px){.hero-inner{grid-template-columns:1fr;padding:36px 20px 32px}}
+
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.2);border-radius:100px;padding:5px 14px 5px 10px;
+  font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--teal-l);
+  margin-bottom:18px;font-weight:600}
+.badge-dot{width:7px;height:7px;border-radius:50%;background:var(--teal-l);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+
+.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(28px,4.5vw,52px);
+  line-height:1.08;letter-spacing:-.02em;color:#fff;margin-bottom:14px}
+.hero h1 em{font-style:italic;color:var(--teal-l)}
+.hero-sub{font-size:15px;color:rgba(255,255,255,.65);line-height:1.7;max-width:520px;margin-bottom:28px}
+
+.nav-pills{display:flex;gap:8px;flex-wrap:wrap}
+.np{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);color:rgba(255,255,255,.8);
+  border-radius:10px;padding:9px 20px;font-size:13px;font-family:'DM Sans',sans-serif;
+  font-weight:500;cursor:pointer;transition:all .22s}
+.np:hover,.np.active{background:var(--teal-m);border-color:var(--teal-m);color:#fff}
+
+.hero-stat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+  border-radius:var(--r-md);padding:20px 24px;min-width:180px;text-align:center}
+.hero-stat .big{font-family:'DM Serif Display',serif;font-size:42px;color:var(--teal-l);line-height:1;margin-bottom:6px}
+.hero-stat .lbl{font-size:12px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.07em}
+
+/* ── MAIN ──────────────────────────────────────── */
+main{max-width:1120px;margin:0 auto;padding:40px 20px 80px}
+.sec{display:none}.sec.active{display:block}
+
+.card{background:#fff;border-radius:var(--r-lg);box-shadow:var(--sombra-m);
+  padding:32px;margin-bottom:28px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--teal-m),var(--teal-l))}
+.card-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--teal-dk);
+  margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.card-sub{font-size:13px;color:var(--gris-t);margin-bottom:24px;line-height:1.6}
+
+.info-box{border-radius:var(--r-md);padding:16px 20px;font-size:13.5px;
+  line-height:1.7;margin-bottom:20px;border-left:4px solid}
+.info-teal{background:var(--teal-xxl);border-color:var(--teal-m);color:var(--teal-dk)}
+.info-gold{background:#FEF9E7;border-color:#D4AC0D;color:#7a6300}
+
+/* ── TABLAS ────────────────────────────────────── */
+.tw{overflow-x:auto;margin-bottom:20px;border-radius:var(--r-md);box-shadow:var(--sombra-s)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border:1px solid #d8e5e4;padding:10px 14px;text-align:left}
+thead th{background:var(--teal-dk);color:#fff;font-weight:600;font-size:12px;
+  text-transform:uppercase;letter-spacing:.06em}
+tbody tr:nth-child(even){background:#f0f7f6}
+tbody tr:hover{background:var(--teal-xxl)}
+
+/* ── TAGS G0–G3 ────────────────────────────────── */
+.tag{display:inline-block;border-radius:6px;padding:3px 10px;font-size:11px;
+  font-weight:700;letter-spacing:.04em;font-family:'DM Mono',monospace}
+.tag-g0{background:var(--g0-bg);color:var(--g0-txt)}
+.tag-g1{background:var(--g1-bg);color:var(--g1-txt)}
+.tag-g2{background:var(--g2-bg);color:var(--g2-txt)}
+.tag-g3{background:var(--g3-bg);color:var(--g3-txt)}
+
+/* ── CLASIFICACIÓN CARDS ───────────────────────── */
+.clas-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-bottom:24px}
+.cc{border-radius:var(--r-md);padding:22px;border-top:5px solid;position:relative}
+.cc-g0{background:var(--g0-bg);border-color:var(--g0-bdr)}
+.cc-g1{background:var(--g1-bg);border-color:var(--g1-bdr)}
+.cc-g2{background:var(--g2-bg);border-color:var(--g2-bdr)}
+.cc-g3{background:var(--g3-bg);border-color:var(--g3-bdr)}
+.cc .gc{font-family:'DM Mono',monospace;font-size:28px;font-weight:700;line-height:1}
+.cc .gn{font-weight:700;font-size:14px;margin:5px 0 10px}
+.cc .gd{font-size:12px;line-height:1.65;color:var(--gris-t)}
+.cc .gf{font-size:11px;font-weight:700;margin-top:12px;padding:4px 12px;
+  border-radius:20px;display:inline-block;color:#fff}
+.cc-g0 .gc{color:var(--g0-txt)}.cc-g0 .gf{background:var(--g0-bdr)}
+.cc-g1 .gc{color:var(--g1-txt)}.cc-g1 .gf{background:var(--g1-bdr)}
+.cc-g2 .gc{color:var(--g2-txt)}.cc-g2 .gf{background:var(--g2-bdr)}
+.cc-g3 .gc{color:var(--g3-txt)}.cc-g3 .gf{background:var(--g3-bdr)}
+
+/* ── HERRAMIENTA ───────────────────────────────── */
+.tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
+@media(max-width:600px){.tool-grid{grid-template-columns:1fr}}
+.tl{display:block;font-size:13px;font-weight:600;margin-bottom:7px;color:var(--gris-t)}
+.ts{width:100%;padding:10px 14px;border:1.5px solid var(--gris-m);border-radius:10px;
+  font-size:14px;font-family:'DM Sans',sans-serif;color:var(--negro);
+  background:#fff;transition:border .2s}
+.ts:focus{outline:none;border-color:var(--teal-m)}
+.tool-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn-calc{background:var(--teal-dk);color:#fff;border:none;padding:12px 28px;
+  border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:background .2s;flex:1;min-width:160px}
+.btn-calc:hover{background:var(--teal-m)}
+.btn-sec{background:#fff;color:var(--teal-dk);border:2px solid var(--teal-m);
+  padding:12px 22px;border-radius:10px;font-size:14px;font-weight:600;
+  cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-sec:hover{background:var(--teal-m);color:#fff}
+.tool-result{margin-top:24px;border-radius:var(--r-md);padding:24px;
+  display:none;animation:fadeup .3s ease both}
+.tr-g0{background:var(--g0-bg);border-left:5px solid var(--g0-bdr)}
+.tr-g1{background:var(--g1-bg);border-left:5px solid var(--g1-bdr)}
+.tr-g2{background:var(--g2-bg);border-left:5px solid var(--g2-bdr)}
+.tr-g3{background:var(--g3-bg);border-left:5px solid var(--g3-bdr)}
+.tr-cat{font-family:'DM Serif Display',serif;font-size:28px;margin-bottom:4px}
+.tr-sub{font-size:13px;color:var(--gris-t);line-height:1.65;margin-bottom:14px}
+.tr-cond{font-size:13px;display:grid;gap:6px;list-style:none}
+.tr-cond li{padding:7px 12px;background:rgba(255,255,255,.65);border-radius:8px}
+
+/* ── JUEGO ─────────────────────────────────────── */
+.game-topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:24px}
+.game-title h2{font-family:'DM Serif Display',serif;font-size:26px;color:var(--teal-dk)}
+.game-title p{font-size:13px;color:var(--gris-t);margin-top:3px}
+.score-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.sp{background:#fff;border-radius:var(--r-md);padding:10px 18px;
+  box-shadow:var(--sombra-s);text-align:center}
+.sp .n{font-family:'DM Serif Display',serif;font-size:24px;color:var(--teal-dk);line-height:1}
+.sp .l{font-size:10px;color:var(--gris-t);text-transform:uppercase;letter-spacing:.07em;margin-top:2px}
+.btn-reset{background:#fff;color:var(--teal-dk);border:2px solid var(--teal-m);
+  border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;
+  cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;
+  display:flex;align-items:center;gap:6px}
+.btn-reset:hover{background:var(--teal-m);color:#fff}
+
+.prog-wrap{background:var(--gris-m);border-radius:20px;height:10px;margin-bottom:32px;overflow:hidden}
+.prog-bar{height:10px;border-radius:20px;background:linear-gradient(90deg,var(--teal-m),var(--teal-l));
+  transition:width .5s cubic-bezier(.4,0,.2,1)}
+
+.caso-wrap{background:#fff;border-radius:var(--r-lg);box-shadow:var(--sombra-m);
+  overflow:hidden;animation:fadeup .35s ease both}
+@keyframes fadeup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+.caso-hdr{background:var(--teal-dk);padding:20px 28px;display:flex;align-items:center;justify-content:space-between}
+.caso-hdr .cn{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--teal-l);font-weight:700}
+.caso-hdr .tipo-badge{font-size:11px;background:rgba(255,255,255,.15);color:rgba(255,255,255,.8);
+  border-radius:6px;padding:3px 10px;font-family:'DM Mono',monospace}
+
+.caso-body{padding:28px}
+.historia{font-size:15px;line-height:1.8;background:var(--teal-xxl);border-radius:var(--r-md);
+  padding:20px 22px;margin-bottom:20px;border-left:4px solid var(--teal-m)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.chip{background:var(--gris-f);border:1px solid var(--gris-m);border-radius:8px;
+  padding:5px 12px;font-size:12px;font-family:'DM Mono',monospace;color:var(--teal-dk);font-weight:500}
+.pregunta{font-family:'DM Serif Display',serif;font-size:18px;color:var(--teal-dk);margin-bottom:18px;line-height:1.4}
+
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:center;gap:14px;border:2px solid var(--gris-m);border-radius:12px;
+  padding:14px 18px;cursor:pointer;background:#fff;transition:all .2s;
+  text-align:left;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--negro)}
+.opt:hover:not(:disabled){border-color:var(--teal-m);background:var(--teal-xxl)}
+.opt-l{min-width:32px;height:32px;border-radius:50%;background:var(--teal-dk);color:#fff;
+  font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.opt.ok{background:var(--verde-l);border-color:var(--verde)}
+.opt.ok .opt-l{background:var(--verde)}
+.opt.err{background:var(--rojo-l);border-color:var(--rojo)}
+.opt.err .opt-l{background:var(--rojo)}
+.opt:disabled{cursor:default}
+
+.feedback{margin-top:20px;border-radius:var(--r-md);padding:18px 22px;
+  font-size:14px;line-height:1.7;display:none;animation:fadeup .25s ease both}
+.feedback.ok{background:var(--verde-l);border-left:4px solid var(--verde)}
+.feedback.err{background:var(--rojo-l);border-left:4px solid var(--rojo)}
+.feedback strong{display:block;margin-bottom:6px;font-size:15px}
+.feedback .expl{color:var(--gris-t)}
+
+.caso-footer{display:flex;align-items:center;justify-content:space-between;
+  padding:20px 28px;border-top:1px solid var(--gris-m);background:var(--gris-f);flex-wrap:wrap;gap:12px}
+.hint{font-size:12px;color:var(--gris-t)}
+.btn-sig{background:var(--teal-dk);color:#fff;border:none;padding:12px 28px;border-radius:10px;
+  font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;
+  transition:background .2s;display:none}
+.btn-sig:hover{background:var(--teal-m)}
+
+/* ── FINAL ─────────────────────────────────────── */
+.final-sc{background:#fff;border-radius:var(--r-lg);box-shadow:var(--sombra-l);
+  padding:60px 40px;text-align:center;display:none;animation:fadeup .4s ease both}
+.final-sc .est{font-size:52px;margin-bottom:16px}
+.final-sc .big{font-family:'DM Serif Display',serif;font-size:80px;color:var(--teal-dk);line-height:1;margin-bottom:8px}
+.final-sc h2{font-family:'DM Serif Display',serif;font-size:28px;margin-bottom:12px}
+.final-sc p{color:var(--gris-t);font-size:15px;max-width:420px;margin:0 auto 32px;line-height:1.7}
+.barra-r{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:36px}
+.br{background:var(--gris-f);border-radius:var(--r-md);padding:14px 24px;text-align:center;min-width:100px}
+.br .brn{font-family:'DM Serif Display',serif;font-size:30px;color:var(--teal-dk)}
+.br .brl{font-size:11px;color:var(--gris-t);text-transform:uppercase;letter-spacing:.06em}
+.btn-reiniciar{background:var(--teal-dk);color:#fff;border:none;padding:14px 36px;
+  border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:background .2s}
+.btn-reiniciar:hover{background:var(--teal-m)}
+
+/* ── REFERENCIA TABS ───────────────────────────── */
+.rtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.rtab{background:var(--teal-xxl);border:1.5px solid var(--teal-xl);color:var(--teal-dk);
+  border-radius:8px;padding:8px 18px;cursor:pointer;font-size:13px;
+  font-family:'DM Sans',sans-serif;font-weight:500;transition:all .2s}
+.rtab.active{background:var(--teal-dk);color:#fff;border-color:var(--teal-dk)}
+.rp{display:none}.rp.active{display:block}
+
+footer{background:var(--teal-dk);color:rgba(255,255,255,.5);text-align:center;
+  padding:22px;font-size:12px;font-family:'DM Mono',monospace}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-bg"></div>
+  <svg class="hero-ecg" viewBox="0 0 1200 60" preserveAspectRatio="none" fill="none">
+    <polyline points="0,35 100,35 140,10 170,55 200,35 240,35 260,5 280,55 300,35 400,35 420,18 440,50 460,35 600,35 620,8 640,52 660,35 800,35 830,12 860,52 880,35 1200,35" stroke="white" stroke-width="2"/>
+  </svg>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        MINSAL Chile · ECICEP · APS · EFER 502
+      </div>
+      <h1>Clasificación de Riesgo<br><em>ECICEP</em></h1>
+      <p class="hero-sub">Estrategia de Cuidados Integrales Centrados en las Personas — Clasificación G0 a G3 para la gestión del riesgo y la planificación del cuidado en Atención Primaria de Salud.</p>
+      <div class="nav-pills">
+        <button class="np active" onclick="showSec('clasificacion',this)">📋 Clasificación G0–G3</button>
+        <button class="np" onclick="showSec('herramienta',this)">🔧 Clasificador</button>
+        <button class="np" onclick="showSec('juego',this)">🎮 Casos Clínicos</button>
+        <button class="np" onclick="showSec('referencia',this)">📚 Referencia</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ══ CLASIFICACIÓN ══ -->
+<section id="clasificacion" class="sec active">
+
+  <div class="card">
+    <div class="card-title">¿Qué es ECICEP?</div>
+    <div class="card-sub">Estrategia de Cuidados Integrales Centrados en las Personas – MINSAL Chile</div>
+    <div class="info-box info-teal">
+      <strong>ECICEP</strong> es la estrategia oficial de MINSAL para clasificar a las personas según su <strong>nivel de riesgo y complejidad de salud</strong>, con el objetivo de planificar cuidados integrales, centrados en la persona y su familia, en el marco de la Atención Primaria de Salud (APS). Utiliza una estratificación en cuatro grupos: <strong>G0, G1, G2 y G3</strong>, que determinan la intensidad y tipo de intervención del equipo de salud.
+    </div>
+    <div class="info-box info-gold">
+      La clasificación ECICEP integra condiciones crónicas, factores de riesgo, funcionalidad, contexto sociofamiliar y conductas de salud. Permite al equipo priorizar recursos y diseñar planes de cuidado personalizados según la complejidad real de cada persona.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Grupos de Riesgo ECICEP: G0 – G3</div>
+    <div class="card-sub">La clasificación determina la frecuencia de control, el tipo de intervención y el nivel de complejidad del plan de cuidados</div>
+    <div class="clas-grid">
+      <div class="cc cc-g0">
+        <div class="gc">G0</div>
+        <div class="gn">Sin Riesgo</div>
+        <div class="gd">Persona sin enfermedades crónicas, sin factores de riesgo significativos y con conductas de vida saludables. Sin necesidades de salud complejas identificadas. Funcionalidad conservada.</div>
+        <span class="gf">Control preventivo anual</span>
+      </div>
+      <div class="cc cc-g1">
+        <div class="gc">G1</div>
+        <div class="gn">Riesgo Leve</div>
+        <div class="gd">Persona con uno o dos factores de riesgo modificables o una condición crónica compensada. Sin daño de órgano diana. Puede requerir intervención en conductas de salud. Funcionalidad conservada.</div>
+        <span class="gf">Control semestral</span>
+      </div>
+      <div class="cc cc-g2">
+        <div class="gc">G2</div>
+        <div class="gn">Riesgo Moderado</div>
+        <div class="gd">Persona con dos o más condiciones crónicas, o una condición crónica descompensada, o con daño de órgano diana incipiente. Puede presentar limitación funcional leve. Requiere plan de cuidados activo.</div>
+        <span class="gf">Control trimestral</span>
+      </div>
+      <div class="cc cc-g3">
+        <div class="gc">G3</div>
+        <div class="gn">Riesgo Alto</div>
+        <div class="gd">Persona con alta complejidad: múltiples condiciones crónicas descompensadas, dependencia funcional, fragilidad, enfermedad terminal o gran vulnerabilidad sociofamiliar. Requiere manejo multidisciplinario y/o visita domiciliaria.</div>
+        <span class="gf">Control mensual / Visita domiciliaria</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Criterios de Clasificación por Grupo</div>
+    <div class="tw">
+      <table>
+        <thead>
+          <tr><th>Dimensión evaluada</th><th><span class="tag tag-g0">G0</span> Sin riesgo</th><th><span class="tag tag-g1">G1</span> Leve</th><th><span class="tag tag-g2">G2</span> Moderado</th><th><span class="tag tag-g3">G3</span> Alto</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Enfermedades crónicas</strong></td><td>Ninguna</td><td>1 condición compensada</td><td>≥2 condiciones o 1 descompensada</td><td>Múltiples descompensadas / comorbilidad severa</td></tr>
+          <tr><td><strong>Factores de riesgo</strong></td><td>Sin FRCV</td><td>1–2 FRCV modificables</td><td>≥3 FRCV o daño de órgano diana</td><td>ECV establecida / ERC avanzada / EPOC severo</td></tr>
+          <tr><td><strong>Funcionalidad</strong></td><td>Independiente (Barthel 100)</td><td>Independiente con limitación leve</td><td>Dependencia leve-moderada (Barthel 60–95)</td><td>Dependencia severa / postrado (Barthel &lt;60)</td></tr>
+          <tr><td><strong>Conductas de salud</strong></td><td>Todas saludables</td><td>1–2 conductas de riesgo</td><td>≥3 conductas de riesgo o dependencia</td><td>Dependencias múltiples / alta complejidad conductual</td></tr>
+          <tr><td><strong>Contexto sociofamiliar</strong></td><td>Red de apoyo adecuada</td><td>Apoyo parcial</td><td>Apoyo insuficiente o aislamiento</td><td>Vulnerabilidad social severa / violencia / pobreza extrema</td></tr>
+          <tr><td><strong>Salud mental</strong></td><td>Sin alteraciones</td><td>Síntomas leves (PHQ-2 positivo)</td><td>Trastorno activo en tratamiento</td><td>Trastorno severo / crisis / riesgo suicida</td></tr>
+          <tr><td><strong>Tipo de intervención</strong></td><td>Educación preventiva</td><td>Consejería + plan de cuidados básico</td><td>Plan de cuidados activo + coordinación</td><td>Gestión de caso + visita domiciliaria + red intersectorial</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Herramientas de Evaluación ECICEP</div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Herramienta</th><th>Dimensión que evalúa</th><th>Punto de corte clave</th><th>Grupo de riesgo</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Índice de Barthel</strong></td><td>Funcionalidad básica (AVD)</td><td>&lt;60: dependencia severa; 60–95: moderada</td><td><span class="tag tag-g2">G2</span>–<span class="tag tag-g3">G3</span></td></tr>
+          <tr><td><strong>Escala de Lawton-Brody</strong></td><td>Actividades instrumentales (AIVD)</td><td>Pérdida de ≥2 actividades: limitación relevante</td><td><span class="tag tag-g2">G2</span>–<span class="tag tag-g3">G3</span></td></tr>
+          <tr><td><strong>PHQ-2 / PHQ-9</strong></td><td>Síntomas depresivos</td><td>PHQ-2 ≥3: derivación a PHQ-9</td><td><span class="tag tag-g1">G1</span>–<span class="tag tag-g2">G2</span></td></tr>
+          <tr><td><strong>AUDIT / AUDIT-C</strong></td><td>Consumo de alcohol</td><td>AUDIT ≥8: consumo perjudicial</td><td><span class="tag tag-g1">G1</span>–<span class="tag tag-g3">G3</span></td></tr>
+          <tr><td><strong>Test de Fagerström</strong></td><td>Dependencia a nicotina</td><td>≥4: dependencia moderada-alta</td><td><span class="tag tag-g2">G2</span>–<span class="tag tag-g3">G3</span></td></tr>
+          <tr><td><strong>EFAM (Evaluación Funcional AM)</strong></td><td>Funcionalidad adulto mayor</td><td>EFAM B: riesgo de dependencia</td><td><span class="tag tag-g2">G2</span>–<span class="tag tag-g3">G3</span></td></tr>
+          <tr><td><strong>Framingham MINSAL</strong></td><td>Riesgo cardiovascular 10 años</td><td>≥20%: riesgo alto; ≥30%: muy alto</td><td><span class="tag tag-g2">G2</span>–<span class="tag tag-g3">G3</span></td></tr>
+          <tr><td><strong>Apgar Familiar</strong></td><td>Funcionalidad familiar</td><td>&lt;7: disfunción familiar</td><td><span class="tag tag-g2">G2</span>–<span class="tag tag-g3">G3</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══ HERRAMIENTA ══ -->
+<section id="herramienta" class="sec">
+  <div class="card">
+    <div class="card-title">🔧 Clasificador ECICEP Interactivo</div>
+    <div class="card-sub">Ingresa los datos del paciente para obtener su grupo de riesgo G0–G3 y el plan de cuidados correspondiente</div>
+    <div class="info-box info-teal">Responde cada dimensión según la situación actual del paciente. El sistema aplicará los criterios ECICEP para determinar el grupo de riesgo.</div>
+
+    <div class="tool-grid">
+      <div>
+        <label class="tl">🫀 Enfermedades crónicas</label>
+        <select id="h-cronicas" class="ts">
+          <option value="0">Ninguna enfermedad crónica</option>
+          <option value="1">1 condición crónica compensada</option>
+          <option value="2">2 condiciones crónicas o 1 descompensada</option>
+          <option value="3">Múltiples condiciones descompensadas</option>
+        </select>
+      </div>
+      <div>
+        <label class="tl">⚠️ Factores de riesgo (FRCV / otros)</label>
+        <select id="h-frcv" class="ts">
+          <option value="0">Sin factores de riesgo</option>
+          <option value="1">1–2 FRCV modificables</option>
+          <option value="2">≥3 FRCV o daño de órgano diana</option>
+          <option value="3">ECV establecida / ERC avanzada / EPOC severo</option>
+        </select>
+      </div>
+      <div>
+        <label class="tl">🦽 Funcionalidad (Barthel / EFAM)</label>
+        <select id="h-func" class="ts">
+          <option value="0">Independiente (Barthel 100 / EFAM A)</option>
+          <option value="1">Independiente con limitación leve</option>
+          <option value="2">Dependencia leve-moderada (Barthel 60–95)</option>
+          <option value="3">Dependencia severa / postrado (Barthel &lt;60)</option>
+        </select>
+      </div>
+      <div>
+        <label class="tl">🧠 Salud mental</label>
+        <select id="h-mental" class="ts">
+          <option value="0">Sin alteraciones de salud mental</option>
+          <option value="1">Síntomas leves (PHQ-2 positivo)</option>
+          <option value="2">Trastorno activo en tratamiento</option>
+          <option value="3">Trastorno severo / crisis / riesgo suicida</option>
+        </select>
+      </div>
+      <div>
+        <label class="tl">👨‍👩‍👧 Contexto sociofamiliar</label>
+        <select id="h-social" class="ts">
+          <option value="0">Red de apoyo adecuada</option>
+          <option value="1">Apoyo parcial</option>
+          <option value="2">Aislamiento o apoyo insuficiente</option>
+          <option value="3">Vulnerabilidad social severa / violencia</option>
+        </select>
+      </div>
+      <div>
+        <label class="tl">🚬🍷 Conductas de salud</label>
+        <select id="h-conductas" class="ts">
+          <option value="0">Todas las conductas son saludables</option>
+          <option value="1">1–2 conductas de riesgo moderadas</option>
+          <option value="2">≥3 conductas de riesgo o dependencia</option>
+          <option value="3">Dependencias múltiples / alta complejidad</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="tool-actions">
+      <button class="btn-calc" onclick="clasificar()">Clasificar según ECICEP</button>
+      <button class="btn-sec" onclick="resetHerr()">🔄 Restablecer</button>
+    </div>
+
+    <div id="tool-result" class="tool-result">
+      <div class="tr-cat" id="tr-cat"></div>
+      <div style="font-weight:700;font-size:15px;margin-bottom:8px" id="tr-nom"></div>
+      <div class="tr-sub" id="tr-sub"></div>
+      <ul class="tr-cond" id="tr-cond"></ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══ JUEGO ══ -->
+<section id="juego" class="sec">
+  <div id="juego-activo">
+    <div class="game-topbar">
+      <div class="game-title">
+        <h2>Casos Clínicos ECICEP</h2>
+        <p>Clasifica a cada paciente en el grupo de riesgo correcto: G0, G1, G2 o G3</p>
+      </div>
+      <div class="score-row">
+        <div class="sp"><div class="n" id="sc-cor">0</div><div class="l">Correctas</div></div>
+        <div class="sp"><div class="n" id="sc-prog">0/20</div><div class="l">Progreso</div></div>
+        <div class="sp"><div class="n" id="sc-pct">0%</div><div class="l">Puntaje</div></div>
+        <button class="btn-reset" onclick="confirmarReset()">🔄 Restablecer</button>
+      </div>
+    </div>
+    <div class="prog-wrap"><div class="prog-bar" id="prog-bar" style="width:0%"></div></div>
+    <div id="caso-container"></div>
+  </div>
+  <div class="final-sc" id="juego-final">
+    <div class="est" id="est-final"></div>
+    <div class="big" id="score-big"></div>
+    <h2 id="tit-final"></h2>
+    <p id="desc-final"></p>
+    <div class="barra-r">
+      <div class="br"><div class="brn" id="fr-cor">0</div><div class="brl">Correctas</div></div>
+      <div class="br"><div class="brn" id="fr-err">0</div><div class="brl">Incorrectas</div></div>
+      <div class="br"><div class="brn" id="fr-pct">0%</div><div class="brl">Puntaje</div></div>
+    </div>
+    <button class="btn-reiniciar" onclick="iniciarJuego()">🔄 Jugar de nuevo</button>
+  </div>
+</section>
+
+<!-- ══ REFERENCIA ══ -->
+<section id="referencia" class="sec">
+  <div class="card">
+    <div class="card-title">📚 Referencia Rápida ECICEP</div>
+    <div class="rtabs">
+      <button class="rtab active" onclick="showRp('rp1',this)">Plan de cuidados por grupo</button>
+      <button class="rtab" onclick="showRp('rp2',this)">Roles del equipo</button>
+      <button class="rtab" onclick="showRp('rp3',this)">Barthel / EFAM</button>
+      <button class="rtab" onclick="showRp('rp4',this)">Integración PSCV</button>
+    </div>
+
+    <div id="rp1" class="rp active">
+      <div class="tw"><table>
+        <thead><tr><th>Grupo</th><th>Plan de cuidados</th><th>Frecuencia</th><th>Modalidad</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag tag-g0">G0</span></td><td>Educación en estilos de vida saludable, tamizaje periódico, vacunas</td><td>Anual</td><td>Consulta preventiva</td></tr>
+          <tr><td><span class="tag tag-g1">G1</span></td><td>Control de FRCV, consejería breve, plan de cuidados básico, seguimiento de conductas</td><td>Semestral</td><td>Consulta de morbilidad + enfermería</td></tr>
+          <tr><td><span class="tag tag-g2">G2</span></td><td>Plan de cuidados activo, gestión de tratamientos, coordinación con especialidad, intervención motivacional</td><td>Trimestral</td><td>Consulta médica + enfermería + otros profesionales</td></tr>
+          <tr><td><span class="tag tag-g3">G3</span></td><td>Gestión de caso, visita domiciliaria, coordinación intersectorial, cuidados paliativos si corresponde</td><td>Mensual / Domiciliario</td><td>Equipo multidisciplinario + gestor de caso</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div id="rp2" class="rp">
+      <div class="tw"><table>
+        <thead><tr><th>Profesional</th><th>Rol en ECICEP</th><th>Grupos prioritarios</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Enfermera/o</strong></td><td>Clasificación inicial, plan de cuidados, consejería, seguimiento, gestión de caso G3</td><td>Todos (G0–G3)</td></tr>
+          <tr><td><strong>Médico/a</strong></td><td>Diagnóstico, prescripción, derivación, evaluación de complejidad</td><td>G1–G3</td></tr>
+          <tr><td><strong>Nutricionista</strong></td><td>Plan nutricional, educación alimentaria, manejo del peso</td><td>G1–G3</td></tr>
+          <tr><td><strong>Psicólogo/a</strong></td><td>Salud mental, intervención motivacional, apoyo en conductas</td><td>G2–G3</td></tr>
+          <tr><td><strong>Trabajador/a Social</strong></td><td>Diagnóstico social, red de apoyo, intersectorialidad</td><td>G2–G3</td></tr>
+          <tr><td><strong>Kinesiólogo/a</strong></td><td>Rehabilitación funcional, prescripción de ejercicio</td><td>G2–G3</td></tr>
+          <tr><td><strong>TENS / Auxiliar</strong></td><td>Toma de exámenes, control de signos vitales, apoyo visita domiciliaria</td><td>G3</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div id="rp3" class="rp">
+      <div class="info-box info-teal"><strong>Índice de Barthel</strong>: evalúa 10 actividades básicas de la vida diaria (AVD). Puntaje 0–100. Se usa en adultos mayores y pacientes con limitación funcional.</div>
+      <div class="tw"><table>
+        <thead><tr><th>Puntaje Barthel</th><th>Nivel de dependencia</th><th>Clasificación ECICEP</th></tr></thead>
+        <tbody>
+          <tr><td>100</td><td>Independiente total</td><td><span class="tag tag-g0">G0</span>/<span class="tag tag-g1">G1</span></td></tr>
+          <tr><td>91–99</td><td>Independiente con limitación mínima</td><td><span class="tag tag-g1">G1</span></td></tr>
+          <tr><td>61–90</td><td>Dependencia leve</td><td><span class="tag tag-g2">G2</span></td></tr>
+          <tr><td>21–60</td><td>Dependencia moderada</td><td><span class="tag tag-g2">G2</span>/<span class="tag tag-g3">G3</span></td></tr>
+          <tr><td>0–20</td><td>Dependencia total</td><td><span class="tag tag-g3">G3</span></td></tr>
+        </tbody>
+      </table></div>
+      <div class="info-box info-gold" style="margin-top:16px"><strong>EFAM</strong> (Evaluación Funcional del Adulto Mayor): instrumento chileno de tamizaje funcional para AM. EFAM A: sin riesgo de dependencia. EFAM B: riesgo de dependencia → profundizar evaluación, clasificar G2–G3.</div>
+    </div>
+
+    <div id="rp4" class="rp">
+      <div class="info-box info-teal">La clasificación ECICEP y el riesgo cardiovascular Framingham son <strong>complementarios</strong> dentro del PSCV. Un paciente puede tener riesgo CV alto (Framingham ≥20%) y ser clasificado G2 o G3 según su complejidad global.</div>
+      <div class="tw"><table>
+        <thead><tr><th>Riesgo CV Framingham</th><th>Clasificación ECICEP sugerida</th><th>Plan integrado</th></tr></thead>
+        <tbody>
+          <tr><td>Bajo (&lt;10%)</td><td><span class="tag tag-g0">G0</span>/<span class="tag tag-g1">G1</span></td><td>Control anual–semestral, educación FRCV</td></tr>
+          <tr><td>Moderado (10–19%)</td><td><span class="tag tag-g1">G1</span>/<span class="tag tag-g2">G2</span></td><td>Control semestral–trimestral, farmacoterapia si aplica</td></tr>
+          <tr><td>Alto (20–29%)</td><td><span class="tag tag-g2">G2</span></td><td>Control trimestral, inicio de tratamiento, derivación</td></tr>
+          <tr><td>Muy alto (≥30%)</td><td><span class="tag tag-g3">G3</span></td><td>Control mensual, gestión de caso, manejo multidisciplinario</td></tr>
+          <tr><td>ECV establecida (IAM/ACV previo)</td><td><span class="tag tag-g3">G3</span> (automático)</td><td>Gestión de caso, visita domiciliaria, prevención secundaria</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer>Material elaborado por: Victoria Catalina Tiznado Jara</footer>
+
+<script>
+// ── NAVEGACIÓN ──────────────────────────────────
+function showSec(id,btn){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.np').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='juego'&&!juegoIniciado) iniciarJuego();
+}
+function showRp(id,btn){
+  document.querySelectorAll('.rp').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── HERRAMIENTA ─────────────────────────────────
+function clasificar(){
+  const vals=[
+    parseInt(document.getElementById('h-cronicas').value),
+    parseInt(document.getElementById('h-frcv').value),
+    parseInt(document.getElementById('h-func').value),
+    parseInt(document.getElementById('h-mental').value),
+    parseInt(document.getElementById('h-social').value),
+    parseInt(document.getElementById('h-conductas').value)
+  ];
+  const max=Math.max(...vals);
+  const sum=vals.reduce((a,b)=>a+b,0);
+
+  let grupo,nom,cls,conds;
+  if(max===0){
+    grupo='G0 – Sin Riesgo';nom='Persona sin riesgo identificado';cls='tr-g0';
+    conds=['Control preventivo anual','Educación en estilos de vida saludable','Tamizaje periódico de FRCV','Vacunación según programa','Registro en SOME y ficha familiar'];
+  } else if(max===1||(max===2&&sum<=3)){
+    grupo='G1 – Riesgo Leve';nom='Requiere consejería y plan de cuidados básico';cls='tr-g1';
+    conds=['Control semestral en APS','Plan de cuidados básico individualizado','Consejería sobre factores de riesgo modificables','Seguimiento de conductas de salud (ECICEP)','Derivación a nutricionista si corresponde','Registro y actualización en ficha clínica'];
+  } else if(max===2||(max===3&&sum<=5)){
+    grupo='G2 – Riesgo Moderado';nom='Requiere plan de cuidados activo y coordinación';cls='tr-g2';
+    conds=['Control trimestral','Plan de cuidados activo con metas medibles','Gestión y coordinación de tratamientos crónicos','Intervención motivacional según etapa de cambio','Coordinación con nivel secundario si aplica','Evaluación de funcionalidad (Barthel/EFAM) si AM','Participación de equipo multidisciplinario'];
+  } else {
+    grupo='G3 – Riesgo Alto';nom='Requiere gestión de caso y manejo multidisciplinario';cls='tr-g3';
+    conds=['Control mensual o visita domiciliaria','Designación de gestor de caso (enfermera/o)','Plan de cuidados integral y personalizado','Coordinación intersectorial (salud, social, educación)','Evaluación sociofamiliar y red de apoyo','Cuidados paliativos si corresponde (Ley 21.375)','Seguimiento activo por todo el equipo de salud'];
+  }
+
+  const box=document.getElementById('tool-result');
+  box.className='tool-result '+cls;
+  box.style.display='block';
+  document.getElementById('tr-cat').textContent=grupo;
+  document.getElementById('tr-nom').textContent=nom;
+  document.getElementById('tr-sub').textContent=`Puntaje máximo por dimensión: ${max}/3 · Suma total: ${sum}/18`;
+  document.getElementById('tr-cond').innerHTML=conds.map(c=>`<li>✔ ${c}</li>`).join('');
+  box.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function resetHerr(){
+  ['h-cronicas','h-frcv','h-func','h-mental','h-social','h-conductas']
+    .forEach(id=>document.getElementById(id).selectedIndex=0);
+  const box=document.getElementById('tool-result');
+  box.style.display='none'; box.className='tool-result';
+}
+
+// ── 20 CASOS CLÍNICOS G0–G3 ─────────────────────
+const casos=[
+  {
+    num:1,tipo:"Persona sana – Control preventivo",
+    historia:"Don Alejandro, 45 años, sexo masculino. Acude a control de salud preventivo. No tiene enfermedades crónicas. No fuma, no consume alcohol, realiza ciclismo 4 veces a la semana. IMC 23. PA 118/76. Glicemia en ayuno: 90 mg/dL. Colesterol total: 178 mg/dL. Vive con su familia, con buen apoyo. Sin antecedentes de ECV. Refiere sentirse bien.",
+    chips:["Sin enfermedades crónicas","Sin FRCV","Activo físicamente","IMC 23 normal","Buena red de apoyo"],
+    pregunta:"¿Cuál es la clasificación ECICEP de Don Alejandro?",
+    opciones:["G0 – Sin riesgo, control preventivo anual","G1 – Riesgo leve, control semestral","G2 – Riesgo moderado, control trimestral","G3 – Riesgo alto, gestión de caso"],
+    correcta:0,
+    feedback:"Don Alejandro no tiene enfermedades crónicas, ningún FRCV, conductas de vida saludables, funcionalidad conservada y buen contexto sociofamiliar → Clasificación G0 (Sin Riesgo). Corresponde control preventivo anual, educación en estilos de vida y tamizaje periódico. Es el perfil ideal que ECICEP busca mantener."
+  },
+  {
+    num:2,tipo:"HTA compensada – Riesgo leve",
+    historia:"Señora Luisa, 52 años. Hipertensa hace 3 años, en tratamiento con enalapril 10 mg/día. PA actual: 128/82 mmHg. Sin otras enfermedades. IMC 26. Sedentaria ('no hago ejercicio pero tampoco soy obesa'). Alimentación con exceso de sal. No fuma. No consume alcohol. Funcionalidad conservada. Vive con su marido e hijos, red de apoyo adecuada.",
+    chips:["HTA compensada (1 crónica)","Sedentaria","Alimentación con exceso de sal","IMC 26 (sobrepeso)","Buena red de apoyo"],
+    pregunta:"¿En qué grupo ECICEP clasifica Luisa?",
+    opciones:["G0 – Sin riesgo","G1 – Riesgo leve, 1 crónica + 2 conductas de riesgo","G2 – Riesgo moderado, HTA descompensada","G3 – Riesgo alto, múltiples condiciones"],
+    correcta:1,
+    feedback:"Luisa tiene 1 condición crónica compensada (HTA) + 2 conductas de riesgo (sedentarismo, mala alimentación) y 1 FRCV (sobrepeso) → Clasificación G1 (Riesgo Leve). Control semestral, plan de cuidados básico: consejería en actividad física, reducción de sal, control de peso. No hay descompensación ni daño de órgano diana."
+  },
+  {
+    num:3,tipo:"DM2 + HTA + múltiples FRCV",
+    historia:"Don Roberto, 60 años. DM2 hace 8 años (HbA1c 8.9% – descompensada). HTA. PA: 158/96 mmHg. Fumador activo (10 cig/día). Sedentario. IMC 32 (obesidad). Colesterol total: 238 mg/dL. Sin ECV establecida. Funcionalidad conservada. Vive solo, refiere que 'nadie lo ayuda con los remedios'.",
+    chips:["DM2 descompensada","HTA descompensada","Fumador","IMC 32 (obesidad)","Vive solo – red limitada"],
+    pregunta:"¿Cuál es la clasificación ECICEP de Don Roberto?",
+    opciones:["G0 – Sin riesgo","G1 – Riesgo leve","G2 – Riesgo moderado, plan de cuidados activo","G3 – Riesgo alto, gestión de caso"],
+    correcta:2,
+    feedback:"Roberto tiene 2 condiciones crónicas descompensadas (DM2 + HTA) + múltiples FRCV (tabaco, obesidad, dislipidemia, sedentarismo) + aislamiento social → Clasificación G2 (Riesgo Moderado). Control trimestral, plan de cuidados activo: ajuste farmacológico, intervención motivacional para tabaco y ejercicio, derivación a nutricionista, evaluación de red de apoyo. El aislamiento social podría elevar a G3 si se confirma vulnerabilidad severa."
+  },
+  {
+    num:4,tipo:"Adulto mayor dependiente",
+    historia:"Doña Carmen, 82 años. Postrada por ACV isquémico hace 1 año. Índice de Barthel: 35 (dependencia moderada). Tiene DM2, HTA e insuficiencia cardíaca (IC). Su hija la cuida sola en casa, sin apoyo del sistema de salud hasta ahora. La hija refiere agotamiento. Sin escara actualmente. Recibe 4 medicamentos.",
+    chips:["Barthel 35 (dependencia moderada)","3 enfermedades crónicas","ACV previo","Cuidadora única agotada","Sin apoyo previo del sistema"],
+    pregunta:"¿Cuál es la clasificación ECICEP de Doña Carmen?",
+    opciones:["G1 – Riesgo leve por edad avanzada","G2 – Riesgo moderado, varias crónicas","G3 – Riesgo alto, dependencia + cuidadora agotada","G0 – Estable porque no tiene escaras"],
+    correcta:2,
+    feedback:"Doña Carmen tiene ECV establecida (ACV previo) + 3 crónicas descompensadas + dependencia moderada (Barthel 35) + cuidadora única con agotamiento (vulnerabilidad sociofamiliar severa) → Clasificación G3 (Riesgo Alto). Requiere gestión de caso, visita domiciliaria, plan de cuidados del cuidador, coordinación con trabajo social para red de apoyo, evaluación de escaras y úlceras, revisión polifarmacia."
+  },
+  {
+    num:5,tipo:"Joven sin factores de riesgo",
+    historia:"Valentina, 24 años. Acude a control ginecológico preventivo. No tiene enfermedades. No fuma. Consume alcohol solo en eventos sociales (AUDIT-C: 1). Practica yoga 3 veces por semana. IMC 21. Sin antecedentes familiares relevantes. Trabaja, estudia y tiene buenas redes de apoyo. Sin síntomas de salud mental.",
+    chips:["Sin enfermedades","Sin FRCV","Activa (yoga 3x/sem)","IMC 21","AUDIT-C 1 (bajo riesgo)"],
+    pregunta:"¿Cuál es la clasificación ECICEP de Valentina?",
+    opciones:["G0 – Sin riesgo, control preventivo anual","G1 – Riesgo leve por consumo de alcohol","G2 – Riesgo moderado","G3 – Riesgo alto"],
+    correcta:0,
+    feedback:"Valentina no tiene ninguna condición crónica, FRCV, alteración de salud mental ni vulnerabilidad social. Sus conductas de salud son saludables. AUDIT-C 1 está muy por debajo del punto de corte → Clasificación G0. Control preventivo anual, tamizaje y educación. Es el perfil ideal para la población joven."
+  },
+  {
+    num:6,tipo:"EPOC severo + dependencia",
+    historia:"Don Sergio, 71 años. EPOC GOLD IV (muy severo). Usa oxígeno domiciliario 16 h/día. Ex-fumador (dejó hace 2 años por indicación médica). DM2 compensada. Barthel: 55 (dependencia moderada). PHQ-9: 18 (depresión moderada-grave). Vive con su esposa de 75 años, quien tiene artrosis severa y no puede ayudarlo bien. Ingresos económicos bajos.",
+    chips:["EPOC GOLD IV","O2 domiciliario","Barthel 55","PHQ-9 18 (depresión)","Vulnerabilidad sociofamiliar severa"],
+    pregunta:"¿Cuál es la clasificación ECICEP correcta para Don Sergio?",
+    opciones:["G1 – Solo tiene EPOC y DM2","G2 – Riesgo moderado por 2 crónicas","G3 – Riesgo alto, múltiples criterios de máxima complejidad","G0 – Dejó de fumar, entonces bajó su riesgo"],
+    correcta:2,
+    feedback:"Don Sergio tiene EPOC severo (criterio directo G3) + dependencia moderada (Barthel 55) + depresión moderada-grave (PHQ-9 18) + cuidador con limitación física + vulnerabilidad económica → Clasificación G3 (Riesgo Alto). Gestión de caso por enfermera, visita domiciliaria, evaluación psiquiátrica, apoyo al cuidador, coordinación con trabajo social para subsidios y red de apoyo. Evaluación de cuidados paliativos dada la severidad del EPOC."
+  },
+  {
+    num:7,tipo:"Control crónico compensado – 2 condiciones",
+    historia:"Señora Patricia, 58 años. DM2 (HbA1c 7.1% – compensada) e HTA (PA 126/80 en tratamiento). IMC 27. No fuma. AUDIT-C: 0. Camina 30 minutos, 4 días a la semana. Sin daño de órgano diana. Funcionalidad conservada. Vive con su marido. Control regular en CESFAM desde hace 5 años.",
+    chips:["DM2 compensada (HbA1c 7.1%)","HTA compensada","IMC 27 (sobrepeso)","Activa (caminata regular)","Sin daño órgano diana"],
+    pregunta:"¿Cuál es la clasificación ECICEP de Patricia?",
+    opciones:["G0 – Sin riesgo","G1 – 1 crónica compensada","G2 – 2 crónicas compensadas, plan activo","G3 – DM2 + HTA siempre es G3"],
+    correcta:2,
+    feedback:"Patricia tiene 2 condiciones crónicas compensadas (DM2 + HTA) → Clasificación G2 (Riesgo Moderado). Aunque ambas están bien controladas, la presencia de 2 crónicas requiere un plan de cuidados activo y control trimestral para mantener la compensación, prevenir descompensaciones y monitorear daño de órgano diana. El sobrepeso es un FRCV adicional que refuerza el G2."
+  },
+  {
+    num:8,tipo:"Salud mental + aislamiento social",
+    historia:"Don Mauricio, 40 años. Diagnóstico de depresión mayor hace 1 año, en tratamiento con sertralina. PHQ-9 actual: 16 (depresión moderada activa). Desempleado. Vive solo, sin red de apoyo ('no tengo familia aquí'). Sedentario. IMC 24. Sin enfermedades crónicas somáticas. No fuma ni consume alcohol. Refiere ideas de inutilidad pero niega ideación suicida activa.",
+    chips:["Depresión mayor activa (PHQ-9 16)","Desempleado","Vive solo – sin red","Sedentario","Sin crónicas somáticas"],
+    pregunta:"¿En qué grupo ECICEP clasifica Don Mauricio?",
+    opciones:["G0 – Sin enfermedades físicas","G1 – Solo depresión leve","G2 – Trastorno mental activo + vulnerabilidad social","G3 – Riesgo alto por ideación de inutilidad"],
+    correcta:2,
+    feedback:"Mauricio tiene trastorno mental activo en tratamiento (depresión moderada, PHQ-9 16) + vulnerabilidad social severa (desempleo, aislamiento, sin red) + sedentarismo → Clasificación G2 (Riesgo Moderado). La combinación de salud mental + contexto social eleva la complejidad. Plan de cuidados activo: seguimiento mensual por enfermería, coordinación con psicología, trabajo social para red de apoyo y apoyo social. Si aparece ideación suicida activa → reevaluar G3."
+  },
+  {
+    num:9,tipo:"Adulto mayor frágil – EFAM B",
+    historia:"Doña Elsa, 78 años. Vive sola. EFAM: grupo B (riesgo de dependencia). Tiene HTA compensada y artrosis severa de rodillas. Se ha caído 2 veces en los últimos 6 meses. IMC 29. Sedentaria por el dolor. No fuma. PHQ-2 positivo (deriva a PHQ-9 pendiente). Refiere que 'a veces se olvida de tomar los remedios'. Red de apoyo: solo una vecina.",
+    chips:["EFAM B (riesgo dependencia)","2 caídas en 6 meses","HTA + artrosis","PHQ-2 positivo","Vive sola – red limitada"],
+    pregunta:"¿Cuál es la clasificación ECICEP de Doña Elsa?",
+    opciones:["G0 – HTA compensada, sin mayor problema","G1 – Solo 1 crónica activa","G2 – EFAM B + caídas + vulnerabilidad social","G3 – Automáticamente G3 por edad ≥75 años"],
+    correcta:2,
+    feedback:"Doña Elsa tiene EFAM B (riesgo de dependencia → G2 por funcionalidad) + antecedente de caídas (factor de fragilidad) + HTA + artrosis + PHQ-2 positivo + aislamiento social → Clasificación G2 (Riesgo Moderado). Control trimestral, evaluación completa de caídas, completar PHQ-9, evaluación de funcionalidad con Barthel, consejería de seguridad en el hogar, coordinación con kinesiología. La edad sola no determina el grupo; la complejidad sí. Si PHQ-9 es alto o se confirma mayor dependencia → G3."
+  },
+  {
+    num:10,tipo:"ECV establecida – IAM previo",
+    historia:"Don Fernando, 63 años. IAM hace 6 meses. Actualmente con angioplastia y stent coronario. En tratamiento con AAS, clopidogrel, atorvastatina, metoprolol y enalapril. DM2 con HbA1c 7.8%. Funcionalidad conservada. Vive con su señora. Actualmente sedentario por miedo a hacer ejercicio. PHQ-2 negativo. Red de apoyo adecuada.",
+    chips:["IAM previo (ECV establecida)","Stent coronario","DM2 (HbA1c 7.8%)","5 fármacos diarios","Sedentario post-IAM"],
+    pregunta:"¿En qué grupo ECICEP clasifica Don Fernando?",
+    opciones:["G1 – IAM ya fue tratado con stent, está estable","G2 – 2 crónicas (IAM + DM2)","G3 – ECV establecida = criterio directo G3","G0 – Funcionalidad conservada, sin dependencia"],
+    correcta:2,
+    feedback:"ECV establecida (IAM previo con revascularización) es un criterio directo de Clasificación G3 (Riesgo Alto), independientemente del nivel funcional actual. Además tiene DM2 en curso y polifarmacia. Requiere gestión de caso, plan de rehabilitación cardiovascular, coordinación con cardiología, prevención secundaria estricta, abordaje del miedo al ejercicio (intervención motivacional), educación en adherencia. Control mensual o según evolución."
+  },
+  {
+    num:11,tipo:"Joven con FRCV modificables",
+    historia:"Rodrigo, 32 años. Fumador activo (15 cig/día). Sedentario. IMC 28. Alimentación con exceso de sodio y grasas. PA: 132/84 mmHg (prehipertensión, sin diagnóstico formal). Colesterol total: 205 mg/dL. Sin enfermedades crónicas diagnosticadas. Sin síntomas de salud mental. Buen apoyo familiar.",
+    chips:["Fumador activo","Sedentario","IMC 28 (sobrepeso)","PA prehipertensiva","Col. 205 mg/dL"],
+    pregunta:"¿Cuál es la clasificación ECICEP de Rodrigo?",
+    opciones:["G0 – No tiene diagnósticos crónicos","G1 – Riesgo leve, múltiples FRCV modificables","G2 – FRCV severos con daño de órgano diana","G3 – Riesgo alto por tabaquismo joven"],
+    correcta:1,
+    feedback:"Rodrigo no tiene enfermedades crónicas diagnosticadas pero sí múltiples FRCV modificables: tabaquismo, sedentarismo, sobrepeso, prehipertensión y dislipidemia leve → Clasificación G1 (Riesgo Leve). Control semestral, plan de cuidados con intervención en conductas de salud: consejería de cesación tabáquica (Test Fagerström), prescripción de actividad física, derivación a nutricionista, monitoreo de PA. Si no responde y FRCV progresan → reevaluar G2."
+  },
+  {
+    num:12,tipo:"Embarazo + condición crónica",
+    historia:"Señora Andrea, 30 años, cursando 20 semanas de embarazo. DM gestacional diagnosticada hace 2 semanas, en manejo con dieta. Glicemia en ayuno: 104 mg/dL. No fuma. AUDIT-C: 0. Sin otras enfermedades. Funcionalidad conservada. Primigesta. Vive con su pareja, buena red de apoyo. Algo ansiosa por el diagnóstico ('nunca había tenido nada').",
+    chips:["DM gestacional","20 semanas de embarazo","Manejada con dieta","Ansiosa por diagnóstico nuevo","Buena red de apoyo"],
+    pregunta:"¿Cuál es la clasificación ECICEP de Andrea durante el embarazo?",
+    opciones:["G0 – Sin historia de DM antes del embarazo","G1 – 1 condición crónica (DM gestacional) en control","G2 – El embarazo con DM es automáticamente G2","G3 – Todo embarazo es G3 por definición"],
+    correcta:1,
+    feedback:"Andrea tiene 1 condición crónica activa (DM gestacional) en manejo → Clasificación G1 (Riesgo Leve). El embarazo per se no determina el grupo; la complejidad clínica sí. Control semestral o según protocolo obstétrico, educación sobre DM gestacional, plan nutricional con nutricionista, monitoreo glicémico domiciliario, apoyo psicológico para la ansiedad. Si la DM gestacional se descompensa o aparecen complicaciones → reevaluar G2."
+  },
+  {
+    num:13,tipo:"Polifarmacia + adulto mayor",
+    historia:"Don Héctor, 76 años. HTA, DM2, IC compensada, dislipidemia y artrosis. Toma 8 medicamentos diarios. Barthel: 75 (dependencia leve). EFAM B. PHQ-9: 10 (depresión leve). Vive con su esposa, quien también es mayor. Sin caídas recientes. Asiste a control regular. Colesterol LDL controlado. PA 134/84.",
+    chips:["5 enfermedades crónicas compensadas","8 medicamentos/día","Barthel 75 (dep. leve)","PHQ-9 10 (depresión leve)","EFAM B"],
+    pregunta:"¿Cuál es la clasificación ECICEP de Don Héctor?",
+    opciones:["G1 – Todas sus enfermedades están compensadas","G2 – Múltiples crónicas + dependencia leve + depresión","G3 – Automáticamente G3 por 5 enfermedades","G0 – Asiste a control y está compensado"],
+    correcta:1,
+    feedback:"Héctor tiene 5 condiciones crónicas (aunque compensadas), polifarmacia (riesgo de interacciones), dependencia leve (Barthel 75, EFAM B) y depresión leve → Clasificación G2 (Riesgo Moderado). La combinación de múltiples crónicas + inicio de dependencia funcional + salud mental determina G2. Plan activo trimestral: revisión de polifarmacia con médico, evaluación de Barthel en cada control, manejo de depresión, apoyo al cuidador. Reevaluar G3 si se descompensa o la dependencia aumenta."
+  },
+  {
+    num:14,tipo:"Enfermedad terminal – Cuidados paliativos",
+    historia:"Doña Mercedes, 69 años. Cáncer de ovario etapa IV con metástasis hepáticas. En cuidados paliativos bajo Ley 21.375. Barthel: 30 (dependencia moderada-severa). Dolor crónico moderado. Vive con su hija y yerno. Anímicamente frágil pero con apoyo espiritual de su comunidad religiosa. Sin ECV ni DM.",
+    chips:["Cáncer etapa IV – Paliativa","Barthel 30 (dependencia severa)","Dolor crónico","Apoyo familiar y espiritual","Ley 21.375 Cuidados Paliativos"],
+    pregunta:"¿Cuál es la clasificación ECICEP de Doña Mercedes?",
+    opciones:["G2 – Solo tiene cáncer, sin enfermedades crónicas adicionales","G1 – Está en su casa, no hospitalizada","G3 – Enfermedad terminal + dependencia severa + dolor crónico","G0 – Tiene apoyo familiar y espiritual"],
+    correcta:2,
+    feedback:"Doña Mercedes tiene enfermedad terminal (cáncer etapa IV) + dependencia moderada-severa (Barthel 30) + dolor crónico = múltiples criterios de G3. La presencia de cuidados paliativos activos es coherente con G3. Gestión de caso, visita domiciliaria regular, coordinación del plan paliativo (control del dolor, síntomas, apoyo emocional y espiritual), apoyo al cuidador familiar, articulación con COSAM si corresponde. El apoyo familiar y espiritual es un factor protector que debe potenciarse."
+  },
+  {
+    num:15,tipo:"Hipertensión descompensada",
+    historia:"Señora Gloria, 55 años. Hipertensa hace 10 años. Llegó a urgencias del CESFAM con PA 178/110 mmHg. Refiere que lleva 2 semanas sin tomar sus medicamentos porque 'se le acabaron y no había pedido hora'. Sin otras enfermedades. Funcionalidad conservada. No fuma. IMC 25. Buen apoyo familiar.",
+    chips:["HTA descompensada (PA 178/110)","Sin adherencia farmacológica (2 semanas)","1 sola crónica","Funcionalidad conservada","Acceso a CESFAM activo"],
+    pregunta:"¿Cuál es la clasificación ECICEP en este momento para Gloria?",
+    opciones:["G0 – No tiene otras enfermedades","G1 – HTA como única crónica, solo es puntual","G2 – HTA descompensada + falla de adherencia = plan de cuidados activo","G3 – Toda crisis hipertensiva es G3"],
+    correcta:2,
+    feedback:"Gloria tiene HTA descompensada (PA 178/110) secundaria a no adherencia → Clasificación G2 (Riesgo Moderado). La descompensación de una crónica, aunque sea única, eleva el grupo a G2. Plan de cuidados activo: normalizar PA en urgencias, reiniciar medicamento, educación en adherencia, establecer sistema de recordatorio/retiro oportuno de medicamentos, control en 1 semana y luego trimestral. No es G3 porque la crisis tiene causa evidente y reversible, sin daño orgánico documentado."
+  },
+  {
+    num:16,tipo:"Persona con discapacidad + contexto social",
+    historia:"Don Pedro, 38 años. Secuela de accidente laboral hace 3 años: paraplejia incompleta. Barthel: 65 (dependencia leve). Sin enfermedades crónicas adicionales. PHQ-9: 7 (depresión leve). Desempleado desde el accidente. Vive con sus padres adultos mayores. Recibe pensión de invalidez. Sin FRCV. No fuma. No consume alcohol.",
+    chips:["Paraplejia incompleta (secuela)","Barthel 65 (dep. leve)","PHQ-9 7 (depresión leve)","Desempleado – pensión invalidez","Vive con padres AM"],
+    pregunta:"¿Cuál es la clasificación ECICEP de Don Pedro?",
+    opciones:["G0 – Joven y sin enfermedades crónicas","G1 – Solo tiene discapacidad leve","G2 – Dependencia leve + depresión + vulnerabilidad social","G3 – Toda discapacidad física es automáticamente G3"],
+    correcta:2,
+    feedback:"Pedro tiene dependencia funcional leve (Barthel 65) + depresión leve activa (PHQ-9 7) + vulnerabilidad social (desempleo, dependencia económica, cuidado por padres AM) → Clasificación G2 (Riesgo Moderado). Plan trimestral: continuidad de rehabilitación kinésica, manejo de depresión, trabajo social para apoyo laboral y social, evaluación de cuidadores (padres AM también son grupo de riesgo). Reevaluar si la depresión se agrava o si los padres pierden capacidad de cuidado → G3."
+  },
+  {
+    num:17,tipo:"DM2 con complicaciones – daño órgano diana",
+    historia:"Señora Roxana, 62 años. DM2 hace 15 años. HbA1c 9.5% (descompensada). Tiene retinopatía diabética no proliferativa y microalbuminuria 55 mg/g creatinina. HTA mal controlada: PA 162/98. Fumadora (5 cig/día, Fagerström 4). IMC 34. Sin dependencia funcional. Vive con su marido. PHQ-2 negativo.",
+    chips:["DM2 descompensada (HbA1c 9.5%)","Retinopatía diabética","Microalbuminuria 55 mg/g","HTA mal controlada","Fumadora (Fagerström 4)"],
+    pregunta:"¿Cuál es la clasificación ECICEP de Roxana?",
+    opciones:["G1 – Funcionalidad conservada, no hay dependencia","G2 – 2 crónicas + daño de órgano diana","G3 – DM2 con daño de órgano diana = criterio directo G3","G0 – La retinopatía es leve, no es urgente"],
+    correcta:2,
+    feedback:"Roxana tiene DM2 descompensada + HTA descompensada + daño de órgano diana (retinopatía + microalbuminuria = nefropatía incipiente) + tabaquismo con dependencia moderada + obesidad → Clasificación G3 (Riesgo Alto). El daño de órgano diana en contexto de mal control metabólico es criterio para G3. Gestión de caso, derivación a oftalmología y nefrología, ajuste farmacológico urgente, intervención para tabaquismo (PCIC), plan nutricional, control mensual."
+  },
+  {
+    num:18,tipo:"Persona mayor – sin riesgo",
+    historia:"Don Alberto, 70 años. Pensionado. Acude a control preventivo. No tiene enfermedades crónicas diagnosticadas. PA 122/78. Colesterol total: 182 mg/dL. Glicemia: 92 mg/dL. Camina 1 hora diaria. IMC 23. No fuma, no consume alcohol. Vive con su señora, buena relación. PHQ-2 negativo. EFAM A (sin riesgo de dependencia). Barthel 100.",
+    chips:["70 años sin enfermedades","PA normal, glicemia normal","EFAM A","Barthel 100","Activo – camina 1h/día"],
+    pregunta:"¿Cuál es la clasificación ECICEP de Don Alberto?",
+    opciones:["G3 – Todo adulto mayor ≥70 años es G3 por definición","G2 – La edad ≥65 es criterio de riesgo moderado","G1 – Riesgo leve por ser adulto mayor","G0 – Sin riesgo, control preventivo anual"],
+    correcta:3,
+    feedback:"Don Alberto no tiene enfermedades crónicas, mantiene conductas de vida saludables, tiene funcionalidad conservada (Barthel 100, EFAM A), sin alteraciones de salud mental ni vulnerabilidad social → Clasificación G0. Punto clave: la edad avanzada sola NO determina el grupo ECICEP. Lo que determina la clasificación es la complejidad real (enfermedades, funcionalidad, contexto). Control preventivo anual con tamizaje de FRCV, evaluación funcional periódica y fomento de conductas saludables."
+  },
+  {
+    num:19,tipo:"Situación de calle – vulnerabilidad extrema",
+    historia:"Manuel, 45 años. Sin domicilio fijo (situación de calle). Alcohol: AUDIT 28 puntos (dependencia). Fuma 20 cig/día (Fagerström 7). DM2 sin tratamiento (glicemia 310 mg/dL). IMC 19 (desnutrición). PHQ-9: 22 (depresión grave). Sin red de apoyo. Ha tenido 3 hospitalizaciones por descompensación diabética en el último año.",
+    chips:["Situación de calle","AUDIT 28 (dependencia alcohólica)","Fagerström 7 (alta dependencia)","DM2 sin tratamiento (G: 310)","PHQ-9 22 (depresión grave)"],
+    pregunta:"¿Cuál es la clasificación ECICEP de Manuel?",
+    opciones:["G1 – Solo tiene DM2 y conductas de riesgo","G2 – Múltiples FRCV, plan activo","G3 – Máxima complejidad: dependencias + vulnerabilidad extrema + DM descompensada","G0 – Joven y sin diagnósticos previos formales"],
+    correcta:2,
+    feedback:"Manuel presenta la máxima complejidad ECICEP: dependencia a alcohol (AUDIT 28) + dependencia nicotínica (Fagerström 7) + DM2 sin tratamiento descompensada + desnutrición + depresión grave (PHQ-9 22) + vulnerabilidad social extrema (situación de calle, sin red) + hospitalizaciones recurrentes → Clasificación G3. Gestión de caso urgente, trabajo intersectorial (COSAM, trabajo social, municipio, ONG), derivación a programa de alcohol y drogas, inicio de tratamiento DM2, evaluación psiquiátrica, plan de cuidados integral. Es el caso más complejo y que más recursos requiere."
+  },
+  {
+    num:20,tipo:"Caso integrador – reclasificación",
+    historia:"Señora Beatriz, 65 años. Hace 1 año era clasificada G1 (HTA compensada, sin mayor complejidad). Hoy regresa al CESFAM con: Barthel 80 (cayó y tiene dolor de cadera), PHQ-9 14 (depresión moderada nueva), PA 155/96 (descompensada), HbA1c 8.1% (DM2 recién diagnosticada). Su marido falleció hace 3 meses. Vive sola. Dice: 'no me importa nada desde que murió él'.",
+    chips:["Antes G1 – ahora más compleja","Barthel 80 (cayó)","PHQ-9 14 (depresión nueva)","HTA descompensada + DM2 nueva","Duelo reciente – vive sola"],
+    pregunta:"¿Cómo debe reclasificarse Beatriz según su situación actual?",
+    opciones:["Mantener G1 – su situación es temporal por el duelo","G0 – Fue siempre saludable","G2 – Reclasificar por mayor complejidad: 2 crónicas + dependencia leve + depresión + aislamiento","G3 – El duelo con depresión siempre es G3"],
+    correcta:2,
+    feedback:"Beatriz debe reclasificarse de G1 a G2. Ahora tiene: 2 crónicas (HTA descompensada + DM2 nueva) + dependencia leve tras la caída (Barthel 80) + depresión moderada (PHQ-9 14) + vulnerabilidad social (duelo reciente, vive sola) → Clasificación G2 (Riesgo Moderado). Punto clave de ECICEP: la clasificación debe actualizarse con cada cambio clínico o social significativo. Plan de cuidados activo trimestral: manejo de duelo, inicio de tratamiento DM2, ajuste antihipertensivo, evaluación de caída (kinesiología), apoyo social. La frase 'no me importa nada' requiere explorar ideación suicida."
+  }
+];
+
+// ── ESTADO JUEGO ─────────────────────────────────
+let casoIdx=0, correctas=0, respondido=false, juegoIniciado=false;
+
+function iniciarJuego(){
+  juegoIniciado=true; casoIdx=0; correctas=0; respondido=false;
+  document.getElementById('juego-final').style.display='none';
+  document.getElementById('juego-activo').style.display='block';
+  actualizarScore(); renderCaso();
+}
+
+function confirmarReset(){
+  if(confirm('¿Deseas reiniciar el juego desde el caso 1? Se perderá tu progreso actual.'))
+    iniciarJuego();
+}
+
+function renderCaso(){
+  if(casoIdx>=casos.length){mostrarFinal();return;}
+  respondido=false;
+  const c=casos[casoIdx];
+  const L=['A','B','C','D'];
+  document.getElementById('caso-container').innerHTML=`
+    <div class="caso-wrap">
+      <div class="caso-hdr">
+        <span class="cn">Caso ${c.num} de ${casos.length}</span>
+        <span class="tipo-badge">${c.tipo}</span>
+      </div>
+      <div class="caso-body">
+        <div class="historia">${c.historia}</div>
+        <div class="chips">${c.chips.map(ch=>`<span class="chip">${ch}</span>`).join('')}</div>
+        <div class="pregunta">❓ ${c.pregunta}</div>
+        <div class="opts">
+          ${c.opciones.map((op,i)=>`
+            <button class="opt" onclick="responder(${i})" id="opt-${i}">
+              <span class="opt-l">${L[i]}</span><span>${op}</span>
+            </button>`).join('')}
+        </div>
+        <div class="feedback" id="feedback"></div>
+      </div>
+      <div class="caso-footer">
+        <span class="hint" id="hint">Selecciona el grupo G0, G1, G2 o G3 correcto</span>
+        <button class="btn-sig" id="btn-sig" onclick="siguiente()">
+          ${casoIdx<casos.length-1?'Siguiente caso →':'Ver resultado final →'}
+        </button>
+      </div>
+    </div>`;
+  actualizarProgress();
+}
+
+function responder(idx){
+  if(respondido)return;
+  respondido=true;
+  const c=casos[casoIdx];
+  const L=['A','B','C','D'];
+  c.opciones.forEach((_,i)=>{
+    const b=document.getElementById('opt-'+i);
+    b.disabled=true;
+    if(i===c.correcta)b.classList.add('ok');
+    if(i===idx&&idx!==c.correcta)b.classList.add('err');
+  });
+  const ok=idx===c.correcta;
+  if(ok)correctas++;
+  const fb=document.getElementById('feedback');
+  fb.className='feedback '+(ok?'ok':'err');
+  fb.style.display='block';
+  fb.innerHTML=`<strong>${ok?'✅ ¡Correcto!':'❌ Incorrecto – la respuesta era: '+L[c.correcta]+') '+c.opciones[c.correcta]}</strong><span class="expl">${c.feedback}</span>`;
+  document.getElementById('btn-sig').style.display='inline-block';
+  document.getElementById('hint').textContent=ok?'¡Muy bien! Continúa con el siguiente caso.':'Revisa el fundamento y continúa.';
+  actualizarScore();
+}
+
+function siguiente(){casoIdx++;renderCaso();}
+
+function actualizarScore(){
+  const r=Math.min(casoIdx+(respondido?1:0),20);
+  document.getElementById('sc-cor').textContent=correctas;
+  document.getElementById('sc-prog').textContent=r+'/20';
+  const p=r>0?Math.round((correctas/r)*100):0;
+  document.getElementById('sc-pct').textContent=p+'%';
+}
+
+function actualizarProgress(){
+  document.getElementById('prog-bar').style.width=(casoIdx/casos.length*100)+'%';
+}
+
+function mostrarFinal(){
+  document.getElementById('juego-activo').style.display='none';
+  const fin=document.getElementById('juego-final');
+  fin.style.display='block';
+  const pct=Math.round((correctas/20)*100);
+  let est,tit,desc;
+  if(pct>=90){est='⭐⭐⭐';tit='¡Excelente manejo de ECICEP!';desc='Clasificas con precisión la complejidad de cada persona. Estás lista para aplicar ECICEP en la gestión de cuidados en APS.'}
+  else if(pct>=70){est='⭐⭐';tit='¡Muy bien!';desc='Buen dominio de los grupos G0–G3. Repasa los criterios de G3 y los casos con múltiples dimensiones de riesgo.'}
+  else if(pct>=50){est='⭐';tit='En progreso';desc='Vas por buen camino. Refuerza los criterios de clasificación por dimensión y los criterios directos de G3.'}
+  else{est='📚';tit='Sigue estudiando';desc='Revisa la tabla de criterios ECICEP por dimensión (enfermedades, funcionalidad, contexto social, salud mental) y los umbrales de cada grupo.'}
+  document.getElementById('est-final').textContent=est;
+  document.getElementById('score-big').textContent=correctas+'/20';
+  document.getElementById('tit-final').textContent=tit;
+  document.getElementById('desc-final').textContent=desc;
+  document.getElementById('fr-cor').textContent=correctas;
+  document.getElementById('fr-err').textContent=20-correctas;
+  document.getElementById('fr-pct').textContent=pct+'%';
+}
+</script>
+
+<a href="../index.html" class="volver-menu">← Volver al menú principal</a>
+
+</body>
+</html>
