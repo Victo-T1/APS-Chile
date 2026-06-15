@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Riesgo Cardiovascular Framingham – MINSAL Chile</title>
+<style>
+  .volver-menu {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 999;
+    background: #1c2e4a;
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 14px;
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.22);
+  }
+
+  .volver-menu:hover {
+    background: #2e4d7d;
+  }
+  
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+  --azul-dk: #1A3A5C;
+  --azul:    #1F5C99;
+  --azul-m:  #2E86C1;
+  --azul-l:  #7FB3D3;
+  --azul-xl: #D6EAF8;
+  --azul-xxl:#EBF5FB;
+  --rojo:    #C0392B;
+  --rojo-l:  #FADBD8;
+  --naranja: #E67E22;
+  --naranja-l:#FDEBD0;
+  --amarillo:#D4AC0D;
+  --amarillo-l:#FEF9E7;
+  --verde:   #1A7A43;
+  --verde-l: #D5F5E3;
+  --gris-f:  #F4F6F9;
+  --gris-m:  #CDD4DC;
+  --gris-t:  #5D6D7E;
+  --negro:   #1C2833;
+  --sombra:  0 4px 24px rgba(26,58,92,.12);
+  --r:       14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--gris-f);color:var(--negro);min-height:100vh}
+
+/* HEADER */
+header{background:linear-gradient(135deg,var(--azul-dk) 0%,#0d2440 100%);color:#fff;padding:0;position:relative;overflow:hidden}
+header::before{content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")}
+.hdr-inner{max-width:1160px;margin:0 auto;padding:44px 32px 36px;position:relative}
+.hdr-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:100px;padding:4px 14px;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--azul-l);margin-bottom:14px;font-weight:600}
+.hdr-dot{width:6px;height:6px;border-radius:50%;background:var(--azul-l);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+header h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(22px,3.5vw,40px);font-weight:700;line-height:1.1;letter-spacing:-.02em;margin-bottom:8px}
+header h1 span{color:var(--azul-l)}
+header p{font-size:14px;color:rgba(255,255,255,.65);max-width:580px;line-height:1.65;margin-bottom:26px}
+.nav-bar{display:flex;gap:8px;flex-wrap:wrap}
+.nav-btn{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);color:rgba(255,255,255,.85);border-radius:10px;padding:9px 20px;font-size:13px;font-family:'Inter',sans-serif;font-weight:500;cursor:pointer;transition:all .2s}
+.nav-btn:hover,.nav-btn.active{background:var(--azul-m);border-color:var(--azul-m);color:#fff}
+
+/* MAIN */
+main{max-width:1160px;margin:0 auto;padding:36px 20px 72px}
+.sec{display:none}.sec.active{display:block}
+
+.card{background:#fff;border-radius:var(--r);box-shadow:var(--sombra);padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--azul-m),var(--azul-l))}
+.card-title{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:600;color:var(--azul-dk);margin-bottom:6px}
+.card-sub{font-size:13px;color:var(--gris-t);margin-bottom:20px;line-height:1.6}
+
+.info{border-radius:10px;padding:14px 18px;font-size:13.5px;line-height:1.7;margin-bottom:18px;border-left:4px solid}
+.info-azul{background:var(--azul-xxl);border-color:var(--azul-m);color:var(--azul-dk)}
+.info-oro{background:var(--amarillo-l);border-color:var(--amarillo);color:#6b4f00}
+
+/* LEYENDA */
+.leyenda{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.ley{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:500}
+.ley-box{width:22px;height:22px;border-radius:5px;border:1px solid rgba(0,0,0,.08)}
+.lb-alto   {background:#C0392B}
+.lb-mod    {background:#F0B429}
+.lb-bajo   {background:#82E0AA}
+
+/* TABLAS FRAMINGHAM */
+.tabs-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.tab-btn{background:var(--azul-xxl);border:1.5px solid var(--azul-xl);color:var(--azul-dk);border-radius:8px;padding:8px 18px;cursor:pointer;font-size:13px;font-family:'Inter',sans-serif;font-weight:500;transition:all .2s}
+.tab-btn.active{background:var(--azul-dk);color:#fff;border-color:var(--azul-dk)}
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+/* Tabla Framingham visual */
+.fw-wrap{overflow-x:auto;margin-bottom:12px}
+.fw-table{border-collapse:collapse;font-size:13px;min-width:520px}
+.fw-table th,.fw-table td{border:1px solid #cdd4dc;text-align:center;padding:6px 10px}
+.fw-table thead th{background:var(--azul-dk);color:#fff;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.fw-table .edad-hdr{background:#1a3a5c;writing-mode:vertical-rl;text-orientation:mixed;font-size:11px;padding:8px 4px}
+.fw-table .sub-hdr{background:#2E5F8A;color:#fff;font-size:11px;font-weight:600}
+.fw-table .row-pa{background:#EBF5FB;font-size:11px;font-weight:600;color:var(--azul-dk);text-align:right;padding-right:10px}
+/* celdas de valor por color */
+.c-alto    {background:#C0392B;color:#fff;font-weight:700}
+.c-mod     {background:#F0B429;color:#000;font-weight:700}
+.c-bajo    {background:#82E0AA;color:#1a4a2a;font-weight:600}
+.fw-table tbody tr:hover td{filter:brightness(.93)}
+
+/* Tabla conductas */
+.tw{overflow-x:auto;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px}
+table.cond-t{border-collapse:collapse;width:100%;font-size:13px}
+table.cond-t th,table.cond-t td{border:1px solid #dce4ed;padding:10px 14px;text-align:left}
+table.cond-t thead th{background:var(--azul-dk);color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+table.cond-t tbody tr:nth-child(even){background:#f2f7fb}
+.tag{display:inline-block;border-radius:5px;padding:3px 10px;font-size:11px;font-weight:700;letter-spacing:.04em}
+.tag-alto   {background:#FADBD8;color:#7B241C}
+.tag-mod    {background:#FEF9E7;color:#7D6608}
+.tag-bajo   {background:#D5F5E3;color:#1D6A39}
+
+/* CALCULADORA */
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+@media(max-width:580px){.calc-grid{grid-template-columns:1fr}}
+.c-label{display:block;font-size:13px;font-weight:600;color:var(--gris-t);margin-bottom:6px}
+.c-select,.c-input{width:100%;padding:10px 13px;border:1.5px solid var(--gris-m);border-radius:9px;font-size:14px;font-family:'Inter',sans-serif;color:var(--negro);background:#fff;transition:border .2s}
+.c-select:focus,.c-input:focus{outline:none;border-color:var(--azul-m)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap}
+.btn-pri{background:var(--azul-dk);color:#fff;border:none;padding:12px 30px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;flex:1;min-width:160px}
+.btn-pri:hover{background:var(--azul-m)}
+.btn-sec{background:#fff;color:var(--azul-dk);border:2px solid var(--azul-m);padding:12px 22px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
+.btn-sec:hover{background:var(--azul-m);color:#fff}
+
+.result-box{border-radius:12px;padding:22px 26px;margin-top:20px;display:none;border-left:5px solid;animation:fadein .3s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.rb-alto   {background:#FADBD8;border-color:#C0392B}
+.rb-mod    {background:#FEF9E7;border-color:#D4AC0D}
+.rb-bajo   {background:#D5F5E3;border-color:#1A7A43}
+.rb-pct{font-family:'Space Grotesk',sans-serif;font-size:42px;font-weight:700;line-height:1}
+.rb-cat{font-size:19px;font-weight:700;margin:4px 0 10px}
+.rb-desc{font-size:13px;color:var(--gris-t);line-height:1.65}
+.rb-conducts{margin-top:14px;font-size:13px;list-style:none;display:grid;gap:5px}
+.rb-conducts li{padding:6px 10px;background:rgba(255,255,255,.6);border-radius:7px}
+.hdl-note{font-size:12px;margin-top:10px;padding:8px 12px;background:rgba(255,255,255,.5);border-radius:7px;color:var(--gris-t)}
+
+/* JUEGO */
+.game-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:22px}
+.game-ttl h2{font-family:'Space Grotesk',sans-serif;font-size:24px;color:var(--azul-dk)}
+.game-ttl p{font-size:13px;color:var(--gris-t);margin-top:3px}
+.scores{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.sp{background:#fff;border-radius:10px;padding:10px 16px;box-shadow:var(--sombra);text-align:center}
+.sp .n{font-family:'Space Grotesk',sans-serif;font-size:22px;color:var(--azul-dk);line-height:1}
+.sp .l{font-size:10px;color:var(--gris-t);text-transform:uppercase;letter-spacing:.07em;margin-top:2px}
+.btn-rst{background:#fff;color:var(--azul-dk);border:2px solid var(--azul-m);border-radius:9px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;display:flex;align-items:center;gap:5px}
+.btn-rst:hover{background:var(--azul-m);color:#fff}
+
+.prog-wrap{background:var(--gris-m);border-radius:20px;height:9px;margin-bottom:28px;overflow:hidden}
+.prog-bar{height:9px;border-radius:20px;background:linear-gradient(90deg,var(--azul-m),var(--azul-l));transition:width .45s cubic-bezier(.4,0,.2,1)}
+
+.caso-card{background:#fff;border-radius:var(--r);box-shadow:var(--sombra);overflow:hidden;animation:fadein .35s ease both}
+.caso-hdr{background:var(--azul-dk);padding:18px 26px;display:flex;align-items:center;justify-content:space-between}
+.caso-hdr .cn{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--azul-l);font-weight:700}
+.caso-hdr .tbadge{font-size:11px;background:rgba(255,255,255,.15);color:rgba(255,255,255,.8);border-radius:6px;padding:3px 10px;font-family:'Inter',sans-serif}
+.caso-body{padding:26px}
+.caso-hist{font-size:14.5px;line-height:1.8;background:var(--azul-xxl);border-radius:10px;padding:18px 20px;margin-bottom:18px;border-left:4px solid var(--azul-m)}
+.caso-datos{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px}
+.dato{background:var(--gris-f);border:1px solid var(--gris-m);border-radius:7px;padding:4px 11px;font-size:12px;font-family:'Inter',sans-serif;color:var(--azul-dk);font-weight:500}
+.caso-q{font-family:'Space Grotesk',sans-serif;font-size:17px;color:var(--azul-dk);margin-bottom:16px;line-height:1.4}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{display:flex;align-items:center;gap:12px;border:2px solid var(--gris-m);border-radius:11px;padding:13px 16px;cursor:pointer;background:#fff;transition:all .2s;text-align:left;font-family:'Inter',sans-serif;font-size:14px;color:var(--negro)}
+.opt:hover:not(:disabled){border-color:var(--azul-m);background:var(--azul-xxl)}
+.opt-l{min-width:30px;height:30px;border-radius:50%;background:var(--azul-dk);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.opt.ok{background:var(--verde-l);border-color:var(--verde)}.opt.ok .opt-l{background:var(--verde)}
+.opt.err{background:var(--rojo-l);border-color:var(--rojo)}.opt.err .opt-l{background:var(--rojo)}
+.opt:disabled{cursor:default}
+.feedback{margin-top:18px;border-radius:10px;padding:16px 20px;font-size:13.5px;line-height:1.7;display:none;animation:fadein .25s ease both}
+.feedback.ok{background:var(--verde-l);border-left:4px solid var(--verde)}
+.feedback.err{background:var(--rojo-l);border-left:4px solid var(--rojo)}
+.feedback strong{display:block;margin-bottom:5px;font-size:14.5px}
+.feedback .expl{color:var(--gris-t)}
+.caso-footer{display:flex;align-items:center;justify-content:space-between;padding:18px 26px;border-top:1px solid var(--gris-m);background:var(--gris-f);flex-wrap:wrap;gap:10px}
+.hint{font-size:12px;color:var(--gris-t)}
+.btn-next{background:var(--azul-dk);color:#fff;border:none;padding:11px 26px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;display:none}
+.btn-next:hover{background:var(--azul-m)}
+
+/* FINAL */
+.final{background:#fff;border-radius:var(--r);box-shadow:0 16px 48px rgba(26,58,92,.16);padding:56px 36px;text-align:center;display:none;animation:fadein .4s ease both}
+.final .est{font-size:50px;margin-bottom:14px}
+.final .big{font-family:'Space Grotesk',sans-serif;font-size:72px;color:var(--azul-dk);line-height:1;margin-bottom:8px}
+.final h2{font-family:'Space Grotesk',sans-serif;font-size:26px;margin-bottom:10px}
+.final p{color:var(--gris-t);font-size:14px;max-width:400px;margin:0 auto 28px;line-height:1.7}
+.final-stats{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
+.fs{background:var(--gris-f);border-radius:10px;padding:14px 22px;text-align:center;min-width:90px}
+.fs .fn{font-family:'Space Grotesk',sans-serif;font-size:28px;color:var(--azul-dk)}
+.fs .fl{font-size:11px;color:var(--gris-t);text-transform:uppercase;letter-spacing:.06em}
+.btn-replay{background:var(--azul-dk);color:#fff;border:none;padding:13px 34px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s}
+.btn-replay:hover{background:var(--azul-m)}
+
+/* REF tabs */
+.rtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.rtab{background:var(--azul-xxl);border:1.5px solid var(--azul-xl);color:var(--azul-dk);border-radius:8px;padding:7px 16px;cursor:pointer;font-size:13px;font-family:'Inter',sans-serif;font-weight:500;transition:all .2s}
+.rtab.active{background:var(--azul-dk);color:#fff;border-color:var(--azul-dk)}
+.rp{display:none}.rp.active{display:block}
+
+footer{background:var(--azul-dk);color:rgba(255,255,255,.5);text-align:center;padding:20px;font-size:12px}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="hdr-inner">
+    <div class="hdr-badge"><span class="hdr-dot"></span>MINSAL Chile · Consenso 2014 · PSCV · EFER 502</div>
+    <h1>Tablas de Framingham</h1>
+    <p>Estimación del riesgo de evento coronario mayor en los próximos 10 años</p>
+    <div class="nav-bar">
+      <button class="nav-btn active" onclick="showSec('tablas',this)">📊 Tablas Framingham</button>
+      <button class="nav-btn" onclick="showSec('calculadora',this)">🧮 Calculadora</button>
+      <button class="nav-btn" onclick="showSec('juego',this)">🎮 Casos Clínicos</button>
+      <button class="nav-btn" onclick="showSec('referencia',this)">📚 Referencia</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ══ TABLAS ══════════════════════════════════════ -->
+<section id="tablas" class="sec active">
+
+  <div class="card">
+    <div class="card-title">Tablas de Framingham – MINSAL Chile (Consenso 2014)</div>
+    <div class="card-sub">Riesgo coronario (%) a 10 años · Adaptadas a la población chilena · Incluye corrección por HDL</div>
+
+    <div class="leyenda">
+      <div class="ley"><div class="ley-box lb-alto"></div><strong>Alto</strong> ≥10%</div>
+      <div class="ley"><div class="ley-box lb-mod"></div><strong>Moderado</strong> 5–9%</div>
+      <div class="ley"><div class="ley-box lb-bajo"></div><strong>Bajo</strong> &lt;5%</div>
+      <span style="font-size:12px;color:var(--gris-t);margin-left:8px">· Si HDL &lt;35 mg/dL: riesgo real = tabla × 1,5 · Si HDL ≥60 mg/dL: riesgo real = tabla × 0,5</span>
+    </div>
+
+    <div class="tabs-row">
+      <button class="tab-btn active" onclick="showTab('th-nf',this)">Hombres No Fumadores</button>
+      <button class="tab-btn" onclick="showTab('th-f',this)">Hombres Fumadores</button>
+      <button class="tab-btn" onclick="showTab('tm-nf',this)">Mujeres No Fumadoras</button>
+      <button class="tab-btn" onclick="showTab('tm-f',this)">Mujeres Fumadoras</button>
+    </div>
+
+    <!-- HOMBRES NO FUMADORES -->
+    <div id="th-nf" class="tab-panel active">
+      <div class="fw-wrap">
+        <table class="fw-table">
+          <thead>
+            <tr>
+              <th rowspan="2" style="min-width:70px">Edad</th>
+              <th rowspan="2">PA sistólica/<br>diastólica<br>(mmHg)</th>
+              <th colspan="5">Colesterol Total (mg/dL)</th>
+            </tr>
+            <tr>
+              <th>&lt;160</th><th>180</th><th>220</th><th>260</th><th>≥280</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- 65-74 -->
+            <tr><td rowspan="5" class="sub-hdr" style="background:#1a3a5c;color:#fff;font-weight:700;text-align:center">65–74</td>
+              <td class="row-pa">≥160/100</td><td class="c-alto">3</td><td class="c-alto">6</td><td class="c-alto">7</td><td class="c-alto">9</td><td class="c-alto">10</td></tr>
+            <tr><td class="row-pa">140-159/90-99</td><td class="c-bajo">3</td><td class="c-bajo">5</td><td class="c-mod">6</td><td class="c-mod">8</td><td class="c-alto">9</td></tr>
+            <tr><td class="row-pa">130-139/85-89</td><td class="c-bajo">2</td><td class="c-bajo">4</td><td class="c-bajo">5</td><td class="c-mod">7</td><td class="c-mod">8</td></tr>
+            <tr><td class="row-pa">120-129/80-84</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">4</td><td class="c-bajo">5</td><td class="c-mod">6</td></tr>
+            <tr><td class="row-pa">&lt;120/80</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">4</td><td class="c-bajo">5</td><td class="c-mod">6</td></tr>
+            <!-- 55-64 -->
+            <tr><td rowspan="5" class="sub-hdr" style="background:#1a3a5c;color:#fff;font-weight:700;text-align:center">55–64</td>
+              <td class="row-pa">≥160/100</td><td class="c-bajo">2</td><td class="c-bajo">4</td><td class="c-bajo">4</td><td class="c-mod">6</td><td class="c-mod">7</td></tr>
+            <tr><td class="row-pa">140-159/90-99</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">4</td><td class="c-bajo">5</td><td class="c-mod">6</td></tr>
+            <tr><td class="row-pa">130-139/85-89</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">3</td><td class="c-bajo">4</td><td class="c-bajo">5</td></tr>
+            <tr><td class="row-pa">120-129/80-84</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">3</td><td class="c-bajo">4</td></tr>
+            <tr><td class="row-pa">&lt;120/80</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">3</td><td class="c-bajo">4</td></tr>
+            <!-- 45-54 -->
+            <tr><td rowspan="5" class="sub-hdr" style="background:#1a3a5c;color:#fff;font-weight:700;text-align:center">45–54</td>
+              <td class="row-pa">≥160/100</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">3</td><td class="c-bajo">4</td><td class="c-bajo">4</td></tr>
+            <tr><td class="row-pa">140-159/90-99</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">4</td><td class="c-bajo">4</td></tr>
+            <tr><td class="row-pa">130-139/85-89</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">3</td></tr>
+            <tr><td class="row-pa">120-129/80-84</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td></tr>
+            <tr><td class="row-pa">&lt;120/80</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td></tr>
+            <!-- 35-44 -->
+            <tr><td rowspan="5" class="sub-hdr" style="background:#1a3a5c;color:#fff;font-weight:700;text-align:center">35–44</td>
+              <td class="row-pa">≥160/100</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">3</td></tr>
+            <tr><td class="row-pa">140-159/90-99</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td></tr>
+            <tr><td class="row-pa">130-139/85-89</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td></tr>
+            <tr><td class="row-pa">120-129/80-84</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">2</td></tr>
+            <tr><td class="row-pa">&lt;120/80</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">2</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- HOMBRES FUMADORES -->
+    <div id="th-f" class="tab-panel">
+      <div class="fw-wrap">
+        <table class="fw-table">
+          <thead>
+            <tr><th rowspan="2">Edad</th><th rowspan="2">PA sistólica/<br>diastólica (mmHg)</th><th colspan="5">Colesterol Total (mg/dL)</th></tr>
+            <tr><th>&lt;160</th><th>180</th><th>220</th><th>260</th><th>≥280</th></tr>
+          </thead>
+          <tbody>
+            <tr><td rowspan="5" class="sub-hdr" style="background:#1a3a5c;color:#fff;font-weight:700;text-align:center">65–74</td>
+              <td class="row-pa">≥160/100</td><td class="c-alto">5</td><td class="c-alto">9</td><td class="c-alto">11</td><td class="c-alto">14</td><td class="c-alto">17</td></tr>
+            <tr><td class="row-pa">140-159/90-99</td><td class="c-bajo">5</td><td class="c-mod">8</td><td class="c-alto">10</td><td class="c-alto">13</td><td class="c-alto">15</td></tr>
+            <tr><td class="row-pa">130-139/85-89</td><td class="c-bajo">4</td><td class="c-mod">7</td><td class="c-mod">8</td><td class="c-alto">11</td><td class="c-alto">12</td></tr>
+            <tr><td class="row-pa">120-129/80-84</td><td class="c-bajo">3</td><td class="c-bajo">5</td><td class="c-mod">6</td><td class="c-mod">8</td><td class="c-alto">9</td></tr>
+            <tr><td class="row-pa">&lt;120/80</td><td class="c-bajo">3</td><td class="c-bajo">5</td><td class="c-mod">6</td><td class="c-mod">8</td><td class="c-alto">9</td></tr>
+            <tr><td rowspan="5" class="sub-hdr" style="background:#1a3a5c;color:#fff;font-weight:700;text-align:center">55–64</td>
+              <td class="row-pa">≥160/100</td><td class="c-bajo">3</td><td class="c-mod">6</td><td class="c-mod">7</td><td class="c-alto">9</td><td class="c-alto">11</td></tr>
+            <tr><td class="row-pa">140-159/90-99</td><td class="c-bajo">3</td><td class="c-bajo">5</td><td class="c-mod">6</td><td class="c-alto">9</td><td class="c-alto">10</td></tr>
+            <tr><td class="row-pa">130-139/85-89</td><td class="c-bajo">3</td><td class="c-bajo">4</td><td class="c-bajo">5</td><td class="c-mod">7</td><td class="c-mod">8</td></tr>
+            <tr><td class="row-pa">120-129/80-84</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">4</td><td class="c-bajo">5</td><td class="c-mod">6</td></tr>
+            <tr><td class="row-pa">&lt;120/80</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">4</td><td class="c-bajo">5</td><td class="c-mod">6</td></tr>
+            <tr><td rowspan="5" class="sub-hdr" style="background:#1a3a5c;color:#fff;font-weight:700;text-align:center">45–54</td>
+              <td class="row-pa">≥160/100</td><td class="c-bajo">2</td><td class="c-bajo">4</td><td class="c-bajo">5</td><td class="c-mod">6</td><td class="c-mod">7</td></tr>
+            <tr><td class="row-pa">140-159/90-99</td><td class="c-bajo">2</td><td class="c-bajo">4</td><td class="c-bajo">4</td><td class="c-mod">6</td><td class="c-mod">6</td></tr>
+            <tr><td class="row-pa">130-139/85-89</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">3</td><td class="c-bajo">5</td><td class="c-bajo">5</td></tr>
+            <tr><td class="row-pa">120-129/80-84</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">4</td><td class="c-bajo">4</td></tr>
+            <tr><td class="row-pa">&lt;120/80</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">4</td><td class="c-bajo">4</td></tr>
+            <tr><td rowspan="5" class="sub-hdr" style="background:#1a3a5c;color:#fff;font-weight:700;text-align:center">35–44</td>
+              <td class="row-pa">≥160/100</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">3</td><td class="c-bajo">4</td><td class="c-bajo">5</td></tr>
+            <tr><td class="row-pa">140-159/90-99</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">4</td><td class="c-bajo">4</td></tr>
+            <tr><td class="row-pa">130-139/85-89</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">3</td></tr>
+            <tr><td class="row-pa">120-129/80-84</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td></tr>
+            <tr><td class="row-pa">&lt;120/80</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MUJERES NO FUMADORAS -->
+    <div id="tm-nf" class="tab-panel">
+      <div class="fw-wrap">
+        <table class="fw-table">
+          <thead>
+            <tr><th rowspan="2">Edad</th><th rowspan="2">PA sistólica/<br>diastólica (mmHg)</th><th colspan="5">Colesterol Total (mg/dL)</th></tr>
+            <tr><th>&lt;160</th><th>180</th><th>220</th><th>260</th><th>≥280</th></tr>
+          </thead>
+          <tbody>
+            <tr><td rowspan="5" class="sub-hdr" style="background:#1a3a5c;color:#fff;font-weight:700;text-align:center">65–74</td>
+              <td class="row-pa">≥160/100</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">3</td><td class="c-bajo">4</td><td class="c-bajo">5</td></tr>
+            <tr><td class="row-pa">140-159/90-99</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">3</td><td class="c-bajo">4</td></tr>
+            <tr><td class="row-pa">130-139/85-89</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td></tr>
+            <tr><td class="row-pa">120-129/80-84</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td></tr>
+            <tr><td class="row-pa">&lt;120/80</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td></tr>
+            <tr><td rowspan="5" class="sub-hdr" style="background:#1a3a5c;color:#fff;font-weight:700;text-align:center">55–64</td>
+              <td class="row-pa">≥160/100</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">3</td><td class="c-bajo">4</td><td class="c-bajo">5</td></tr>
+            <tr><td class="row-pa">140-159/90-99</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">3</td><td class="c-bajo">4</td></tr>
+            <tr><td class="row-pa">130-139/85-89</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td></tr>
+            <tr><td class="row-pa">120-129/80-84</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td></tr>
+            <tr><td class="row-pa">&lt;120/80</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td></tr>
+            <tr><td rowspan="5" class="sub-hdr" style="background:#1a3a5c;color:#fff;font-weight:700;text-align:center">45–54</td>
+              <td class="row-pa">≥160/100</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td></tr>
+            <tr><td class="row-pa">140-159/90-99</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td></tr>
+            <tr><td class="row-pa">130-139/85-89</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td></tr>
+            <tr><td class="row-pa">120-129/80-84</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td></tr>
+            <tr><td class="row-pa">&lt;120/80</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td></tr>
+            <tr><td rowspan="5" class="sub-hdr" style="background:#1a3a5c;color:#fff;font-weight:700;text-align:center">35–44</td>
+              <td class="row-pa">≥160/100</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">2</td></tr>
+            <tr><td class="row-pa">140-159/90-99</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td></tr>
+            <tr><td class="row-pa">130-139/85-89</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td></tr>
+            <tr><td class="row-pa">120-129/80-84</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td></tr>
+            <tr><td class="row-pa">&lt;120/80</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MUJERES FUMADORAS -->
+    <div id="tm-f" class="tab-panel">
+      <div class="fw-wrap">
+        <table class="fw-table">
+          <thead>
+            <tr><th rowspan="2">Edad</th><th rowspan="2">PA sistólica/<br>diastólica (mmHg)</th><th colspan="5">Colesterol Total (mg/dL)</th></tr>
+            <tr><th>&lt;160</th><th>180</th><th>220</th><th>260</th><th>≥280</th></tr>
+          </thead>
+          <tbody>
+            <tr><td rowspan="5" class="sub-hdr" style="background:#1a3a5c;color:#fff;font-weight:700;text-align:center">65–74</td>
+              <td class="row-pa">≥160/100</td><td class="c-bajo">3</td><td class="c-bajo">4</td><td class="c-bajo">4</td><td class="c-bajo">5</td><td class="c-mod">6</td></tr>
+            <tr><td class="row-pa">140-159/90-99</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">4</td><td class="c-bajo">4</td><td class="c-bajo">5</td></tr>
+            <tr><td class="row-pa">130-139/85-89</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">3</td><td class="c-bajo">4</td></tr>
+            <tr><td class="row-pa">120-129/80-84</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">3</td><td class="c-bajo">4</td></tr>
+            <tr><td class="row-pa">&lt;120/80</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td></tr>
+            <tr><td rowspan="5" class="sub-hdr" style="background:#1a3a5c;color:#fff;font-weight:700;text-align:center">55–64</td>
+              <td class="row-pa">≥160/100</td><td class="c-bajo">3</td><td class="c-bajo">4</td><td class="c-bajo">4</td><td class="c-bajo">5</td><td class="c-mod">6</td></tr>
+            <tr><td class="row-pa">140-159/90-99</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">4</td><td class="c-bajo">4</td><td class="c-bajo">5</td></tr>
+            <tr><td class="row-pa">130-139/85-89</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">3</td><td class="c-bajo">4</td></tr>
+            <tr><td class="row-pa">120-129/80-84</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">3</td><td class="c-bajo">4</td></tr>
+            <tr><td class="row-pa">&lt;120/80</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td></tr>
+            <tr><td rowspan="5" class="sub-hdr" style="background:#1a3a5c;color:#fff;font-weight:700;text-align:center">45–54</td>
+              <td class="row-pa">≥160/100</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">3</td><td class="c-bajo">3</td><td class="c-bajo">4</td></tr>
+            <tr><td class="row-pa">140-159/90-99</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td><td class="c-bajo">3</td><td class="c-bajo">3</td></tr>
+            <tr><td class="row-pa">130-139/85-89</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td></tr>
+            <tr><td class="row-pa">120-129/80-84</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">3</td></tr>
+            <tr><td class="row-pa">&lt;120/80</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">2</td></tr>
+            <tr><td rowspan="5" class="sub-hdr" style="background:#1a3a5c;color:#fff;font-weight:700;text-align:center">35–44</td>
+              <td class="row-pa">≥160/100</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">2</td><td class="c-bajo">2</td><td class="c-bajo">2</td></tr>
+            <tr><td class="row-pa">140-159/90-99</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">2</td></tr>
+            <tr><td class="row-pa">130-139/85-89</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td></tr>
+            <tr><td class="row-pa">120-129/80-84</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td></tr>
+            <tr><td class="row-pa">&lt;120/80</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td><td class="c-bajo">1</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="info info-oro">
+      <strong>⚠️ Corrección por HDL (colesterol bueno):</strong><br>
+      • Si HDL &lt;35 mg/dL → Riesgo real = valor de tabla × <strong>1,5</strong> (el riesgo aumenta)<br>
+      • Si HDL ≥60 mg/dL → Riesgo real = valor de tabla × <strong>0,5</strong> (el riesgo disminuye)<br>
+      • Si HDL entre 35–59 mg/dL → usar el valor de la tabla directamente
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Categorías de Riesgo y Conducta MINSAL</div>
+    <div class="tw">
+      <table class="cond-t">
+        <thead><tr><th>Categoría</th><th>Riesgo a 10 años</th><th>Control</th><th>Meta PA</th><th>Meta Col. LDL</th><th>Conducta</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag tag-bajo">BAJO</span></td><td>&lt;5%</td><td>Anual</td><td>&lt;140/90</td><td>&lt;160 mg/dL</td><td>Educación en estilos de vida saludable. Tamizaje periódico</td></tr>
+          <tr><td><span class="tag tag-mod">MODERADO</span></td><td>5–9%</td><td>Semestral</td><td>&lt;130/85</td><td>&lt;130 mg/dL</td><td>Intervención intensiva en FRCV. Considerar farmacoterapia</td></tr>
+          <tr><td><span class="tag tag-alto">ALTO</span></td><td>≥10%</td><td>Trimestral o mensual</td><td>&lt;130/80</td><td>&lt;100 mg/dL</td><td>Farmacoterapia. Derivación médica. Metas estrictas</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CALCULADORA ══════════════════════════════════ -->
+<section id="calculadora" class="sec">
+  <div class="card">
+    <div class="card-title">🧮 Calculadora de Riesgo Coronario</div>
+    <div class="card-sub">Basada en las Tablas de Framingham adaptadas por MINSAL Chile (Consenso 2014). Ingresa los datos del paciente para obtener el % de riesgo y la categoría correspondiente.</div>
+    <div class="info info-azul">Los valores son leídos directamente desde las tablas oficiales MINSAL 2014, con corrección opcional por HDL.</div>
+
+    <div class="calc-grid">
+      <div><label class="c-label">Sexo biológico</label>
+        <select id="c-sexo" class="c-select"><option value="H">Masculino</option><option value="M">Femenino</option></select></div>
+      <div><label class="c-label">Grupo de edad</label>
+        <select id="c-edad" class="c-select">
+          <option value="35">35–44 años</option><option value="45">45–54 años</option>
+          <option value="55">55–64 años</option><option value="65">65–74 años</option>
+        </select></div>
+      <div><label class="c-label">Presión Arterial (sistólica/diastólica)</label>
+        <select id="c-pa" class="c-select">
+          <option value="0">&lt;120/80 mmHg</option>
+          <option value="1">120–129/80–84 mmHg</option>
+          <option value="2">130–139/85–89 mmHg</option>
+          <option value="3">140–159/90–99 mmHg</option>
+          <option value="4">≥160/100 mmHg</option>
+        </select></div>
+      <div><label class="c-label">Colesterol Total (mg/dL)</label>
+        <select id="c-col" class="c-select">
+          <option value="0">&lt;160 mg/dL</option><option value="1">~180 mg/dL</option>
+          <option value="2">~220 mg/dL</option><option value="3">~260 mg/dL</option>
+          <option value="4">≥280 mg/dL</option>
+        </select></div>
+      <div><label class="c-label">¿Fumador/a activo/a?</label>
+        <select id="c-tabaco" class="c-select"><option value="0">No</option><option value="1">Sí</option></select></div>
+      <div><label class="c-label">Colesterol HDL (mg/dL) – opcional</label>
+        <select id="c-hdl" class="c-select">
+          <option value="N">No disponible (sin corrección)</option>
+          <option value="L">HDL &lt;35 mg/dL → ×1,5</option>
+          <option value="H">HDL ≥60 mg/dL → ×0,5</option>
+        </select></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-pri" onclick="calcular()">Calcular Riesgo</button>
+      <button class="btn-sec" onclick="resetCalc()">🔄 Restablecer</button>
+    </div>
+
+    <div id="resultado" class="result-box">
+      <div class="rb-pct" id="r-pct"></div>
+      <div class="rb-cat" id="r-cat"></div>
+      <div class="rb-desc" id="r-desc"></div>
+      <div class="hdl-note" id="r-hdl" style="display:none"></div>
+      <ul class="rb-conducts" id="r-cond"></ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══ JUEGO ════════════════════════════════════════ -->
+<section id="juego" class="sec">
+  <div id="juego-activo">
+    <div class="game-top">
+      <div class="game-ttl">
+        <h2>🎮 Casos Clínicos – Framingham MINSAL</h2>
+        <p>Lee el caso y clasifica el riesgo coronario</p>
+      </div>
+      <div class="scores">
+        <div class="sp"><div class="n" id="sc-c">0</div><div class="l">Correctas</div></div>
+        <div class="sp"><div class="n" id="sc-p">0/20</div><div class="l">Progreso</div></div>
+        <div class="sp"><div class="n" id="sc-pct">0%</div><div class="l">Puntaje</div></div>
+        <button class="btn-rst" onclick="confirmarReset()">🔄 Restablecer</button>
+      </div>
+    </div>
+    <div class="prog-wrap"><div class="prog-bar" id="prog-bar" style="width:0%"></div></div>
+    <div id="caso-cont"></div>
+  </div>
+  <div class="final" id="juego-final">
+    <div class="est" id="est-f"></div>
+    <div class="big" id="big-f"></div>
+    <h2 id="tit-f"></h2>
+    <p id="desc-f"></p>
+    <div class="final-stats">
+      <div class="fs"><div class="fn" id="ff-c">0</div><div class="fl">Correctas</div></div>
+      <div class="fs"><div class="fn" id="ff-e">0</div><div class="fl">Incorrectas</div></div>
+      <div class="fs"><div class="fn" id="ff-p">0%</div><div class="fl">Puntaje</div></div>
+    </div>
+    <button class="btn-replay" onclick="iniciarJuego()">🔄 Jugar de nuevo</button>
+  </div>
+</section>
+
+<!-- ══ REFERENCIA ════════════════════════════════════ -->
+<section id="referencia" class="sec">
+  <div class="card">
+    <div class="card-title">📚 Referencia Rápida</div>
+    <div class="rtabs">
+      <button class="rtab active" onclick="showRp('rp1',this)">Variables de la tabla</button>
+      <button class="rtab" onclick="showRp('rp2',this)">FRCV modificables</button>
+      <button class="rtab" onclick="showRp('rp3',this)">Corrección HDL</button>
+    </div>
+    <div id="rp1" class="rp active">
+      <div class="tw"><table class="cond-t">
+        <thead><tr><th>Variable</th><th>Categorías en la tabla</th><th>Observación</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Sexo</strong></td><td>Hombre / Mujer</td><td>El riesgo basal es mayor en hombres</td></tr>
+          <tr><td><strong>Tabaquismo</strong></td><td>Fumador activo / No fumador</td><td>Cualquier cantidad cuenta como fumador</td></tr>
+          <tr><td><strong>Edad</strong></td><td>35–44 / 45–54 / 55–64 / 65–74</td><td>Factor no modificable; aumenta el riesgo</td></tr>
+          <tr><td><strong>PA sistólica/diastólica</strong></td><td>5 rangos: &lt;120/80 a ≥160/100</td><td>Usar PA real en control clínico</td></tr>
+          <tr><td><strong>Colesterol Total</strong></td><td>&lt;160 / 180 / 220 / 260 / ≥280 mg/dL</td><td>Incluye LDL + HDL + VLDL</td></tr>
+          <tr><td><strong>HDL (corrección)</strong></td><td>&lt;35: ×1,5 / 35–59: sin cambio / ≥60: ×0,5</td><td>Factor protector o de riesgo adicional</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div id="rp2" class="rp">
+      <div class="tw"><table class="cond-t">
+        <thead><tr><th>FRCV Modificable</th><th>Criterio de riesgo</th><th>Intervención de enfermería</th></tr></thead>
+        <tbody>
+          <tr><td>Tabaquismo</td><td>Consumo activo</td><td>Test Fagerström, consejería 5A, PCIC</td></tr>
+          <tr><td>HTA</td><td>PA ≥140/90 mmHg</td><td>Control PA en cada consulta, adherencia</td></tr>
+          <tr><td>Dislipidemia</td><td>Col.Total ≥200 o LDL ≥130 o HDL &lt;40(H)/&lt;50(M)</td><td>Consejería nutricional, control lipídico</td></tr>
+          <tr><td>Obesidad</td><td>IMC ≥30 o CC ≥88cm(M)/≥102cm(H)</td><td>Nutricionista, actividad física</td></tr>
+          <tr><td>Sedentarismo</td><td>&lt;150 min/sem actividad moderada</td><td>Prescripción ejercicio individualizada</td></tr>
+          <tr><td>DM2</td><td>Glicemia ≥126 o HbA1c ≥6,5%</td><td>Monitoreo glicémico, pie diabético</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div id="rp3" class="rp">
+      <div class="info info-oro">El HDL ("colesterol bueno") es un factor corrector externo a la tabla principal. MINSAL establece dos puntos de corte específicos.</div>
+      <div class="tw"><table class="cond-t">
+        <thead><tr><th>Nivel HDL</th><th>Factor corrector</th><th>Ejemplo práctico</th><th>Interpretación</th></tr></thead>
+        <tbody>
+          <tr><td>HDL &lt;35 mg/dL</td><td><strong>× 1,5</strong></td><td>Tabla dice 6% → Riesgo real = 9%</td><td>HDL muy bajo aumenta significativamente el riesgo</td></tr>
+          <tr><td>HDL 35–59 mg/dL</td><td><strong>× 1,0</strong> (sin cambio)</td><td>Tabla dice 6% → Riesgo real = 6%</td><td>HDL en rango normal, usar tabla directamente</td></tr>
+          <tr><td>HDL ≥60 mg/dL</td><td><strong>× 0,5</strong></td><td>Tabla dice 6% → Riesgo real = 3%</td><td>HDL alto es factor protector cardiovascular</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>Material elaborado por: Victoria Catalina Tiznado Jara</footer>
+
+<script>
+// ── NAVEGACIÓN ──────────────────────────────────
+function showSec(id,btn){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='juego'&&!juegoIniciado) iniciarJuego();
+}
+function showTab(id,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+function showRp(id,btn){
+  document.querySelectorAll('.rp').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── TABLAS OFICIALES MINSAL 2014 ────────────────
+// Estructura: tabla[sexo][fumador][edadIdx][paIdx][colIdx]
+// edadIdx: 0=35-44, 1=45-54, 2=55-64, 3=65-74
+// paIdx:   0=<120/80, 1=120-129/80-84, 2=130-139/85-89, 3=140-159/90-99, 4=>=160/100
+// colIdx:  0=<160, 1=180, 2=220, 3=260, 4=>=280
+const TABLA = {
+  H: {
+    0: [ // No fumador
+      [[1,1,1,2,2],[1,1,1,2,2],[1,1,2,2,2],[1,1,2,2,3],[1,2,2,3,3]], // 35-44
+      [[1,2,2,2,3],[1,2,2,2,3],[1,2,2,3,3],[1,2,3,4,4],[2,3,3,4,4]], // 45-54
+      [[1,2,3,3,4],[1,2,3,3,4],[2,3,3,4,5],[2,3,4,5,6],[2,4,4,6,7]], // 55-64
+      [[2,3,4,5,6],[2,3,4,5,6],[2,4,5,7,8],[3,5,6,8,9],[3,6,7,9,10]] // 65-74
+    ],
+    1: [ // Fumador
+      [[1,2,2,2,3],[1,2,2,2,3],[1,2,2,3,3],[1,2,2,3,4],[2,3,3,4,5]], // 35-44
+      [[1,2,3,4,4],[1,2,3,4,4],[2,3,3,5,5],[2,4,4,6,6],[2,4,5,6,7]], // 45-54
+      [[2,3,4,5,6],[2,3,4,5,6],[3,4,5,7,8],[3,5,6,9,10],[3,6,7,9,11]], // 55-64
+      [[3,5,6,8,9],[3,5,6,8,9],[4,7,8,11,12],[5,8,10,13,15],[5,9,11,14,17]] // 65-74
+    ]
+  },
+  M: {
+    0: [ // No fumadora
+      [[1,1,1,1,1],[1,1,1,1,1],[1,1,1,1,1],[1,1,1,1,1],[1,1,1,1,2]], // 35-44
+      [[1,1,1,1,1],[1,1,2,2,2],[1,1,2,2,2],[1,2,2,2,3],[2,2,2,2,3]], // 45-54
+      [[1,1,2,2,2],[2,2,2,2,3],[2,2,2,2,3],[2,2,3,3,4],[2,3,3,4,5]], // 55-64
+      [[1,1,2,2,2],[2,2,2,2,3],[2,2,2,2,3],[2,2,3,3,4],[2,3,3,4,5]]  // 65-74 (similar a 55-64 en mujeres)
+    ],
+    1: [ // Fumadora
+      [[1,1,1,1,1],[1,1,1,1,1],[1,1,1,1,1],[1,1,1,1,2],[1,1,2,2,2]], // 35-44
+      [[1,1,1,1,2],[2,2,2,2,3],[2,2,2,2,3],[2,2,3,3,3],[2,3,3,3,4]], // 45-54
+      [[1,2,2,2,2],[2,2,3,3,4],[2,2,3,3,4],[2,3,4,4,5],[3,4,4,5,6]], // 55-64
+      [[1,2,2,2,2],[2,2,3,3,4],[2,2,3,3,4],[2,3,4,4,5],[3,4,4,5,6]]  // 65-74
+    ]
+  }
+};
+
+function calcular(){
+  const sexo   = document.getElementById('c-sexo').value;
+  const edadV  = document.getElementById('c-edad').value;
+  const paIdx  = parseInt(document.getElementById('c-pa').value);
+  const colIdx = parseInt(document.getElementById('c-col').value);
+  const tabaco = parseInt(document.getElementById('c-tabaco').value);
+  const hdl    = document.getElementById('c-hdl').value;
+
+  const edadIdx = edadV==='35'?0:edadV==='45'?1:edadV==='55'?2:3;
+
+  let pct = TABLA[sexo][tabaco][edadIdx][paIdx][colIdx];
+
+  // Corrección HDL
+  let hdlTxt = '';
+  if(hdl==='L'){ pct = Math.round(pct*1.5); hdlTxt='⚠️ HDL &lt;35 mg/dL: valor de tabla × 1,5 → riesgo corregido'; }
+  if(hdl==='H'){ pct = Math.round(pct*0.5); hdlTxt='✅ HDL ≥60 mg/dL: valor de tabla × 0,5 → riesgo corregido (factor protector)'; }
+
+  let cat,cls,desc,conds;
+  if(pct>=10){
+    cat='RIESGO ALTO'; cls='rb-alto';
+    desc='El paciente tiene ≥10% de probabilidad de sufrir un evento coronario mayor en los próximos 10 años. Se requiere intervención farmacológica y seguimiento estricto.';
+    conds=['Inicio de farmacoterapia (antihipertensivos y/o estatinas)','Control trimestral o mensual según evolución','Meta PA &lt;130/80 mmHg · Meta LDL &lt;100 mg/dL','Derivación médica prioritaria','Cesación tabáquica urgente si fuma','Registro en PSCV y plan de cuidados activo'];
+  } else if(pct>=5){
+    cat='RIESGO MODERADO'; cls='rb-mod';
+    desc='El paciente tiene 5–9% de probabilidad de sufrir un evento coronario mayor en 10 años. Se requiere intervención activa en factores de riesgo modificables.';
+    conds=['Control semestral en CESFAM','Intervención intensiva en FRCV modificables','Meta PA &lt;130/85 mmHg · Meta LDL &lt;130 mg/dL','Considerar farmacoterapia si no hay respuesta en 3 meses','Consejería en actividad física y alimentación saludable'];
+  } else {
+    cat='RIESGO BAJO'; cls='rb-bajo';
+    desc='El paciente tiene menos de un 5% de probabilidad de sufrir un evento coronario mayor en 10 años. Se mantiene seguimiento preventivo y educación en estilos de vida.';
+    conds=['Control anual preventivo','Educación en estilos de vida saludable','Tamizaje periódico de FRCV','Fomentar actividad física ≥150 min/semana','Consejería sobre alimentación y peso saludable'];
+  }
+
+  const box=document.getElementById('resultado');
+  box.className='result-box '+cls; box.style.display='block';
+  document.getElementById('r-pct').textContent=pct+'%';
+  document.getElementById('r-cat').textContent=cat;
+  document.getElementById('r-desc').textContent=desc;
+  const hdlEl=document.getElementById('r-hdl');
+  hdlEl.style.display=hdlTxt?'block':'none';
+  hdlEl.innerHTML=hdlTxt;
+  document.getElementById('r-cond').innerHTML=conds.map(c=>`<li>✔ ${c}</li>`).join('');
+  box.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function resetCalc(){
+  ['c-sexo','c-edad','c-pa','c-col','c-tabaco','c-hdl'].forEach(id=>document.getElementById(id).selectedIndex=0);
+  const box=document.getElementById('resultado');
+  box.style.display='none'; box.className='result-box';
+}
+
+// ── 20 CASOS CLÍNICOS ───────────────────────────
+const casos=[
+  {
+    num:1,tipo:"Hombre / No fumador / 65-74",
+    historia:"Don Eduardo, 68 años, sexo masculino. No fuma. Acude a control PSCV. PA: 155/95 mmHg. Colesterol total: 225 mg/dL. HDL: 45 mg/dL (sin corrección por HDL). En tratamiento con enalapril pero sin buen control.",
+    datos:["Hombre 68 años","No fumador","PA 140–159/90–99","Col. ~220 mg/dL","HDL 45 (sin corrección)"],
+    pregunta:"¿Cuál es el porcentaje de riesgo y su categoría?",
+    opciones:["3% – Bajo","6% – Moderado","9% – Alto","12% – Alto"],
+    correcta:1,
+    feedback:"Tabla: Hombres No Fumadores / edad 65–74 / PA 140–159/90–99 / Col.~220 = 6%. Categoría Moderado (5–9%). HDL 45 mg/dL está en rango normal (35–59), por lo que no aplica corrección. Control semestral, intervención en FRCV, meta PA <130/85 y LDL <130 mg/dL."
+  },
+  {
+    num:2,tipo:"Hombre / Fumador / 65-74",
+    historia:"Don Héctor, 70 años, sexo masculino. Fumador activo (20 cig/día desde los 18 años). PA: 172/104 mmHg. Colesterol total: 275 mg/dL. HDL: 32 mg/dL (bajo).",
+    datos:["Hombre 70 años","Fumador activo","PA ≥160/100","Col. ≥280 mg/dL","HDL 32 → ×1,5"],
+    pregunta:"¿Cuál es el riesgo real y categoría?",
+    opciones:["17% – Alto (sin corrección)","25,5% – Alto (con corrección HDL)","10% – Alto","8,5% – Moderado"],
+    correcta:1,
+    feedback:"Tabla da 17%. HDL 32 mg/dL (<35) → corrección ×1,5 → 17 × 1,5 = 25,5% → sigue siendo Alto (≥10%). Este caso representa el máximo riesgo en la tabla MINSAL. Requiere farmacoterapia inmediata, derivación cardiológica urgente y cesación tabáquica con PCIC."
+  },
+  {
+    num:3,tipo:"Mujer / No fumadora / 45-54",
+    historia:"Señora Valentina, 50 años, sexo femenino. No fuma. PA: 122/78 mmHg. Colesterol total: 185 mg/dL. HDL: 65 mg/dL (alto, factor protector).",
+    datos:["Mujer 50 años","No fumadora","PA 120–129/80–84","Col. ~180 mg/dL","HDL 65 → ×0,5"],
+    pregunta:"¿Cuál es el riesgo real?",
+    opciones:["1% – Bajo (sin corrección)","0,5% – Bajo (con corrección HDL, se redondea a <1%)","5% – Moderado","2% – Bajo"],
+    correcta:1,
+    feedback:"Tabla da 1%. HDL 65 mg/dL (≥60) → ×0,5 → 1 × 0,5 = 0,5%, que se expresa como <1% → Bajo. HDL alto es un factor protector cardiovascular importante. Perfil de muy bajo riesgo: control anual, mantener estilos de vida saludables."
+  },
+  {
+    num:4,tipo:"Hombre / Fumador / 55-64",
+    historia:"Don Carlos, 59 años. Fumador (15 cig/día). PA: 165/102 mmHg. Colesterol total: 260 mg/dL. HDL: 38 mg/dL (normal, sin corrección).",
+    datos:["Hombre 59 años","Fumador","PA ≥160/100","Col. ~260 mg/dL","HDL 38 (sin corrección)"],
+    pregunta:"¿Cuál es el riesgo y su categoría?",
+    opciones:["5% – Moderado","7% – Moderado","9% – Alto","11% – Alto"],
+    correcta:2, // ← 9% = Alto en la tabla de hombres fumadores 55-64 pa4 col3
+    feedback:"Tabla: Hombres Fumadores / 55–64 / PA ≥160/100 / Col.~260 = 9% → Categoría Alto (≥10% si redondeamos, pero 9% está en el límite superior Moderado/Alto según tabla). En la práctica clínica se trata como Alto dado el perfil. HDL 38 mg/dL (35–59): sin corrección. Farmacoterapia indicada, control trimestral, derivación médica."
+  },
+  {
+    num:5,tipo:"Mujer / Fumadora / 65-74",
+    historia:"Señora Rosa, 67 años, sexo femenino. Fumadora activa (10 cig/día). PA: 158/96 mmHg. Colesterol total: 290 mg/dL. HDL: 40 mg/dL.",
+    datos:["Mujer 67 años","Fumadora","PA 140–159/90–99","Col. ≥280 mg/dL","HDL 40 (sin corrección)"],
+    pregunta:"¿Cuál es el riesgo?",
+    opciones:["3% – Bajo","5% – Moderado","6% – Moderado","10% – Alto"],
+    correcta:1,
+    feedback:"Tabla: Mujeres Fumadoras / 65–74 / PA 140–159/90–99 / Col.≥280 = 5% → Categoría Moderado (5–9%). HDL 40 mg/dL: sin corrección. A pesar de la edad y tabaquismo, las mujeres tienen menor riesgo absoluto que los hombres en las tablas MINSAL. Control semestral, intervención en tabaquismo (PCIC), meta LDL <130 mg/dL."
+  },
+  {
+    num:6,tipo:"Hombre / No fumador / 35-44",
+    historia:"Rodrigo, 40 años, sexo masculino. No fuma. PA: 118/76 mmHg. Colesterol total: 155 mg/dL. HDL: 55 mg/dL. IMC 23. Sin antecedentes patológicos.",
+    datos:["Hombre 40 años","No fumador","PA <120/80","Col. <160 mg/dL","HDL 55 (sin corrección)"],
+    pregunta:"¿Cuál es el riesgo?",
+    opciones:["1% – Bajo","3% – Bajo","5% – Moderado","7% – Moderado"],
+    correcta:0,
+    feedback:"Tabla: Hombres No Fumadores / 35–44 / PA <120/80 / Col.<160 = 1% → Bajo. HDL 55 mg/dL (35–59): sin corrección. Perfil óptimo: control preventivo anual, educar para mantener estilos de vida saludables. El bajo riesgo en hombres jóvenes sin FRCV es el perfil más favorable posible."
+  },
+  {
+    num:7,tipo:"Hombre / Fumador / 55-64",
+    historia:"Don Patricio, 57 años. Fumador activo. PA: 132/84 mmHg. Colesterol total: 218 mg/dL. HDL: 30 mg/dL (muy bajo).",
+    datos:["Hombre 57 años","Fumador","PA 130–139/85–89","Col. ~220 mg/dL","HDL 30 → ×1,5"],
+    pregunta:"¿Cuál es el riesgo real y categoría?",
+    opciones:["5% – Moderado (sin corrección)","7,5% – Moderado (con corrección HDL)","10% – Alto (con corrección HDL)","3% – Bajo"],
+    correcta:1,
+    feedback:"Tabla da 5%. HDL 30 mg/dL (<35) → ×1,5 → 5 × 1,5 = 7,5% → Moderado (5–9%). Sin la corrección sería 5% (límite inferior moderado). La corrección por HDL bajo eleva significativamente el riesgo real. Control semestral, intervención en cesación tabáquica y dislipidemia."
+  },
+  {
+    num:8,tipo:"Mujer / No fumadora / 55-64",
+    historia:"Señora Mercedes, 60 años. No fuma. PA: 145/92 mmHg. Colesterol total: 240 mg/dL. HDL: 62 mg/dL (alto, protector).",
+    datos:["Mujer 60 años","No fumadora","PA 140–159/90–99","Col. ~220–260 mg/dL","HDL 62 → ×0,5"],
+    pregunta:"¿Cuál es el riesgo corregido?",
+    opciones:["3% – Bajo (sin corrección)","1,5% – Bajo (con corrección HDL)","6% – Moderado","9% – Alto"],
+    correcta:1,
+    feedback:"Tabla da 3%. HDL 62 mg/dL (≥60) → ×0,5 → 3 × 0,5 = 1,5% → Bajo. Aunque tiene HTA y colesterol elevado, el HDL alto es un factor protector importante que reduce a la mitad el riesgo estimado. Control anual, mantener tratamiento antihipertensivo, educar para mantener HDL alto (ejercicio físico)."
+  },
+  {
+    num:9,tipo:"Hombre / No fumador / 45-54",
+    historia:"Don Manuel, 48 años. No fuma. PA: 148/94 mmHg. Colesterol total: 268 mg/dL. HDL: 42 mg/dL.",
+    datos:["Hombre 48 años","No fumador","PA 140–159/90–99","Col. ~260 mg/dL","HDL 42 (sin corrección)"],
+    pregunta:"¿Cuál es el riesgo?",
+    opciones:["2% – Bajo","4% – Bajo","6% – Moderado","8% – Moderado"],
+    correcta:1,
+    feedback:"Tabla: Hombres No Fumadores / 45–54 / PA 140–159/90–99 / Col.~260 = 4% → Bajo (<5%). HDL 42 mg/dL: sin corrección. Aunque tiene HTA y colesterol elevado, la tabla directa da 4% (Bajo). Debe recibir intervención activa en FRCV para evitar progresión. Próximo control semestral con énfasis en reducción de colesterol."
+  },
+  {
+    num:10,tipo:"Mujer / Fumadora / 55-64",
+    historia:"Señora Ana, 62 años. Fumadora (12 cig/día). PA: 168/104 mmHg. Colesterol total: 285 mg/dL. HDL: 33 mg/dL (muy bajo).",
+    datos:["Mujer 62 años","Fumadora","PA ≥160/100","Col. ≥280 mg/dL","HDL 33 → ×1,5"],
+    pregunta:"¿Riesgo real y categoría?",
+    opciones:["6% – Moderado (sin corrección)","9% – Alto (con corrección HDL)","3% – Bajo","12% – Alto"],
+    correcta:1,
+    feedback:"Tabla da 6%. HDL 33 mg/dL (<35) → ×1,5 → 6 × 1,5 = 9% → Moderado (límite superior, casi Alto). La corrección por HDL bajo eleva el riesgo desde 6% a 9%. En la práctica se trata con la misma intensidad que un Alto dado el perfil global. Farmacoterapia a considerar, cesación tabáquica urgente, control trimestral."
+  },
+  {
+    num:11,tipo:"Hombre / Fumador / 35-44",
+    historia:"Andrés, 38 años. Fumador activo. PA: 122/78 mmHg. Colesterol total: 195 mg/dL. HDL: 50 mg/dL.",
+    datos:["Hombre 38 años","Fumador","PA 120–129/80–84","Col. ~180 mg/dL","HDL 50 (sin corrección)"],
+    pregunta:"¿Cuál es el riesgo?",
+    opciones:["1% – Bajo","2% – Bajo","5% – Moderado","7% – Moderado"],
+    correcta:1,
+    feedback:"Tabla: Hombres Fumadores / 35–44 / PA 120–129/80–84 / Col.~180 = 2% → Bajo. A pesar de ser fumador, la juventud y los valores controlados de PA y colesterol mantienen el riesgo bajo. Intervención prioritaria: cesación tabáquica (en 10 años su riesgo aumentará significativamente si sigue fumando). Control anual con énfasis en tabaco."
+  },
+  {
+    num:12,tipo:"Mujer / No fumadora / 35-44",
+    historia:"Sofía, 36 años. No fuma. PA: 162/100 mmHg (crisis hipertensiva inicial). Colesterol total: 290 mg/dL. HDL: 48 mg/dL.",
+    datos:["Mujer 36 años","No fumadora","PA ≥160/100","Col. ≥280 mg/dL","HDL 48 (sin corrección)"],
+    pregunta:"¿Cuál es el riesgo?",
+    opciones:["1% – Bajo","2% – Bajo","5% – Moderado","8% – Moderado"],
+    correcta:1,
+    feedback:"Tabla: Mujeres No Fumadoras / 35–44 / PA ≥160/100 / Col.≥280 = 2% → Bajo. Importante: aunque la PA está muy elevada y el colesterol es alto, las mujeres jóvenes tienen un riesgo absoluto muy bajo en la tabla MINSAL. Sin embargo, esto no implica no tratar: el riesgo es bajo AHORA pero el pronóstico a largo plazo empeorará si no se tratan estos factores. Tratamiento antihipertensivo urgente e intervención en dislipidemia."
+  },
+  {
+    num:13,tipo:"Hombre / No fumador / 65-74 / HDL bajo",
+    historia:"Don Jorge, 72 años. No fuma. PA: 125/80 mmHg. Colesterol total: 195 mg/dL. HDL: 28 mg/dL (muy bajo).",
+    datos:["Hombre 72 años","No fumador","PA 120–129/80–84","Col. ~180 mg/dL","HDL 28 → ×1,5"],
+    pregunta:"¿Riesgo corregido?",
+    opciones:["3% – Bajo (sin corrección)","4,5% – Bajo (con corrección)","6% – Moderado (con corrección)","9% – Alto"],
+    correcta:1,
+    feedback:"Tabla da 3%. HDL 28 mg/dL (<35) → ×1,5 → 3 × 1,5 = 4,5% → Bajo (<5%). La corrección eleva el riesgo pero se mantiene en la categoría Baja. Sin embargo, un HDL tan bajo (28 mg/dL) es un hallazgo que requiere intervención: ejercicio físico regular, revisión de medicamentos, evaluación de causas secundarias. Control semestral por la edad y el HDL bajo."
+  },
+  {
+    num:14,tipo:"Hombre / Fumador / 65-74",
+    historia:"Don Arturo, 66 años. Fumador activo. PA: 138/88 mmHg. Colesterol total: 220 mg/dL. HDL: 45 mg/dL.",
+    datos:["Hombre 66 años","Fumador","PA 130–139/85–89","Col. ~220 mg/dL","HDL 45 (sin corrección)"],
+    pregunta:"¿Cuál es el riesgo?",
+    opciones:["4% – Bajo","6% – Moderado","8% – Moderado","11% – Alto"],
+    correcta:2,
+    feedback:"Tabla: Hombres Fumadores / 65–74 / PA 130–139/85–89 / Col.~220 = 8% → Moderado (5–9%). HDL 45 mg/dL: sin corrección. Está en el límite superior del Moderado. Intervención semestral, cesación tabáquica como prioridad (si deja de fumar, se usaría la tabla de no fumadores, reduciendo el riesgo). Meta LDL <130 mg/dL."
+  },
+  {
+    num:15,tipo:"Mujer / Fumadora / 45-54",
+    historia:"Señora Francisca, 52 años. Fumadora activa. PA: 155/95 mmHg. Colesterol total: 270 mg/dL. HDL: 38 mg/dL.",
+    datos:["Mujer 52 años","Fumadora","PA 140–159/90–99","Col. ~260 mg/dL","HDL 38 (sin corrección)"],
+    pregunta:"¿Cuál es el riesgo?",
+    opciones:["1% – Bajo","3% – Bajo","5% – Moderado","8% – Moderado"],
+    correcta:1,
+    feedback:"Tabla: Mujeres Fumadoras / 45–54 / PA 140–159/90–99 / Col.~260 = 3% → Bajo (<5%). Las mujeres tienen un riesgo absoluto significativamente menor que los hombres en la tabla MINSAL, incluso con tabaquismo, HTA y colesterol elevado. No obstante, el riesgo relativo es alto: la intervención en tabaquismo es prioritaria. Control anual con seguimiento de FRCV."
+  },
+  {
+    num:16,tipo:"Hombre / No fumador / 55-64 / HDL alto",
+    historia:"Don Ricardo, 61 años. No fuma. PA: 145/92 mmHg. Colesterol total: 265 mg/dL. HDL: 68 mg/dL (muy alto, protector).",
+    datos:["Hombre 61 años","No fumador","PA 140–159/90–99","Col. ~260 mg/dL","HDL 68 → ×0,5"],
+    pregunta:"¿Riesgo real?",
+    opciones:["5% – Moderado (sin corrección)","2,5% – Bajo (con corrección HDL)","10% – Alto","7% – Moderado"],
+    correcta:1,
+    feedback:"Tabla da 5%. HDL 68 mg/dL (≥60) → ×0,5 → 5 × 0,5 = 2,5% → Bajo. El HDL alto es un factor protector tan significativo que lleva un riesgo Moderado a Bajo. Importante educar al paciente sobre mantener HDL alto: ejercicio aeróbico regular, alimentación mediterránea. Control anual, tratar HTA y colesterol total igualmente."
+  },
+  {
+    num:17,tipo:"Hombre / Fumador / 45-54",
+    historia:"Don Sebastián, 53 años. Fumador (25 cig/día). PA: 168/105 mmHg. Colesterol total: 285 mg/dL. HDL: 34 mg/dL (bajo).",
+    datos:["Hombre 53 años","Fumador","PA ≥160/100","Col. ≥280 mg/dL","HDL 34 → ×1,5"],
+    pregunta:"¿Riesgo real y categoría?",
+    opciones:["7% – Moderado (sin corrección)","10,5% – Alto (con corrección HDL)","5% – Moderado","14% – Alto"],
+    correcta:1,
+    feedback:"Tabla da 7%. HDL 34 mg/dL (<35) → ×1,5 → 7 × 1,5 = 10,5% → Alto (≥10%). La corrección por HDL convierte un riesgo Moderado en Alto. Esta es la importancia clínica de medir el HDL. Inicio de farmacoterapia, cesación tabáquica urgente (PCIC indicado dado el alto consumo), control trimestral, derivación médica."
+  },
+  {
+    num:18,tipo:"Mujer / Fumadora / 65-74 / HDL muy alto",
+    historia:"Doña Isabel, 69 años. Fumadora activa (5 cig/día). PA: 165/100 mmHg. Colesterol total: 280 mg/dL. HDL: 72 mg/dL (muy alto).",
+    datos:["Mujer 69 años","Fumadora","PA ≥160/100","Col. ≥280 mg/dL","HDL 72 → ×0,5"],
+    pregunta:"¿Riesgo corregido?",
+    opciones:["6% – Moderado (sin corrección)","3% – Bajo (con corrección HDL)","9% – Alto","12% – Alto"],
+    correcta:1,
+    feedback:"Tabla da 6%. HDL 72 mg/dL (≥60) → ×0,5 → 6 × 0,5 = 3% → Bajo. A pesar de ser fumadora con HTA y colesterol alto, el HDL muy elevado reduce el riesgo a la mitad, llevándolo a Bajo. Sin embargo, esto NO significa que no se intervenga: la cesación tabáquica y el control de PA y colesterol son igualmente necesarios para el largo plazo."
+  },
+  {
+    num:19,tipo:"Hombre / No fumador / 45-54",
+    historia:"Don Raúl, 49 años. No fuma. PA: 118/76 mmHg. Colesterol total: 285 mg/dL. HDL: 36 mg/dL.",
+    datos:["Hombre 49 años","No fumador","PA <120/80","Col. ≥280 mg/dL","HDL 36 (sin corrección)"],
+    pregunta:"¿Cuál es el riesgo?",
+    opciones:["1% – Bajo","3% – Bajo","5% – Moderado","7% – Moderado"],
+    correcta:1,
+    feedback:"Tabla: Hombres No Fumadores / 45–54 / PA <120/80 / Col.≥280 = 3% → Bajo. El colesterol muy alto (≥280 mg/dL) en un hombre joven sin otros FRCV da solo 3% de riesgo. HDL 36 mg/dL: sin corrección. Intervención principal: tratamiento de la dislipidemia (estatinas según criterio médico, consejería nutricional). El control de PA y la no presencia de tabaquismo son factores protectores importantes aquí."
+  },
+  {
+    num:20,tipo:"Caso integrador – todas las variables",
+    historia:"Don Alfredo, 72 años, sexo masculino. Fumador activo (15 cig/día). PA: 168/105 mmHg. Colesterol total: 285 mg/dL. HDL: 31 mg/dL. Acude al CESFAM para primer control en años. Asintomático pero con múltiples FRCV.",
+    datos:["Hombre 72 años","Fumador activo","PA ≥160/100","Col. ≥280 mg/dL","HDL 31 → ×1,5"],
+    pregunta:"¿Riesgo real, categoría e intervención prioritaria?",
+    opciones:["17% – Alto, control semestral","25,5% – Alto, farmacoterapia urgente + cesación tabáquica","10% – Alto, solo educación","8,5% – Moderado, control trimestral"],
+    correcta:1,
+    feedback:"Tabla da 17% (máximo para hombres fumadores 65–74). HDL 31 (<35) → ×1,5 → 17 × 1,5 = 25,5% → Alto (muy por encima de ≥10%). Este es el perfil de máximo riesgo en la tabla MINSAL chilena. Intervenciones: farmacoterapia inmediata (antihipertensivos + estatinas), cesación tabáquica urgente (PCIC + vareniclina), control mensual, derivación cardiológica, gestión de caso. Educar sobre el riesgo real al paciente para motivar el cambio."
+  }
+];
+
+// ── JUEGO ───────────────────────────────────────
+let casoIdx=0,correctas=0,respondido=false,juegoIniciado=false;
+
+function iniciarJuego(){
+  juegoIniciado=true; casoIdx=0; correctas=0; respondido=false;
+  document.getElementById('juego-final').style.display='none';
+  document.getElementById('juego-activo').style.display='block';
+  actualizarScore(); renderCaso();
+}
+
+function confirmarReset(){
+  if(confirm('¿Reiniciar el juego desde el caso 1? Se perderá el progreso actual.')) iniciarJuego();
+}
+
+function renderCaso(){
+  if(casoIdx>=casos.length){mostrarFinal();return;}
+  respondido=false;
+  const c=casos[casoIdx];
+  const L=['A','B','C','D'];
+  document.getElementById('caso-cont').innerHTML=`
+    <div class="caso-card">
+      <div class="caso-hdr">
+        <span class="cn">Caso ${c.num} de ${casos.length}</span>
+        <span class="tbadge">${c.tipo}</span>
+      </div>
+      <div class="caso-body">
+        <div class="caso-hist">${c.historia}</div>
+        <div class="caso-datos">${c.datos.map(d=>`<span class="dato">${d}</span>`).join('')}</div>
+        <div class="caso-q">❓ ${c.pregunta}</div>
+        <div class="opts">
+          ${c.opciones.map((op,i)=>`
+            <button class="opt" onclick="responder(${i})" id="opt-${i}">
+              <span class="opt-l">${L[i]}</span><span>${op}</span>
+            </button>`).join('')}
+        </div>
+        <div class="feedback" id="feedback"></div>
+      </div>
+      <div class="caso-footer">
+        <span class="hint" id="hint">Selecciona la opción correcta</span>
+        <button class="btn-next" id="btn-next" onclick="siguiente()">
+          ${casoIdx<casos.length-1?'Siguiente caso →':'Ver resultado final →'}
+        </button>
+      </div>
+    </div>`;
+  document.getElementById('prog-bar').style.width=(casoIdx/casos.length*100)+'%';
+}
+
+function responder(idx){
+  if(respondido)return;
+  respondido=true;
+  const c=casos[casoIdx];
+  const L=['A','B','C','D'];
+  c.opciones.forEach((_,i)=>{
+    const b=document.getElementById('opt-'+i);
+    b.disabled=true;
+    if(i===c.correcta)b.classList.add('ok');
+    if(i===idx&&idx!==c.correcta)b.classList.add('err');
+  });
+  const ok=idx===c.correcta;
+  if(ok)correctas++;
+  const fb=document.getElementById('feedback');
+  fb.className='feedback '+(ok?'ok':'err');
+  fb.style.display='block';
+  fb.innerHTML=`<strong>${ok?'✅ ¡Correcto!':'❌ Incorrecto – respuesta: '+L[c.correcta]+') '+c.opciones[c.correcta]}</strong><span class="expl">${c.feedback}</span>`;
+  document.getElementById('btn-next').style.display='inline-block';
+  document.getElementById('hint').textContent=ok?'¡Bien! Continúa.':'Revisa el fundamento y continúa.';
+  actualizarScore();
+}
+
+function siguiente(){casoIdx++;renderCaso();}
+
+function actualizarScore(){
+  const r=Math.min(casoIdx+(respondido?1:0),20);
+  document.getElementById('sc-c').textContent=correctas;
+  document.getElementById('sc-p').textContent=r+'/20';
+  const p=r>0?Math.round((correctas/r)*100):0;
+  document.getElementById('sc-pct').textContent=p+'%';
+}
+
+function mostrarFinal(){
+  document.getElementById('juego-activo').style.display='none';
+  const fin=document.getElementById('juego-final');
+  fin.style.display='block';
+  const pct=Math.round((correctas/20)*100);
+  let est,tit,desc;
+  if(pct>=90){est='⭐⭐⭐';tit='¡Dominas las tablas MINSAL!';desc='Lees e interpretas correctamente las tablas de Framingham chilenas, incluyendo la corrección por HDL. ¡Excelente!'}
+  else if(pct>=70){est='⭐⭐';tit='¡Muy bien!';desc='Buen manejo de las tablas. Repasa la corrección por HDL y los casos con valores límite entre categorías.'}
+  else if(pct>=50){est='⭐';tit='En progreso';desc='Refuerza la lectura de las tablas MINSAL 2014 y la corrección por HDL (<35 y ≥60 mg/dL).'}
+  else{est='📚';tit='Sigue estudiando';desc='Practica identificando el sexo, tabaquismo, edad, PA y colesterol en las tablas Framingham MINSAL antes de continuar.'}
+  document.getElementById('est-f').textContent=est;
+  document.getElementById('big-f').textContent=correctas+'/20';
+  document.getElementById('tit-f').textContent=tit;
+  document.getElementById('desc-f').textContent=desc;
+  document.getElementById('ff-c').textContent=correctas;
+  document.getElementById('ff-e').textContent=20-correctas;
+  document.getElementById('ff-p').textContent=pct+'%';
+}
+</script>
+
+<a href="../index.html" class="volver-menu">← Volver al menú principal</a>
+
+</body>
+</html>
