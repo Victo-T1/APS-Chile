@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🩺Quiz Clínico</title>
+<style>
+    .volver-menu {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 999;
+    background: #1c2e4a;
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 14px;
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.22);
+  }
+
+  .volver-menu:hover {
+    background: #2e4d7d;
+  }
+
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --verde: #0D7A5F;
+    --verde-claro: #12A87F;
+    --verde-pale: #E8F7F3;
+    --azul: #1B4F8A;
+    --azul-claro: #2563B0;
+    --azul-pale: #EBF1FA;
+    --rojo: #C0392B;
+    --rojo-pale: #FDEEEC;
+    --amarillo: #E67E22;
+    --amarillo-pale: #FEF5E7;
+    --gris-dark: #1A1D23;
+    --gris-med: #4A5568;
+    --gris-light: #E2E8F0;
+    --blanco: #FFFFFF;
+    --fondo: #F6F8FA;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--fondo);
+    color: var(--gris-dark);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, var(--azul) 0%, var(--verde) 100%);
+    color: white;
+    padding: 20px 24px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-icon {
+    width: 38px; height: 38px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .logo h1 { font-size: 1.1rem; font-weight: 700; line-height: 1.2; }
+  .logo p { font-size: 0.72rem; opacity: 0.8; font-weight: 400; }
+
+  .score-panel {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  .score-item {
+    text-align: center;
+    background: rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 6px 16px;
+  }
+  .score-item .val {
+    font-size: 1.5rem;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1;
+  }
+  .score-item .lbl { font-size: 0.65rem; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  /* Vitals bar */
+  .vitals-bar {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .vitals-label { font-size: 0.7rem; opacity: 0.75; white-space: nowrap; }
+  .progress-track {
+    flex: 1;
+    height: 8px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 99px;
+    overflow: hidden;
+    position: relative;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #56E0B4, #AAFCE6);
+    border-radius: 99px;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+    position: relative;
+  }
+  .pulse-dot {
+    width: 10px; height: 10px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    right: -2px;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 0 0 0 rgba(255,255,255,0.7);
+    animation: pulse 1.8s infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
+    70% { box-shadow: 0 0 0 6px rgba(255,255,255,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+  }
+  .progress-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    opacity: 0.9;
+    min-width: 36px;
+    text-align: right;
+  }
+
+  /* ── MAIN ── */
+  main { max-width: 860px; margin: 0 auto; padding: 24px 16px 60px; }
+
+  /* ── TEMA SELECTOR ── */
+  .section-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gris-med);
+    margin-bottom: 10px;
+  }
+  .temas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .tema-btn {
+    background: white;
+    border: 2px solid var(--gris-light);
+    border-radius: 12px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.18s;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+  .tema-btn:hover { border-color: var(--verde-claro); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(18,168,127,0.15); }
+  .tema-btn.activo { border-color: var(--verde-claro); background: var(--verde-pale); }
+  .tema-btn .tema-icon { font-size: 1.4rem; margin-bottom: 4px; display: block; }
+  .tema-btn .tema-nombre { font-size: 0.82rem; font-weight: 600; line-height: 1.3; color: var(--gris-dark); }
+  .tema-btn .tema-n { font-size: 0.68rem; color: var(--gris-med); margin-top: 4px; }
+  .tema-btn .check-badge {
+    position: absolute; top: 8px; right: 8px;
+    width: 18px; height: 18px;
+    background: var(--verde-claro);
+    border-radius: 50%;
+    color: white;
+    font-size: 10px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+  .tema-btn.completado .check-badge { display: flex; }
+
+  /* MODO MIXTO */
+  .mix-btn {
+    background: linear-gradient(135deg, var(--azul), var(--verde));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 22px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: opacity 0.15s, transform 0.15s;
+    font-family: 'Inter', sans-serif;
+  }
+  .mix-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+
+  /* ── QUIZ AREA ── */
+  #quiz-area { display: none; }
+  .quiz-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .back-btn {
+    background: white;
+    border: 2px solid var(--gris-light);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    color: var(--gris-med);
+    font-family: 'Inter', sans-serif;
+    transition: all 0.15s;
+  }
+  .back-btn:hover { border-color: var(--azul); color: var(--azul); }
+  .quiz-tema-tag {
+    background: var(--azul-pale);
+    color: var(--azul-claro);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .pregunta-counter {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--gris-med);
+  }
+
+  .card-pregunta {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    padding: 28px;
+    margin-bottom: 16px;
+    border-left: 5px solid var(--azul-claro);
+  }
+  .badge-tipo {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+  .badge-tipo.mc { background: var(--azul-pale); color: var(--azul-claro); }
+  .badge-tipo.tf { background: var(--amarillo-pale); color: var(--amarillo); }
+  .badge-tipo.caso { background: #F3E8FF; color: #7C3AED; }
+
+  .enunciado {
+    font-size: 1.05rem;
+    font-weight: 500;
+    line-height: 1.55;
+    margin-bottom: 22px;
+    color: var(--gris-dark);
+  }
+  .enunciado .dato {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--fondo);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 0.92em;
+    color: var(--azul);
+  }
+
+  .opciones { display: flex; flex-direction: column; gap: 10px; }
+  .opcion-btn {
+    background: var(--fondo);
+    border: 2px solid var(--gris-light);
+    border-radius: 10px;
+    padding: 13px 16px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    color: var(--gris-dark);
+    transition: all 0.18s;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.4;
+  }
+  .opcion-btn:hover:not(:disabled) { border-color: var(--azul-claro); background: var(--azul-pale); }
+  .opcion-btn .opt-letra {
+    font-weight: 700;
+    font-size: 0.78rem;
+    min-width: 20px;
+    height: 20px;
+    background: var(--gris-light);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gris-med);
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+  .opcion-btn.correcta { border-color: var(--verde-claro) !important; background: var(--verde-pale) !important; color: var(--verde) !important; }
+  .opcion-btn.correcta .opt-letra { background: var(--verde-claro); color: white; }
+  .opcion-btn.incorrecta { border-color: var(--rojo) !important; background: var(--rojo-pale) !important; color: var(--rojo) !important; }
+  .opcion-btn.incorrecta .opt-letra { background: var(--rojo); color: white; }
+  .opcion-btn:disabled { cursor: default; }
+
+  /* Feedback */
+  .feedback-box {
+    display: none;
+    margin-top: 16px;
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 0.88rem;
+    line-height: 1.55;
+  }
+  .feedback-box.correcto { background: var(--verde-pale); border-left: 4px solid var(--verde-claro); color: #0A5C47; }
+  .feedback-box.incorrecto { background: var(--rojo-pale); border-left: 4px solid var(--rojo); color: #7B1D14; }
+  .feedback-box .fb-titulo { font-weight: 700; margin-bottom: 4px; font-size: 0.95rem; }
+  .feedback-box .fb-detalle { margin-top: 6px; opacity: 0.9; }
+
+  .btn-siguiente {
+    display: none;
+    margin-top: 16px;
+    background: var(--verde);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 28px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.15s;
+    width: 100%;
+  }
+  .btn-siguiente:hover { background: var(--verde-claro); transform: translateY(-1px); }
+
+  /* ── RESULTADO FINAL ── */
+  #resultado { display: none; text-align: center; }
+  .resultado-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 40px 32px;
+  }
+  .resultado-emoji { font-size: 4rem; margin-bottom: 12px; display: block; }
+  .resultado-titulo { font-size: 1.6rem; font-weight: 800; margin-bottom: 6px; }
+  .resultado-subtitulo { color: var(--gris-med); margin-bottom: 28px; font-size: 0.95rem; }
+  .resultado-stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+  .rstat {
+    background: var(--fondo);
+    border-radius: 12px;
+    padding: 16px 24px;
+    min-width: 110px;
+  }
+  .rstat .rv { font-size: 2rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+  .rstat .rl { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gris-med); margin-top: 2px; }
+  .btn-reiniciar {
+    background: linear-gradient(135deg, var(--azul), var(--verde));
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 32px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    margin: 6px;
+    transition: opacity 0.15s;
+  }
+  .btn-reiniciar:hover { opacity: 0.9; }
+
+  /* Selector temas */
+  #selector { display: block; }
+
+  /* Animaciones */
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .card-pregunta { animation: slideIn 0.28s ease; }
+
+  /* Responsive */
+  @media (max-width: 560px) {
+    .temas-grid { grid-template-columns: 1fr 1fr; }
+    .score-panel { gap: 10px; }
+    .score-item { padding: 5px 10px; }
+    .score-item .val { font-size: 1.2rem; }
+    main { padding: 16px 12px 50px; }
+  }
+
+  /* Barra flash correcto/incorrecto */
+  .flash-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    z-index: 999;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease, background 0s;
+  }
+  .flash-bar.show-verde { background: var(--verde-claro); transform: scaleX(1); }
+  .flash-bar.show-rojo { background: var(--rojo); transform: scaleX(1); }
+
+  /* Botón reiniciar global */
+  .btn-reset-global {
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.35);
+    color: white;
+    border-radius: 10px;
+    width: 40px; height: 40px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.18s;
+    flex-shrink: 0;
+  }
+  .btn-reset-global:hover { background: rgba(255,255,255,0.3); transform: rotate(-20deg) scale(1.1); }
+
+  /* Tooltip datos clínicos */
+  .tip {
+    border-bottom: 1px dashed var(--azul-claro);
+    cursor: help;
+    color: var(--azul-claro);
+  }
+</style>
+</head>
+<body>
+
+<div class="flash-bar" id="flashBar"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-top">
+    <div class="logo">
+      <div class="logo-icon">🩺</div>
+      <div>
+        <h1>Solemne 2 EFER 502</h1>
+        <p>Material elaborado por: Victoria Catalina Tiznado Jara</p>
+      </div>
+    </div>
+    <div class="score-panel">
+      <div class="score-item">
+        <div class="val" id="scoreCorrectas">0</div>
+        <div class="lbl">Correctas</div>
+      </div>
+      <div class="score-item">
+        <div class="val" id="scoreTotal">0</div>
+        <div class="lbl">Respondidas</div>
+      </div>
+      <div class="score-item" style="background:rgba(255,255,255,0.25)">
+        <div class="val" id="scorePct">—</div>
+        <div class="lbl">% acierto</div>
+      </div>
+      <button class="btn-reset-global" onclick="reiniciarTodo()" title="Reiniciar todo el progreso">↺</button>
+    </div>
+  </div>
+  <div class="vitals-bar">
+    <span class="vitals-label">Progreso solemne</span>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:0%">
+        <div class="pulse-dot"></div>
+      </div>
+    </div>
+    <span class="progress-pct" id="progressPct">0%</span>
+  </div>
+</header>
+
+<main>
+  <!-- SELECTOR -->
+  <div id="selector">
+    <p class="section-title">Selecciona un tema o inicia modo mixto</p>
+    <button class="mix-btn" onclick="iniciarModo('mix')">🔀 Modo Mixto — Todas las preguntas aleatorias</button>
+    <div class="temas-grid" id="temasGrid"></div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz-area">
+    <div class="quiz-header">
+      <button class="back-btn" onclick="volverSelector()">← Volver</button>
+      <span class="quiz-tema-tag" id="quizTemaTag">—</span>
+      <span class="pregunta-counter" id="preguntaCounter">1 / —</span>
+    </div>
+    <div class="card-pregunta" id="cardPregunta">
+      <span class="badge-tipo mc" id="badgeTipo">Opción Múltiple</span>
+      <p class="enunciado" id="enunciado"></p>
+      <div class="opciones" id="opciones"></div>
+      <div class="feedback-box" id="feedbackBox">
+        <div class="fb-titulo" id="fbTitulo"></div>
+        <div class="fb-detalle" id="fbDetalle"></div>
+      </div>
+    </div>
+    <button class="btn-siguiente" id="btnSiguiente" onclick="siguientePregunta()">Siguiente pregunta →</button>
+  </div>
+
+  <!-- RESULTADO -->
+  <div id="resultado">
+    <div class="resultado-card">
+      <span class="resultado-emoji" id="resEmoji">🏆</span>
+      <div class="resultado-titulo" id="resTitulo">¡Excelente!</div>
+      <div class="resultado-subtitulo" id="resSubtitulo"></div>
+      <div class="resultado-stats">
+        <div class="rstat"><div class="rv" id="resCorr" style="color:var(--verde)">—</div><div class="rl">Correctas</div></div>
+        <div class="rstat"><div class="rv" id="resIncorr" style="color:var(--rojo)">—</div><div class="rl">Incorrectas</div></div>
+        <div class="rstat"><div class="rv" id="resPct" style="color:var(--azul)">—</div><div class="rl">% logro</div></div>
+      </div>
+      <button class="btn-reiniciar" onclick="reiniciarTema()">🔄 Repetir tema</button>
+      <button class="btn-reiniciar" onclick="volverSelector()" style="background:white;color:var(--azul);border:2px solid var(--azul);">← Cambiar tema</button>
+    </div>
+  </div>
+</main>
+
+<script>
+// ═══════════════════════════════════════════════
+//  BASE DE PREGUNTAS
+// ═══════════════════════════════════════════════
+const TEMAS = [
+  {
+    id: 'pscv', nombre: 'Programa de Salud Cardiovascular', icon: '❤️',
+    preguntas: [
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuál es el objetivo principal del Programa de Salud Cardiovascular (PSCV) en Chile?',
+        opciones: [
+          'Prevenir exclusivamente el infarto agudo al miocardio en mayores de 65 años',
+          'Reducir la morbimortalidad cardiovascular mediante seguimiento de factores de riesgo y enfermedades crónicas en APS',
+          'Financiar cirugías cardíacas de alta complejidad a través del GES',
+          'Prescribir estatinas a toda la población mayor de 40 años'
+        ],
+        correcta: 1,
+        feedback: 'El PSCV busca reducir la morbimortalidad cardiovascular a través del seguimiento periódico de personas con HTA, DM2, dislipidemia y enfermedad cardiovascular establecida en el nivel primario (APS). Incorpora estratificación de riesgo y metas terapéuticas.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Qué patologías forman parte del PSCV?',
+        opciones: [
+          'Hipertensión arterial, Diabetes Mellitus tipo 2, Dislipidemia y Enfermedad cardiovascular establecida',
+          'HTA, DM tipo 1, Obesidad y Síndrome metabólico',
+          'Hipercolesterolemia, Arritmias, HTA y DM tipo 2',
+          'Solo HTA y DM tipo 2'
+        ],
+        correcta: 0,
+        feedback: 'El PSCV incluye: HTA, DM tipo 2, Dislipidemia y enfermedad cardiovascular establecida (ECV). La DM tipo 1 no está incluida en este programa y se maneja en forma separada.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Con qué frecuencia mínima debe controlarse un paciente con HTA compensada sin otros factores de riesgo en el PSCV?',
+        opciones: [
+          'Cada mes',
+          'Cada 6 meses',
+          'Anualmente',
+          'Cada 3 meses'
+        ],
+        correcta: 1,
+        feedback: 'Los pacientes compensados del PSCV deben controlarse al menos cada 6 meses. Los pacientes descompensados o de alto riesgo requieren controles más frecuentes (mensual o según indicación médica).'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuál es la meta de presión arterial para un paciente hipertenso sin complicaciones en el PSCV?',
+        opciones: [
+          'PA < 160/100 mmHg',
+          'PA < 140/90 mmHg',
+          'PA < 130/80 mmHg',
+          'PA < 120/70 mmHg'
+        ],
+        correcta: 1,
+        feedback: 'La meta general de PA en el PSCV es < 140/90 mmHg. En pacientes con DM, ERC o alto riesgo CV, la meta puede ser < 130/80 mmHg según guías clínicas MINSAL.'
+      },
+      {
+        tipo: 'tf',
+        enunciado: '¿Verdadero o Falso? El PSCV es financiado íntegramente por el sistema GES (Garantías Explícitas en Salud).',
+        opciones: ['Verdadero', 'Falso'],
+        correcta: 1,
+        feedback: 'FALSO. El PSCV es un programa de salud pública que opera en APS con presupuesto del MINSAL, pero no todas sus prestaciones son GES. Algunas patologías del programa SÍ tienen cobertura GES (ej: HTA primaria, DM2 en menores de 15 años), pero el programa en sí es más amplio.'
+      },
+      {
+        tipo: 'caso',
+        enunciado: 'Paciente de 58 años, HTA + DM2, acude a control PSCV. PA: 155/95 mmHg, HbA1c: 8.9%, IMC 31. ¿Cuál es la clasificación de riesgo cardiovascular más probable?',
+        opciones: [
+          'Riesgo bajo (< 5% a 10 años)',
+          'Riesgo moderado (5–10% a 10 años)',
+          'Riesgo alto (> 10% a 10 años)',
+          'No se puede calcular sin exámenes adicionales'
+        ],
+        correcta: 2,
+        feedback: 'La combinación de HTA descompensada + DM2 descompensada (HbA1c > 7%) + obesidad (IMC ≥ 30) coloca a este paciente en riesgo alto. El riesgo cardiovascular se estima con la tabla Framingham adaptada para Chile o la puntuación OMS/MINSAL.'
+      }
+    ]
+  },
+  {
+    id: 'riesgo', nombre: 'Cálculo Riesgo Cardiovascular', icon: '📊',
+    preguntas: [
+      {
+        tipo: 'mc',
+        enunciado: '¿Qué herramienta utiliza Chile para el cálculo de riesgo cardiovascular en APS?',
+        opciones: [
+          'Escala GRACE',
+          'Tabla de Framingham adaptada o puntuación OMS/ISH',
+          'Escala HEART',
+          'Índice CHADS₂'
+        ],
+        correcta: 1,
+        feedback: 'Chile utiliza las Tablas de Framingham adaptadas para la población chilena o la puntuación OMS/ISH (Organización Mundial de la Salud / International Society of Hypertension). Estas permiten estimar el riesgo de evento CV fatal o no fatal a 10 años.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuáles son las variables principales incluidas en el cálculo de riesgo cardiovascular de Framingham?',
+        opciones: [
+          'Edad, sexo, PA sistólica, colesterol total o LDL, HDL, tabaquismo y diabetes',
+          'Peso, talla, perímetro abdominal, glucosa en ayuno y creatinina',
+          'Edad, sedentarismo, consumo de alcohol, antecedentes familiares y PCR',
+          'PA diastólica, triglicéridos, IMC y microalbuminuria'
+        ],
+        correcta: 0,
+        feedback: 'Framingham incluye: Edad, sexo, PA sistólica (tratada o no), colesterol total, colesterol HDL, tabaquismo (actual) y presencia de DM. Estas variables predicen el riesgo de enfermedad coronaria a 10 años.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cómo se clasifica un riesgo cardiovascular de 18% a 10 años según la OMS?',
+        opciones: [
+          'Riesgo bajo',
+          'Riesgo moderado',
+          'Riesgo alto',
+          'Riesgo muy alto'
+        ],
+        correcta: 2,
+        feedback: 'Clasificación OMS: Bajo (<10%), Moderado (10-20%), Alto (20-30%), Muy alto (>30%). Un riesgo de 18% es ALTO. Los pacientes de alto riesgo requieren manejo farmacológico más agresivo y controles frecuentes.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Un paciente con evento cardiovascular previo (infarto al miocardio) debe ser sometido al cálculo de riesgo cardiovascular de Framingham?',
+        opciones: [
+          'Sí, siempre para determinar el nivel de riesgo',
+          'No, se considera automáticamente de riesgo muy alto sin necesidad de calcular',
+          'Solo si tiene además HTA o DM',
+          'Sí, pero solo con la tabla de la OMS'
+        ],
+        correcta: 1,
+        feedback: 'Los pacientes con ECV establecida (infarto previo, ACV, angina, insuficiencia cardíaca, etc.) se clasifican automáticamente como RIESGO MUY ALTO, sin necesidad de aplicar tablas de Framingham. El cálculo se reserva para pacientes sin ECV previa.'
+      },
+      {
+        tipo: 'tf',
+        enunciado: '¿Verdadero o Falso? El colesterol HDL elevado aumenta el riesgo cardiovascular en la escala de Framingham.',
+        opciones: ['Verdadero', 'Falso'],
+        correcta: 1,
+        feedback: 'FALSO. El HDL alto es PROTECTOR, es decir, reduce el riesgo cardiovascular. En la tabla de Framingham, a mayor HDL, menor puntaje de riesgo. Por el contrario, el HDL bajo (< 40 mg/dL en hombres, < 50 mg/dL en mujeres) aumenta el riesgo.'
+      }
+    ]
+  },
+  {
+    id: 'ecicep', nombre: 'ECICEP', icon: '🤝',
+    preguntas: [
+      {
+        tipo: 'mc',
+        enunciado: '¿Qué es la ECICEP?',
+        opciones: [
+          'Escuela de Capacitación Integral para Enfermeras en Chile',
+          'Estrategia de Cuidado Integral Centrado en las Personas',
+          'Equipo Clínico Integrado de Cuidados de Enfermería en APS',
+          'Evaluación Clínica Integral de Condiciones Específicas Prioritarias'
+        ],
+        correcta: 1,
+        feedback: 'La ECICEP es la Estrategia de Cuidado Integral Centrado en las Personas. Es un modelo de atención centrado en la persona, sus necesidades y su contexto, que busca superar la visión biomédica tradicional e integrar el cuidado en todos los niveles de la red asistencial.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuál es el principio fundamental de la ECICEP?',
+        opciones: [
+          'Priorizar la eficiencia en el gasto de salud sobre la calidad de atención',
+          'Centrar el cuidado en la persona, reconociendo su historia, contexto, familia y valores',
+          'Concentrar todas las prestaciones de salud en hospitales de alta complejidad',
+          'Estandarizar los protocolos clínicos para reducir variabilidad en el tratamiento'
+        ],
+        correcta: 1,
+        feedback: 'ECICEP se basa en el cuidado centrado en la persona: reconocer a la persona como sujeto activo, con historia, familia y comunidad. Se aleja del modelo centrado en la enfermedad para enfocarse en el bienestar integral y la autonomía del individuo.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuál de los siguientes NO es un componente de la ECICEP?',
+        opciones: [
+          'Continuidad del cuidado',
+          'Participación de la persona y su familia',
+          'Acceso exclusivo a médicos especialistas',
+          'Coordinación entre niveles de atención'
+        ],
+        correcta: 2,
+        feedback: 'El acceso exclusivo a especialistas no es parte de ECICEP. La estrategia promueve la atención en el nivel primario como eje del sistema, con coordinación entre niveles. Sus componentes incluyen: longitudinalidad, integralidad, participación, coordinación y enfoque familiar y comunitario.'
+      },
+      {
+        tipo: 'tf',
+        enunciado: '¿Verdadero o Falso? La ECICEP reemplaza completamente el modelo biomédico en APS.',
+        opciones: ['Verdadero', 'Falso'],
+        correcta: 1,
+        feedback: 'FALSO. La ECICEP complementa y trasciende el modelo biomédico, pero no lo elimina. Integra el diagnóstico y tratamiento biomédico con una visión más amplia que incluye determinantes sociales, contexto familiar, historia de vida y participación del usuario.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: 'La ECICEP promueve el uso de instrumentos de valoración integral. ¿Cuál de los siguientes corresponde a una herramienta usada en este enfoque?',
+        opciones: [
+          'Escala de Glasgow',
+          'Ficha EFAM (Examen Funcional del Adulto Mayor)',
+          'Cuestionario DASS-21 exclusivamente',
+          'Score de APACHE II'
+        ],
+        correcta: 1,
+        feedback: 'El EFAM es un instrumento de valoración funcional del adulto mayor utilizado en APS, coherente con el enfoque ECICEP de valoración integral. También se usan: Escala de Barthel, Pfeffer, MoCA, entre otros, según la necesidad de la persona.'
+      }
+    ]
+  },
+  {
+    id: 'mayores', nombre: 'Programa Nacional de Personas Mayores', icon: '👴',
+    preguntas: [
+      {
+        tipo: 'mc',
+        enunciado: 'El EFAM (Examen Funcional del Adulto Mayor) clasifica a los adultos mayores en categorías. ¿Cuáles son estas categorías?',
+        opciones: [
+          'Autovalente, En riesgo y Dependiente leve',
+          'Autovalente sin riesgo, Autovalente con riesgo y No autovalente',
+          'Independiente, Semidependiente y Dependiente total',
+          'Funcional, Prefuncional y No funcional'
+        ],
+        correcta: 1,
+        feedback: 'El EFAM clasifica en: (1) Autovalente sin riesgo: puntaje ≥ 43 puntos en la parte A; (2) Autovalente con riesgo: puntaje 33–42 en parte A; (3) No autovalente: puntaje ≤ 32 o cualquier AVD comprometida en parte B. La clasificación orienta el plan de cuidados.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿A qué edad se realiza el primer EFAM según el programa de salud en APS?',
+        opciones: [
+          'A los 60 años',
+          'A los 65 años',
+          'A los 70 años',
+          'A los 75 años'
+        ],
+        correcta: 0,
+        feedback: 'El EFAM se aplica desde los 60 años en el Programa de Salud de las Personas Mayores. Se realiza en el ingreso al programa y luego con periodicidad anual para monitorizar cambios funcionales.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Qué evalúa la Parte B del EFAM?',
+        opciones: [
+          'Riesgo cognitivo mediante el Mini-Mental',
+          'Actividades de la Vida Diaria (AVD) básicas e instrumentales',
+          'Estado nutricional y depresión',
+          'Riesgo de caída con la prueba de Tinetti'
+        ],
+        correcta: 1,
+        feedback: 'La Parte B del EFAM evalúa Actividades de la Vida Diaria (AVD): básicas (comer, vestirse, higiene, continencia, movilizarse) e instrumentales (usar teléfono, medicamentos, transporte, manejo de dinero). Si hay alguna AVD comprometida, el adulto mayor se clasifica como NO AUTOVALENTE, independiente del puntaje de la Parte A.'
+      },
+      {
+        tipo: 'tf',
+        enunciado: '¿Verdadero o Falso? La vacuna contra la influenza es obligatoria y gratuita para todos los adultos mayores de 65 años en Chile.',
+        opciones: ['Verdadero', 'Falso'],
+        correcta: 0,
+        feedback: 'VERDADERO. En Chile, la vacuna contra la influenza es gratuita y forma parte del programa de vacunación del adulto mayor (≥ 65 años), junto a la vacuna anti-neumocócica. Es una de las intervenciones preventivas más importantes del Programa de Salud del Adulto Mayor.'
+      },
+      {
+        tipo: 'caso',
+        enunciado: 'Adulto mayor de 72 años es derivado a domicilio. Presenta compromiso de las AVD básicas: no puede bañarse solo ni trasladarse sin asistencia. EFAM parte A: 38 puntos. ¿Cuál es su clasificación?',
+        opciones: [
+          'Autovalente sin riesgo',
+          'Autovalente con riesgo',
+          'No autovalente',
+          'Requiere reevaluación en 3 meses'
+        ],
+        correcta: 2,
+        feedback: 'CORRECTO. A pesar de que 38 puntos en la Parte A corresponde a "autovalente con riesgo", la presencia de compromiso en AVD básicas (Parte B) clasifica automáticamente al paciente como NO AUTOVALENTE. La Parte B tiene prioridad sobre la Parte A cuando hay déficit en AVD.'
+      }
+    ]
+  },
+  {
+    id: 'padds', nombre: 'PADDS', icon: '🏠',
+    preguntas: [
+      {
+        tipo: 'mc',
+        enunciado: '¿Qué significa PADDS?',
+        opciones: [
+          'Programa de Atención Domiciliaria para personas con Dependencia Severa y sus Cuidadores',
+          'Plan de Apoyo Diagnóstico y Derivación a Servicios de Salud',
+          'Programa de Asistencia Domiciliaria y Desarrollo Social',
+          'Protocolo de Atención Directa para Dependientes del Sistema de Salud'
+        ],
+        correcta: 0,
+        feedback: 'PADDS: Programa de Atención Domiciliaria para personas con Dependencia Severa y sus Cuidadores/as. Está orientado a personas que por su condición de salud no pueden desplazarse a los centros de salud y requieren atención en el hogar.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuál es el criterio de ingreso al PADDS?',
+        opciones: [
+          'Tener más de 65 años y vivir solo',
+          'Presentar dependencia funcional severa certificada y requerir atención de salud que no puede recibir en establecimientos ambulatorios',
+          'Pertenecer a FONASA tramo A o B',
+          'Tener diagnóstico de demencia o ACV'
+        ],
+        correcta: 1,
+        feedback: 'El criterio de ingreso al PADDS es: persona con dependencia funcional severa (no autovalente con gran compromiso de AVD), que no pueda acudir al CESFAM, y que requiera atención de salud continua. También se incluye a los cuidadores como parte del programa.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Qué ley regula el sistema de apoyos a cuidadores en el contexto del PADDS?',
+        opciones: [
+          'Ley 20.584 de Derechos y Deberes de los Pacientes',
+          'Ley 21.805 "Chile Cuida"',
+          'Ley 19.628 de Protección de la Vida Privada',
+          'Ley 20.422 de Igualdad de Oportunidades e Inclusión Social'
+        ],
+        correcta: 1,
+        feedback: 'La Ley 21.805, denominada "Chile Cuida", establece el Sistema Nacional de Apoyos y Cuidados, reconociendo formalmente a los cuidadores/as de personas con dependencia. El PADDS se enmarca en esta ley al incluir a los cuidadores como sujetos de atención y apoyo.'
+      },
+      {
+        tipo: 'tf',
+        enunciado: '¿Verdadero o Falso? En el PADDS, el/la cuidador/a también puede recibir atención de salud y apoyo psicosocial como parte del programa.',
+        opciones: ['Verdadero', 'Falso'],
+        correcta: 0,
+        feedback: 'VERDADERO. Una característica fundamental del PADDS es que incorpora al cuidador/a como parte del equipo de cuidado Y como usuario del programa. Los cuidadores reciben evaluación de su propio estado de salud, educación, apoyo psicosocial y estrategias para prevenir el síndrome de sobrecarga del cuidador.'
+      },
+      {
+        tipo: 'caso',
+        enunciado: 'Señora de 78 años, post-ACV, postrada, con sonda vesical y gastrostomía. Vive con su hija quien la cuida a tiempo completo. ¿Qué programa de APS es el más adecuado para esta familia?',
+        opciones: [
+          'PSCV',
+          'ECICEP únicamente',
+          'PADDS',
+          'Programa de Salud Mental'
+        ],
+        correcta: 2,
+        feedback: 'La señora cumple criterios para PADDS: dependencia severa (postrada, con dispositivos invasivos), incapacidad de acudir al CESFAM, y necesidad de atención domiciliaria continua. Además, su hija cuidadora puede recibir apoyo a través del mismo programa. Es el caso paradigmático del PADDS.'
+      }
+    ]
+  },
+  {
+    id: 'chilecuida', nombre: 'Ley Chile Cuida', icon: '⚖️',
+    preguntas: [
+      {
+        tipo: 'mc',
+        enunciado: '¿Qué crea la Ley 21.805 "Chile Cuida"?',
+        opciones: [
+          'Un bono mensual exclusivo para cuidadores de personas mayores',
+          'El Sistema Nacional de Apoyos y Cuidados, reconociendo formalmente los cuidados como un derecho',
+          'Un programa de jubilación anticipada para cuidadores informales',
+          'La obligatoriedad de institucionalizar a personas con dependencia severa'
+        ],
+        correcta: 1,
+        feedback: 'La Ley 21.805 crea el Sistema Nacional de Apoyos y Cuidados (SNAC). Reconoce formalmente la labor de cuidado, establece derechos tanto para las personas cuidadas como para los cuidadores, y coordina los servicios de apoyo entre distintos organismos del Estado.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Quiénes son reconocidos como "personas cuidadoras" según la Ley Chile Cuida?',
+        opciones: [
+          'Solo los profesionales de enfermería contratados por el Estado',
+          'Únicamente familiares directos (cónyuge, hijos, padres)',
+          'Personas que proveen cuidado no remunerado a otra persona que lo requiere por dependencia o discapacidad',
+          'Cualquier persona mayor de 18 años que viva con una persona dependiente'
+        ],
+        correcta: 2,
+        feedback: 'La Ley Chile Cuida reconoce como cuidador/a a quien provee cuidado no remunerado a una persona con dependencia o discapacidad, independiente del parentesco. Esto valida la labor de vecinos, amigos u otros que asumen este rol de manera informal.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Qué beneficios establece la Ley Chile Cuida para los cuidadores?',
+        opciones: [
+          'Solo reconocimiento simbólico sin beneficios concretos',
+          'Acceso a capacitación, evaluación de salud propia, y posibilidad de acceder a subsidios y descanso (respiro)',
+          'Pensión de vejez anticipada al cumplir 5 años de cuidado',
+          'Exención total de impuestos durante el período de cuidado'
+        ],
+        correcta: 1,
+        feedback: 'Chile Cuida establece beneficios concretos: acceso a capacitación en cuidados, evaluación y apoyo a la salud del cuidador, "respiro" (períodos de descanso), apoyo psicosocial, y posibles subsidios o bonificaciones. Busca reconocer y aliviar la carga del cuidado no remunerado.'
+      },
+      {
+        tipo: 'tf',
+        enunciado: '¿Verdadero o Falso? La Ley Chile Cuida reconoce el cuidado como una función exclusiva del sistema de salud.',
+        opciones: ['Verdadero', 'Falso'],
+        correcta: 1,
+        feedback: 'FALSO. Chile Cuida tiene un enfoque intersectorial: involucra al MINSAL, SENAMA, SENADIS, Ministerio de Desarrollo Social y otros organismos. El cuidado se entiende como un derecho social que va más allá del sistema de salud, incorporando dimensiones sociales, laborales y de protección social.'
+      }
+    ]
+  },
+  {
+    id: 'paliativos', nombre: 'Alivio del Dolor y Cuidados Paliativos', icon: '🌿',
+    preguntas: [
+      {
+        tipo: 'mc',
+        enunciado: '¿Qué son los Cuidados Paliativos según la OMS?',
+        opciones: [
+          'Cuidados orientados exclusivamente a pacientes en los últimos días de vida',
+          'Enfoque que mejora la calidad de vida de pacientes y familias con enfermedades amenazantes, mediante prevención y alivio del sufrimiento',
+          'Tratamiento farmacológico del dolor oncológico en etapa terminal',
+          'Programa de eutanasia pasiva regulado por el Estado'
+        ],
+        correcta: 1,
+        feedback: 'La OMS define los Cuidados Paliativos como el enfoque que mejora la calidad de vida de pacientes y sus familias ante enfermedades que amenazan la vida, mediante la prevención y el alivio del sufrimiento, identificando tempranamente y tratando el dolor y otros problemas físicos, psicosociales y espirituales.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Qué es la Escalera Analgésica de la OMS?',
+        opciones: [
+          'Protocolo quirúrgico para tratamiento del dolor crónico',
+          'Sistema de tres peldaños para manejo progresivo del dolor: no opioides, opioides débiles y opioides potentes',
+          'Escala numérica del 1 al 10 para evaluar la intensidad del dolor',
+          'Protocolo de sedación paliativa en los últimos días de vida'
+        ],
+        correcta: 1,
+        feedback: 'La Escalera Analgésica de la OMS tiene 3 peldaños: Peldaño 1 (dolor leve): AINEs/paracetamol; Peldaño 2 (dolor moderado): opioides débiles como tramadol o codeína ± no opioides; Peldaño 3 (dolor intenso): opioides potentes como morfina ± no opioides. Se sube un peldaño cuando el anterior no controla el dolor.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Qué rol cumple Enfermería en los cuidados paliativos?',
+        opciones: [
+          'Solo administración de medicamentos prescritos por el médico',
+          'Valoración del dolor, manejo de síntomas, apoyo emocional al paciente y familia, educación y coordinación del equipo',
+          'Toma de decisiones clínicas sobre el tratamiento farmacológico',
+          'Exclusivamente cuidados de confort físico'
+        ],
+        correcta: 1,
+        feedback: 'Enfermería tiene un rol fundamental en paliativos: valoración continua del dolor y otros síntomas (disnea, náuseas, constipación), administración y monitorización de analgesia, apoyo emocional y espiritual, educación a la familia sobre cuidados, y coordinación con el equipo interdisciplinario.'
+      },
+      {
+        tipo: 'tf',
+        enunciado: '¿Verdadero o Falso? Los cuidados paliativos solo deben iniciarse cuando no hay más tratamiento curativo disponible.',
+        opciones: ['Verdadero', 'Falso'],
+        correcta: 1,
+        feedback: 'FALSO. Según la OMS y las guías actuales, los cuidados paliativos pueden y deben iniciarse de forma precoz, en paralelo con el tratamiento activo/curativo. No son excluyentes. La integración temprana mejora la calidad de vida y puede incluso prolongarla.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: 'En Chile, el programa GES incluye acceso a cuidados paliativos para:',
+        opciones: [
+          'Solo pacientes con cáncer en etapa terminal',
+          'Pacientes con cáncer en etapa avanzada desde el diagnóstico de incurabilidad',
+          'Toda persona con enfermedad crónica descompensada',
+          'Solo mayores de 65 años con diagnóstico oncológico'
+        ],
+        correcta: 1,
+        feedback: 'El GES incluye garantías de Alivio del Dolor por Cáncer Avanzado y Cuidados Paliativos para pacientes con cáncer avanzado una vez establecida la condición de incurabilidad. Esto incluye acceso a morfina oral, atención domiciliaria y apoyo al cuidador.'
+      }
+    ]
+  },
+  {
+    id: 'eno', nombre: 'Enfermedades de Notificación Obligatoria', icon: '🦠',
+    preguntas: [
+      {
+        tipo: 'mc',
+        enunciado: '¿Qué es una Enfermedad de Notificación Obligatoria (ENO) en Chile?',
+        opciones: [
+          'Enfermedad que requiere hospitalización obligatoria del paciente',
+          'Patología cuya aparición debe ser reportada al sistema de vigilancia epidemiológica según decreto del MINSAL',
+          'Enfermedad crónica que obliga al paciente a inscribirse en un programa de salud',
+          'Condición de salud que activa automáticamente la cobertura GES'
+        ],
+        correcta: 1,
+        feedback: 'Las ENO son enfermedades cuya aparición debe ser notificada obligatoriamente a la autoridad sanitaria (SEREMI de Salud o ISP) según lo establece el DS Nº7/2019 y sus actualizaciones. Permiten la vigilancia epidemiológica nacional para control y prevención.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuál es el plazo de notificación para una ENO de "notificación inmediata" como el cólera o viruela?',
+        opciones: [
+          '24 horas desde la sospecha diagnóstica',
+          'Antes de 1 hora desde la sospecha',
+          'Dentro de la jornada laboral en que se diagnostica',
+          '48 horas desde la confirmación de laboratorio'
+        ],
+        correcta: 1,
+        feedback: 'Las ENO de notificación inmediata (ej: cólera, viruela, SARS) deben notificarse en menos de 1 hora, por la vía más rápida disponible (teléfono + formulario). Las de notificación diaria tienen plazo de 24 horas, y las semanales, 7 días.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuál de las siguientes enfermedades tiene notificación semanal en Chile?',
+        opciones: [
+          'Hantavirus',
+          'Influenza',
+          'Cólera',
+          'Viruela'
+        ],
+        correcta: 1,
+        feedback: 'La Influenza tiene notificación semanal a través del sistema centinela. El Hantavirus es de notificación INMEDIATA (< 1 hora). El Cólera y la Viruela son de notificación inmediata también. La frecuencia depende de la gravedad y potencial epidémico de la enfermedad.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Quiénes están obligados a notificar una ENO en Chile?',
+        opciones: [
+          'Solo los médicos tratantes',
+          'Todo profesional de la salud (médicos, enfermeras, matronas, etc.) y directores de establecimientos',
+          'Únicamente los epidemiólogos del MINSAL',
+          'Solo los directores de hospitales y clínicas'
+        ],
+        correcta: 1,
+        feedback: 'Están obligados a notificar: médicos, cirujanos dentistas, matronas, enfermeras/os, y demás profesionales de salud, así como directores de establecimientos de salud. La notificación es una responsabilidad legal y ética de todo el equipo de salud.'
+      }
+    ]
+  },
+  {
+    id: 'influenza', nombre: 'Influenza & COVID-19', icon: '🤧',
+    preguntas: [
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuál es el período de incubación de la Influenza?',
+        opciones: [
+          '12–24 horas',
+          '1–4 días (promedio 2 días)',
+          '7–14 días',
+          '2–6 semanas'
+        ],
+        correcta: 1,
+        feedback: 'El período de incubación de la Influenza es de 1 a 4 días, con promedio de 2 días. La persona es contagiosa desde 1 día antes del inicio de síntomas hasta 5–7 días después. Los niños y adultos con inmunosupresión pueden contagiar por más tiempo.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuáles son los grupos prioritarios para la vacunación anti-influenza en Chile?',
+        opciones: [
+          'Solo adultos mayores de 65 años',
+          'Personas ≥65 años, embarazadas, menores de 2 años, personas con enfermedades crónicas, y trabajadores de salud',
+          'Toda la población sin distinción',
+          'Solo trabajadores de la salud y pacientes hospitalizados'
+        ],
+        correcta: 1,
+        feedback: 'Los grupos prioritarios para vacunación anti-influenza en Chile incluyen: adultos mayores ≥65 años, embarazadas, niños de 6 meses a 5 años, personas con enfermedades crónicas (cardiovascular, respiratoria, DM, VIH), personal de salud, y otros grupos vulnerables definidos por MINSAL cada temporada.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cómo se diferencia clínicamente la Influenza del resfrío común?',
+        opciones: [
+          'La influenza tiene inicio gradual, mientras que el resfrío es de inicio brusco',
+          'La influenza tiene inicio brusco, fiebre alta, mialgias intensas y compromiso general; el resfrío es más leve y localizado en vías altas',
+          'Son idénticos clínicamente, solo se diferencian por serología',
+          'La influenza afecta solo el sistema respiratorio inferior'
+        ],
+        correcta: 1,
+        feedback: 'La Influenza tiene inicio BRUSCO con: fiebre alta (≥38.5°C), cefalea intensa, mialgias generalizadas, compromiso del estado general, y síntomas respiratorios. El resfrío común tiene inicio gradual, síntomas más leves (rinorrea, estornudos, sin fiebre alta o leve). Esta distinción clínica es clave para enfermería.'
+      },
+      {
+        tipo: 'tf',
+        enunciado: '¿Verdadero o Falso? El COVID-19 dejó de ser una Enfermedad de Notificación Obligatoria en Chile.',
+        opciones: ['Verdadero', 'Falso'],
+        correcta: 0,
+        feedback: 'VERDADERO. Desde la salida de la fase pandémica, el COVID-19 pasó a integrarse como una ENO de vigilancia epidemiológica regular (similar a influenza), con notificación de casos graves y defunciones. Las características de la notificación han evolucionado según las resoluciones del MINSAL.'
+      }
+    ]
+  },
+  {
+    id: 'chagas', nombre: 'Chagas & Dengue', icon: '🦟',
+    preguntas: [
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuál es el vector de la enfermedad de Chagas?',
+        opciones: [
+          'Aedes aegypti (mosquito)',
+          'Triatoma infestans (vinchuca)',
+          'Anopheles gambiae (mosquito)',
+          'Ixodes scapularis (garrapata)'
+        ],
+        correcta: 1,
+        feedback: 'El Chagas es transmitido por la vinchuca (Triatoma infestans y otras especies del género Triatoma), un insecto hematófago que deposita sus heces contaminadas con Trypanosoma cruzi en la piel mientras pica. También puede transmitirse por transfusión sanguínea, vertical (madre-hijo) y trasplante de órganos.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuál es el signo de Romaña en la enfermedad de Chagas?',
+        opciones: [
+          'Fiebre de más de 39°C con erupción cutánea en tronco',
+          'Edema bipalpebral unilateral indoloro por inoculación conjuntival del parásito',
+          'Linfadenopatía cervical con hepatoesplenomegalia',
+          'Chagoma de inoculación en extremidades inferiores'
+        ],
+        correcta: 1,
+        feedback: 'El signo de Romaña es el edema bipalpebral unilateral, indoloro, que ocurre cuando la puerta de entrada del Trypanosoma cruzi es la conjuntiva. Es un signo clásico de la fase aguda del Chagas. El chagoma es la lesión cutánea si la entrada es por piel.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuál es el vector del Dengue y qué condiciones favorecen su reproducción?',
+        opciones: [
+          'Culex quinquefasciatus; agua corriente y limpia',
+          'Aedes aegypti; agua estancada en recipientes artificiales como neumáticos, floreros y bebederos',
+          'Triatoma infestans; viviendas con grietas y ranchos rurales',
+          'Phlebotomus spp.; suelos húmedos y arenosamente'
+        ],
+        correcta: 1,
+        feedback: 'El Dengue es transmitido por el Aedes aegypti, que se reproduce en agua estancada de recipientes artificiales (neumáticos, floreros, tiestos, bebederos de animales). Las medidas de control vectorial incluyen eliminar criaderos, uso de repelente y mosquiteros.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuáles son las señales de alarma del Dengue grave?',
+        opciones: [
+          'Fiebre > 39°C y cefalea intensa',
+          'Dolor abdominal intenso, vómitos persistentes, sangrado de mucosas, letargia, hipotensión',
+          'Erupción cutánea difusa y artralgia',
+          'Fiebre con escalofríos y esplenomegalia'
+        ],
+        correcta: 1,
+        feedback: 'Señales de alarma del Dengue: dolor abdominal intenso, vómitos persistentes, acumulación de líquidos (ascitis, derrame), sangrado de mucosas, letargia/irritabilidad, hepatomegalia > 2 cm, aumento de hematocrito con caída rápida de plaquetas. Requieren hospitalización urgente.'
+      }
+    ]
+  },
+  {
+    id: 'vih', nombre: 'VIH/SIDA & ITS', icon: '🔴',
+    preguntas: [
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuál es la diferencia entre VIH y SIDA?',
+        opciones: [
+          'Son sinónimos, representan la misma condición clínica',
+          'VIH es el virus causante; SIDA es la etapa avanzada de la infección (CD4 < 200 cel/mm³ o enfermedad definitoria)',
+          'VIH es la fase aguda y SIDA es la fase crónica estable',
+          'SIDA puede existir sin infección por VIH'
+        ],
+        correcta: 1,
+        feedback: 'VIH (Virus de Inmunodeficiencia Humana) es el agente etiológico. SIDA (Síndrome de Inmunodeficiencia Adquirida) es la etapa más avanzada de la infección, definida por CD4 < 200 cel/mm³ o la presencia de una enfermedad oportunista definitoria (ej: neumonía por Pneumocystis, toxoplasmosis cerebral, sarcoma de Kaposi).'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuáles son las vías de transmisión del VIH?',
+        opciones: [
+          'Contacto casual (abrazo, beso social, comparto de vajilla)',
+          'Sexual (sin protección), sanguínea (jeringa compartida, transfusión) y vertical (madre-hijo)',
+          'Gotículas respiratorias y contacto fecal-oral',
+          'Picadura de mosquito y contacto con fluidos corporales como sudor'
+        ],
+        correcta: 1,
+        feedback: 'Las 3 vías de transmisión del VIH son: (1) SEXUAL: relaciones sin condón; (2) SANGUÍNEA: uso de jeringa compartida, transfusiones no tamizadas, accidentes corto-punzantes; (3) VERTICAL: de madre a hijo durante embarazo, parto o lactancia. El VIH NO se transmite por contacto casual.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Qué significa TARV en el contexto del VIH?',
+        opciones: [
+          'Tratamiento Ambulatorio de Riesgo Vital',
+          'Terapia Antirretroviral',
+          'Transferencia de Anticuerpos Retrovirales Vitales',
+          'Test de Análisis de Respuesta Viral'
+        ],
+        correcta: 1,
+        feedback: 'TARV es la Terapia Antirretroviral. Consiste en la combinación de medicamentos que suprimen la replicación viral, mantienen el CD4 elevado y permiten una vida normal. Actualmente se inicia en todos los pacientes con diagnóstico de VIH, independiente del recuento de CD4.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Qué es la Profilaxis Pre-Exposición (PrEP) al VIH?',
+        opciones: [
+          'Tratamiento de emergencia post-exposición de 72 horas',
+          'Medicamento antirretroviral tomado por personas VIH negativas con alto riesgo para prevenir la infección',
+          'Vacuna preventiva contra el VIH aprobada por la OMS',
+          'Prueba rápida de VIH antes de una relación sexual'
+        ],
+        correcta: 1,
+        feedback: 'La PrEP (Profilaxis Pre-Exposición) es el uso de antirretrovirales (generalmente Tenofovir/Emtricitabina) por personas VIH negativas con alto riesgo de infección. Tiene eficacia >99% cuando se toma correctamente. En Chile está disponible en el sistema público desde 2021.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuáles son los síntomas característicos del Herpes Genital?',
+        opciones: [
+          'Descarga purulenta uretral y disuria sin lesiones visibles',
+          'Vesículas dolorosas que se rompen formando úlceras en genitales, con ardor y a veces fiebre en el primer episodio',
+          'Verrugas indoloras en genitales y ano',
+          'Úlcera única, indolora y de bordes regulares en genitales'
+        ],
+        correcta: 1,
+        feedback: 'El Herpes Genital (VHS-2, principalmente) se caracteriza por: vesículas dolorosas → úlceras superficiales en genitales/periné. El primer episodio puede incluir fiebre, adenopatías inguinales y malestar general. Es recurrente (el virus persiste latente). La úlcera indolora de bordes regulares es del Sífilis (chancro sifilítico).'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cómo se diferencia la Clamidia de la Gonorrea clínicamente?',
+        opciones: [
+          'Son idénticas, solo se diferencian por cultivo',
+          'Clamidia suele ser asintomática o con descarga mucosa leve; Gonorrea produce descarga purulenta intensa y disuria marcada',
+          'La Gonorrea es siempre asintomática en mujeres',
+          'La Clamidia produce úlceras genitales, la Gonorrea no'
+        ],
+        correcta: 1,
+        feedback: 'La Clamidia (Chlamydia trachomatis) frecuentemente es ASINTOMÁTICA (especialmente en mujeres) o produce descarga mucoide leve. La Gonorrea (Neisseria gonorrhoeae) produce descarga purulenta abundante, disuria intensa y eritema uretral/cervical. Ambas pueden coexistir (coinfección frecuente).'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuál es el rol del VPH en el desarrollo del cáncer cervicouterino?',
+        opciones: [
+          'El VPH es una causa necesaria pero no suficiente para el desarrollo de cáncer cervicouterino',
+          'Solo los VPH de bajo riesgo (6 y 11) causan cáncer',
+          'El VPH provoca directamente el cáncer en el 100% de los casos infectados',
+          'El VPH no tiene relación causal con el cáncer cervicouterino'
+        ],
+        correcta: 0,
+        feedback: 'El VPH es necesario pero no suficiente. Los serotipos de alto riesgo (16 y 18) son los más oncogénicos. Solo una minoría de infecciones por VPH alto riesgo progresa a cáncer, dependiendo de cofactores (tabaco, inmunosupresión, coinfecciones). Los serotipos 6 y 11 causan condilomas (verrugas) pero NO cáncer.'
+      }
+    ]
+  },
+  {
+    id: 'arbovirus', nombre: 'Chikungunya, Zika & Hantavirus', icon: '🌡️',
+    preguntas: [
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuál es el síntoma más característico de la Fiebre Chikungunya que la diferencia del Dengue?',
+        opciones: [
+          'Fiebre hemorrágica y trombocitopenia severa',
+          'Artralgia o artritis intensa y debilitante (puede durar semanas a meses)',
+          'Meningitis y encefalitis en adultos mayores',
+          'Manchas de Koplik y erupción generalizada'
+        ],
+        correcta: 1,
+        feedback: 'La artralgia/artritis INTENSA Y DEBILITANTE es el sello distintivo del Chikungunya (nombre que en lengua makonde significa "aquel que se encorva por el dolor"). Afecta múltiples articulaciones y puede persistir meses. El Dengue tiene más trombocitopenia y síntomas hemorrágicos. Ambos son transmitidos por Aedes aegypti.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Qué complicación grave se asocia al Virus Zika durante el embarazo?',
+        opciones: [
+          'Aborto espontáneo en el tercer trimestre',
+          'Microcefalia y otras malformaciones congénitas del sistema nervioso central',
+          'Síndrome nefrótico congénito',
+          'Cardiopatías congénitas complejas'
+        ],
+        correcta: 1,
+        feedback: 'El Zika tiene especial relevancia en el embarazo porque se asocia a microcefalia fetal y síndrome congénito por Zika (SCZ), que incluye alteraciones del SNC, contracturas articulares, y compromiso ocular y auditivo. También se asocia a síndrome de Guillain-Barré en adultos.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuál es el roedor vector del Hantavirus en Chile y cuál es la zona geográfica más afectada?',
+        opciones: [
+          'Rattus rattus; zona norte (Atacama y Antofagasta)',
+          'Oligoryzomys longicaudatus (ratón de cola larga); zona sur-centro (Biobío a Los Lagos)',
+          'Octodon degus (degú); zona central (Valparaíso y RM)',
+          'Mus musculus; todo Chile uniformemente'
+        ],
+        correcta: 1,
+        feedback: 'En Chile, el Hantavirus es transmitido principalmente por el ratón de cola larga (Oligoryzomys longicaudatus). Las regiones más afectadas son Biobío, La Araucanía, Los Ríos y Los Lagos. La transmisión es por inhalación de aerosoles de heces/orina/saliva del roedor; NO hay transmisión persona-persona (excepto variante andina).'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuál es la presentación clínica más grave del Hantavirus?',
+        opciones: [
+          'Meningitis hemorrágica aguda',
+          'Síndrome Cardiopulmonar por Hantavirus (SCPH): fiebre, mialgias, edema pulmonar agudo no cardiogénico con alta mortalidad',
+          'Hepatitis fulminante con coagulopatía',
+          'Insuficiencia renal aguda oligúrica'
+        ],
+        correcta: 1,
+        feedback: 'El Síndrome Cardiopulmonar por Hantavirus (SCPH) es la forma grave en Chile. Tiene 3 fases: prodrómica (fiebre, mialgias, cefalea), cardiopulmonar (edema pulmonar no cardiogénico, hipotensión, shock) y convalecencia. La mortalidad puede superar el 30–40%. Requiere UCI urgente.'
+      }
+    ]
+  },
+  {
+    id: 'respiratorio', nombre: 'VRS, NAC & Tuberculosis', icon: '🫁',
+    preguntas: [
+      {
+        tipo: 'mc',
+        enunciado: '¿En qué grupo etario el Virus Respiratorio Sincicial (VRS) tiene mayor gravedad clínica?',
+        opciones: [
+          'Adolescentes de 12–18 años',
+          'Adultos mayores de 80 años con EPOC',
+          'Lactantes menores de 6 meses y prematuros',
+          'Adultos jóvenes inmunocompetentes'
+        ],
+        correcta: 2,
+        feedback: 'El VRS es la principal causa de bronquiolitis y neumonía grave en lactantes menores de 6 meses. Los prematuros, lactantes con cardiopatía congénita o displasia broncopulmonar tienen mayor riesgo de enfermedad grave. En adultos mayores e inmunosuprimidos también puede ser severo.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cómo se define la Neumonía Adquirida en la Comunidad (NAC)?',
+        opciones: [
+          'Infección pulmonar contraída en un hospital o institución de salud',
+          'Infección del parénquima pulmonar adquirida fuera del ambiente hospitalario, en personas no hospitalizadas en los últimos 14 días',
+          'Neumonía en pacientes inmunosuprimidos ambulatorios',
+          'Infección pulmonar en pacientes con EPOC'
+        ],
+        correcta: 1,
+        feedback: 'La NAC es la infección del parénquima pulmonar adquirida en la comunidad, en pacientes que no estuvieron hospitalizados en los 14 días previos ni en instituciones de cuidado crónico. El agente más frecuente es Streptococcus pneumoniae. Se diferencia de la neumonía nosocomial (NAVM, NAES).'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Qué escala se utiliza para evaluar gravedad de la NAC y decidir hospitalización?',
+        opciones: [
+          'Escala APACHE II',
+          'Escala CRB-65 o PSI (Pneumonia Severity Index)',
+          'Score de Child-Pugh',
+          'Escala de Wells'
+        ],
+        correcta: 1,
+        feedback: 'Para la NAC se utilizan: CRB-65 (Confusión, FR ≥30, PAS<90/PAD<60, edad ≥65) para uso en APS, y el PSI/PORT para hospital. En APS: CRB-65 = 0 → tratamiento ambulatorio; 1-2 → considerar hospitalización; ≥3 → hospitalización urgente.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuál es la forma de transmisión de la Tuberculosis (TBC)?',
+        opciones: [
+          'Fecal-oral, por agua o alimentos contaminados',
+          'Aérea, por inhalación de gotículas-núcleo (droplet nuclei) expelidas por personas con TBC pulmonar activa',
+          'Contacto directo con lesiones cutáneas',
+          'Vector (mosquito o garrapata)'
+        ],
+        correcta: 1,
+        feedback: 'La TBC se transmite por VÍA AÉREA mediante la inhalación de gotículas-núcleo (partículas < 5 micrones) que contienen Mycobacterium tuberculosis, expelidas al toser, hablar o estornudar una persona con TBC pulmonar o laríngea activa. Las gotículas pueden permanecer en el aire durante horas.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Qué prueba diagnóstica inicial se utiliza para TBC en APS Chile?',
+        opciones: [
+          'PCR de esputo en tiempo real (GeneXpert)',
+          'Baciloscopía de esputo (x3 muestras) y radiografía de tórax',
+          'Mantoux (PPD) como único estudio',
+          'Hemocultivo específico para mycobacterias'
+        ],
+        correcta: 1,
+        feedback: 'El estudio inicial de TBC incluye: baciloscopía de esputo (3 muestras en días consecutivos) y radiografía de tórax. La baciloscopía positiva confirma TBC pulmonar; si negativa pero hay sospecha, se agrega cultivo de Koch y/o GeneXpert. El PPD (Mantoux) indica infección pero no enfermedad activa.'
+      },
+      {
+        tipo: 'tf',
+        enunciado: '¿Verdadero o Falso? La vacuna BCG protege 100% contra todas las formas de tuberculosis.',
+        opciones: ['Verdadero', 'Falso'],
+        correcta: 1,
+        feedback: 'FALSO. La BCG (Bacillus Calmette-Guérin) tiene eficacia variable: alta protección (70-80%) contra formas graves en niños (meningitis TBC, TBC miliar), pero menor eficacia contra TBC pulmonar del adulto. En Chile se aplica al recién nacido en la maternidad. No protege al 100% ni contra todas las formas.'
+      }
+    ]
+  },
+  {
+    id: 'ecoli', nombre: 'E. coli & Gonorrea', icon: '🧫',
+    preguntas: [
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuál es la cepa de E. coli asociada al Síndrome Hemolítico Urémico (SHU)?',
+        opciones: [
+          'E. coli enteropatógena (EPEC)',
+          'E. coli productora de toxina Shiga O157:H7 (STEC/EHEC)',
+          'E. coli uropatógena (UPEC)',
+          'E. coli enterotoxigénica (ETEC)'
+        ],
+        correcta: 1,
+        feedback: 'La E. coli O157:H7 (STEC/EHEC) produce toxinas Shiga que causan colitis hemorrágica y puede progresar a SHU: triada de anemia hemolítica microangiopática + trombocitopenia + insuficiencia renal aguda. Es ENO en Chile. Fuente: carne molida mal cocida, lácteos no pasteurizados, vegetales contaminados.'
+      },
+      {
+        tipo: 'mc',
+        enunciado: '¿Cuál es el tratamiento de elección para la Gonorrea no complicada según guías actuales?',
+        opciones: [
+          'Penicilina G sódica IM dosis única',
+          'Ceftriaxona 500 mg IM dosis única (+ Azitromicina si se sospecha coinfección por Clamidia)',
+          'Metronidazol oral por 7 días',
+          'Ciprofloxacino 500 mg oral dosis única'
+        ],
+        correcta: 1,
+        feedback: 'Dado el aumento de resistencia de Neisseria gonorrhoeae a quinolonas y otros antibióticos, el tratamiento de elección actual es Ceftriaxona 500 mg IM dosis única. Frecuentemente se añade Azitromicina por la alta prevalencia de coinfección con Clamidia. Enfermería debe conocer estos esquemas para la administración y educación.'
+      },
+      {
+        tipo: 'tf',
+        enunciado: '¿Verdadero o Falso? La gonorrea puede transmitirse de forma no sexual por contacto con fómites (toallas, inodoros).',
+        opciones: ['Verdadero', 'Falso'],
+        correcta: 1,
+        feedback: 'FALSO. Neisseria gonorrhoeae es un microorganismo frágil que no sobrevive fuera del huésped. La transmisión es EXCLUSIVAMENTE sexual (contacto con mucosas genitales, rectal u orofaríngea) o vertical (neonatal durante el parto). No se transmite por fómites.'
+      }
+    ]
+  }
+];
+
+// ═══════════════════════════════════════════════
+//  ESTADO DEL JUEGO
+//  ═══════════════════════════════════════════════
+let estado = {
+  temaActual: null,
+  preguntasModo: [],
+  indice: 0,
+  correctas: 0,
+  total: 0,
+  respondidas: 0,
+  temasCompletados: new Set(),
+  modoMix: false
+};
+
+let totalPreguntas = TEMAS.reduce((s, t) => s + t.preguntas.length, 0);
+
+// ═══════════════════════════════════════════════
+//  RENDER TEMAS
+// ═══════════════════════════════════════════════
+function renderTemas() {
+  const grid = document.getElementById('temasGrid');
+  grid.innerHTML = '';
+  TEMAS.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'tema-btn' + (estado.temasCompletados.has(t.id) ? ' completado' : '');
+    btn.innerHTML = `
+      <div class="check-badge">✓</div>
+      <span class="tema-icon">${t.icon}</span>
+      <div class="tema-nombre">${t.nombre}</div>
+      <div class="tema-n">${t.preguntas.length} preguntas</div>
+    `;
+    btn.onclick = () => iniciarModo(t.id);
+    grid.appendChild(btn);
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  INICIAR MODO
+// ═══════════════════════════════════════════════
+function iniciarModo(temaId) {
+  if (temaId === 'mix') {
+    estado.modoMix = true;
+    estado.temaActual = null;
+    let todas = [];
+    TEMAS.forEach(t => t.preguntas.forEach(p => todas.push({ ...p, _tema: t.nombre })));
+    estado.preguntasModo = shuffle(todas);
+    document.getElementById('quizTemaTag').textContent = '🔀 Modo Mixto';
+  } else {
+    estado.modoMix = false;
+    const tema = TEMAS.find(t => t.id === temaId);
+    estado.temaActual = tema;
+    estado.preguntasModo = shuffle([...tema.preguntas]);
+    document.getElementById('quizTemaTag').textContent = tema.icon + ' ' + tema.nombre;
+  }
+  estado.indice = 0;
+  estado.correctas = 0;
+  estado.respondidas = 0;
+
+  document.getElementById('selector').style.display = 'none';
+  document.getElementById('resultado').style.display = 'none';
+  document.getElementById('quiz-area').style.display = 'block';
+
+  mostrarPregunta();
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// ═══════════════════════════════════════════════
+//  MOSTRAR PREGUNTA
+// ═══════════════════════════════════════════════
+function mostrarPregunta() {
+  const preguntas = estado.preguntasModo;
+  if (estado.indice >= preguntas.length) {
+    mostrarResultado();
+    return;
+  }
+  const p = preguntas[estado.indice];
+  const card = document.getElementById('cardPregunta');
+  card.style.animation = 'none';
+  void card.offsetWidth;
+  card.style.animation = 'slideIn 0.28s ease';
+
+  // Badge tipo
+  const badge = document.getElementById('badgeTipo');
+  if (p.tipo === 'mc') { badge.textContent = 'Opción Múltiple'; badge.className = 'badge-tipo mc'; }
+  else if (p.tipo === 'tf') { badge.textContent = 'Verdadero / Falso'; badge.className = 'badge-tipo tf'; }
+  else { badge.textContent = 'Caso Clínico'; badge.className = 'badge-tipo caso'; }
+
+  document.getElementById('enunciado').innerHTML = p.enunciado;
+  document.getElementById('preguntaCounter').textContent = `${estado.indice + 1} / ${preguntas.length}`;
+
+  const optDiv = document.getElementById('opciones');
+  optDiv.innerHTML = '';
+  const letras = ['A', 'B', 'C', 'D'];
+  p.opciones.forEach((op, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opcion-btn';
+    btn.innerHTML = `<span class="opt-letra">${letras[i]}</span><span>${op}</span>`;
+    btn.onclick = () => responder(i, p);
+    optDiv.appendChild(btn);
+  });
+
+  document.getElementById('feedbackBox').style.display = 'none';
+  document.getElementById('btnSiguiente').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════
+//  RESPONDER
+// ═══════════════════════════════════════════════
+function responder(idx, p) {
+  const botones = document.querySelectorAll('.opcion-btn');
+  botones.forEach(b => b.disabled = true);
+
+  const esCorrecta = idx === p.correcta;
+  botones[idx].classList.add(esCorrecta ? 'correcta' : 'incorrecta');
+  if (!esCorrecta) botones[p.correcta].classList.add('correcta');
+
+  const fb = document.getElementById('feedbackBox');
+  const fbTitulo = document.getElementById('fbTitulo');
+  const fbDetalle = document.getElementById('fbDetalle');
+
+  if (esCorrecta) {
+    fb.className = 'feedback-box correcto';
+    fbTitulo.textContent = '✅ ¡Correcto!';
+    estado.correctas++;
+    flashBar('verde');
+  } else {
+    fb.className = 'feedback-box incorrecto';
+    fbTitulo.textContent = '❌ Incorrecto';
+    flashBar('rojo');
+  }
+  fbDetalle.textContent = p.feedback;
+  fb.style.display = 'block';
+  document.getElementById('btnSiguiente').style.display = 'block';
+
+  estado.respondidas++;
+  estado.total++;
+  actualizarScore();
+}
+
+function flashBar(color) {
+  const bar = document.getElementById('flashBar');
+  bar.className = `flash-bar show-${color}`;
+  setTimeout(() => { bar.className = 'flash-bar'; }, 700);
+}
+
+// ═══════════════════════════════════════════════
+//  SIGUIENTE PREGUNTA
+// ═══════════════════════════════════════════════
+function siguientePregunta() {
+  estado.indice++;
+  mostrarPregunta();
+}
+
+// ═══════════════════════════════════════════════
+//  ACTUALIZAR SCORE
+// ═══════════════════════════════════════════════
+function actualizarScore() {
+  document.getElementById('scoreCorrectas').textContent = estado.correctas;
+  document.getElementById('scoreTotal').textContent = estado.total;
+  const pct = estado.total > 0 ? Math.round((estado.correctas / estado.total) * 100) : null;
+  document.getElementById('scorePct').textContent = pct !== null ? pct + '%' : '—';
+
+  // Progreso global (basado en preguntas respondidas de todas las sesiones)
+  const progPct = Math.min(100, Math.round((estado.total / totalPreguntas) * 100));
+  document.getElementById('progressFill').style.width = progPct + '%';
+  document.getElementById('progressPct').textContent = progPct + '%';
+}
+
+// ═══════════════════════════════════════════════
+//  RESULTADO FINAL
+// ═══════════════════════════════════════════════
+function mostrarResultado() {
+  document.getElementById('quiz-area').style.display = 'none';
+  document.getElementById('resultado').style.display = 'block';
+
+  const pct = Math.round((estado.correctas / estado.respondidas) * 100);
+  let emoji, titulo, sub;
+  if (pct >= 90) { emoji = '🏆'; titulo = '¡Excelente!'; sub = 'Dominas el tema. Estás lista para la solemne.'; }
+  else if (pct >= 75) { emoji = '⭐'; titulo = '¡Muy bien!'; sub = 'Buen manejo del contenido. Repasa los temas fallados.'; }
+  else if (pct >= 60) { emoji = '📚'; titulo = 'Bien, pero a repasar'; sub = 'Hay conceptos que necesitan refuerzo. ¡Tú puedes!'; }
+  else { emoji = '💪'; titulo = 'Sigue estudiando'; sub = 'Este tema necesita más repaso. ¡Vuélvelo a intentar!'; }
+
+  document.getElementById('resEmoji').textContent = emoji;
+  document.getElementById('resTitulo').textContent = titulo;
+  document.getElementById('resSubtitulo').textContent = sub;
+  document.getElementById('resCorr').textContent = estado.correctas;
+  document.getElementById('resIncorr').textContent = estado.respondidas - estado.correctas;
+  document.getElementById('resPct').textContent = pct + '%';
+
+  if (estado.temaActual) estado.temasCompletados.add(estado.temaActual.id);
+}
+
+function reiniciarTema() {
+  document.getElementById('resultado').style.display = 'none';
+  if (estado.modoMix) {
+    iniciarModo('mix');
+  } else {
+    iniciarModo(estado.temaActual.id);
+  }
+}
+
+function volverSelector() {
+  document.getElementById('quiz-area').style.display = 'none';
+  document.getElementById('resultado').style.display = 'none';
+  document.getElementById('selector').style.display = 'block';
+  renderTemas();
+}
+
+// ═══════════════════════════════════════════════
+//  REINICIAR TODO
+// ═══════════════════════════════════════════════
+function reiniciarTodo() {
+  if (!confirm('¿Reiniciar todo el progreso y puntaje? Esta acción no se puede deshacer.')) return;
+  estado.correctas = 0;
+  estado.total = 0;
+  estado.respondidas = 0;
+  estado.temasCompletados = new Set();
+  estado.temaActual = null;
+  estado.modoMix = false;
+  document.getElementById('scoreCorrectas').textContent = '0';
+  document.getElementById('scoreTotal').textContent = '0';
+  document.getElementById('scorePct').textContent = '—';
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('progressPct').textContent = '0%';
+  document.getElementById('quiz-area').style.display = 'none';
+  document.getElementById('resultado').style.display = 'none';
+  document.getElementById('selector').style.display = 'block';
+  renderTemas();
+}
+
+// ═══════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════
+renderTemas();
+</script>
+
+<a href="../index.html" class="volver-menu">← Volver al menú principal</a>
+
+</body>
+</html>
